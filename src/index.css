@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn-base {
+    @apply relative flex flex-col items-center justify-center rounded-lg transition-all duration-200;
+    background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%);
+  }
+  
+  .btn-base:not(:disabled):active {
+    @apply transform scale-[0.98];
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+  
+  .btn-base:not(:disabled):hover {
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  }
+
+  .indicator {
+    @apply absolute bottom-4 left-4 w-2.5 h-2.5 rounded-full;
+  }
+
+  .indicator-active {
+    @apply bg-[#FF4400];
+  }
+
+  .indicator-inactive {
+    @apply bg-[#E0E0E0];
+  }
+
+  .star-icon {
+    @apply absolute bottom-4 right-4 w-4 h-4;
+    color: #E0E0E0;
+  }
+}
+
+body {
+  background-color: #E7E7E7;
+}
