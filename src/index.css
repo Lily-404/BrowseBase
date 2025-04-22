@@ -12,10 +12,6 @@
     @apply transform scale-[0.98];
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   }
-  
-  .btn-base:not(:disabled):hover {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-  }
 
   .indicator {
     @apply absolute bottom-4 left-4 w-2.5 h-2.5 rounded-full;

@@ -18,31 +18,31 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
   onSelectTag
 }) => {
   const handleClick = (tagId: string) => {
-    new Audio('/click.mp3').play().catch(() => {});
+    new Audio('/click.wav').play().catch(() => {});
     onSelectTag(tagId);
   };
 
   return (
     <div className="mb-6">
-      <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">Tags</h2>
+      <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">Filter</h2>
       <div className="grid grid-cols-2 gap-3">
         {tags.map((tag) => (
           <div key={tag.id} className="relative">
-            {/* 底部固定矩形，向左上偏移 */}
-            <div className="absolute top-[-1px] left-[-1px] w-full h-full bg-[#D7D7D7] rounded-lg" />
+            {/* Bottom fixed rectangle with reduced offset */}
+            <div className="absolute top-[-0.25px] left-[-0.25px] w-full h-full bg-[#D7D7D7] rounded-lg pointer-events-none" />
             
             <button
               className={`
                 btn-base h-14 w-full
                 bg-[#F1F1F1] rounded-lg
                 ${selectedTags.includes(tag.id) 
-                  ? 'shadow-[0_2px_4px_rgba(0,0,0,0.25),inset_-2px_-2px_4px_rgba(0,0,0,0.1),inset_2px_2px_4px_rgba(255,255,255,0.9),0_1px_2px_#CAC9C9] scale-[0.98]'
-                  : 'shadow-[0_3px_6px_rgba(0,0,0,0.25),inset_-3px_-3px_6px_rgba(0,0,0,0.1),inset_3px_3px_6px_rgba(255,255,255,0.9),0_1px_2px_#CAC9C9]'}
-                relative transition-all duration-300 ease-in-out
+                  ? 'shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.3),inset_1px_1px_2px_rgba(255,255,255,1),4px_4px_7px_rgba(0,0,0,0.15)] scale-[0.995]'
+                  : 'shadow-[4px_4px_7px_rgba(0,0,0,0.25),-1px_-1px_0_rgba(255,255,255,1),inset_-1px_-1px_2px_rgba(0,0,0,0.1),inset_1px_1px_2px_rgba(255,255,255,0.9)]'}
+                relative transition-all duration-300 ease-in-out cursor-default
               `}
               onClick={() => handleClick(tag.id)}
             >
-              <span className="text-sm uppercase text-gray-600">{tag.name}</span>
+              <span className="text-sm uppercase text-gray-600 absolute top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-[calc(100%-24px)] truncate">{tag.name}</span>
               <span 
                 className={`absolute bottom-3 left-3 w-2 h-2 rounded-full transition-colors duration-300 ${
                   selectedTags.includes(tag.id) ? 'bg-[#FF3B30]' : 'bg-[#CDCDCD]'

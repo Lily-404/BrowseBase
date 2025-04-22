@@ -5,14 +5,24 @@ import ResourceTags from './components/ResourceTags';
 import DescriptionBox from './components/DescriptionBox';
 import ResourcePreview from './components/ResourcePreview';
 import Footer from './components/Footer';
-import { categories, tags, previewContent } from './data/mockData';
+import { categories, tags, previewContent, resources } from './data/mockData';
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0].id);
-  const [selectedTags, setSelectedTags] = useState<string[]>([tags[0].id]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  
+  // 筛选资源：根据分类和标签筛选
+  const filteredResources = resources.filter(resource => {
+    const categoryMatch = selectedCategory === 'all' || resource.category === selectedCategory;
+    const tagMatch = selectedTags.length === 0 || 
+      resource.tags.some(tag => selectedTags.includes(tag));
+    return categoryMatch && tagMatch;
+  });
   
   const handleSelectCategory = (categoryId: string) => {
     setSelectedCategory(categoryId);
+    // 移除这行，不再清空标签
+    // setSelectedTags([]); 
   };
   
   const handleSelectTag = (tagId: string) => {
@@ -36,7 +46,7 @@ function App() {
         {/* Left section - Categories and Tags */}
         <div className="w-full md:w-2/5">
           <ResourceCategories 
-            categories={categories} 
+            categories={[{ id: 'all', name: 'all' }, ...categories]}
             selectedCategory={selectedCategory}
             onSelectCategory={handleSelectCategory}
           />
@@ -54,7 +64,7 @@ function App() {
         
         {/* Right section - Resource Preview */}
         <div className="w-full md:w-3/5">
-          <ResourcePreview content={previewContent} />
+          <ResourcePreview resources={filteredResources} />
         </div>
       </main>
       
