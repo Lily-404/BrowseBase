@@ -25,16 +25,16 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
   return (
     <div className="mb-6">
       <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">Filter</h2>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         {tags.map((tag) => (
           <div key={tag.id} className="relative">
             {/* Bottom fixed rectangle with reduced offset */}
-            <div className="absolute top-[-0.25px] left-[-0.25px] w-full h-full bg-[#D7D7D7] rounded-lg pointer-events-none" />
+            <div className="absolute top-[-0.25px] left-[-0.25px] w-full h-full bg-[#D7D7D7] rounded pointer-events-none" />
             
             <button
               className={`
-                btn-base h-14 w-full
-                bg-[#F1F1F1] rounded-lg
+                btn-base h-16 w-full
+                bg-[#F1F1F1] rounded
                 ${selectedTags.includes(tag.id) 
                   ? 'shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.3),inset_1px_1px_2px_rgba(255,255,255,1),4px_4px_7px_rgba(0,0,0,0.15)] scale-[0.995]'
                   : 'shadow-[4px_4px_7px_rgba(0,0,0,0.25),-1px_-1px_0_rgba(255,255,255,1),inset_-1px_-1px_2px_rgba(0,0,0,0.1),inset_1px_1px_2px_rgba(255,255,255,0.9)]'}
@@ -42,9 +42,9 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
               `}
               onClick={() => handleClick(tag.id)}
             >
-              <span className="text-sm uppercase text-gray-600 absolute top-[45%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-[calc(100%-24px)] truncate">{tag.name}</span>
+              <span className="text-xs uppercase text-gray-600 absolute top-2 left-2 max-w-[calc(100%-16px)] truncate">{tag.name}</span>
               <span 
-                className={`absolute bottom-3 left-3 w-2 h-2 rounded-full transition-colors duration-300 ${
+                className={`absolute bottom-2 left-2 w-2 h-2 rounded transition-colors duration-300 ${
                   selectedTags.includes(tag.id) ? 'bg-[#FF3B30]' : 'bg-[#CDCDCD]'
                 }`} 
               />

@@ -39,32 +39,36 @@ function App() {
     : '';
 
   return (
-    <div className="min-h-screen flex flex-col max-w-6xl mx-auto px-4 md:px-6 py-4">
+    <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex flex-col md:flex-row gap-8 flex-grow my-8">
-        {/* Left section - Categories and Tags */}
-        <div className="w-full md:w-2/5">
-          <ResourceCategories 
-            categories={[{ id: 'all', name: 'all' }, ...categories]}
-            selectedCategory={selectedCategory}
-            onSelectCategory={handleSelectCategory}
-          />
-          
-          <ResourceTags 
-            tags={tags}
-            selectedTags={selectedTags}
-            onSelectTag={handleSelectTag}
-          />
-          
-          {selectedTagDescription && (
-            <DescriptionBox description={selectedTagDescription} />
-          )}
-        </div>
-        
-        {/* Right section - Resource Preview */}
-        <div className="w-full md:w-3/5">
-          <ResourcePreview resources={filteredResources} />
+      <main className="flex-grow my-8">
+        <div className="max-w-screen-xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row gap-8">
+            {/* Left section - Categories and Tags */}
+            <div className="w-full md:w-2/5">
+              <ResourceCategories 
+                categories={[{ id: 'all', name: 'all' }, ...categories]}
+                selectedCategory={selectedCategory}
+                onSelectCategory={handleSelectCategory}
+              />
+              
+              <ResourceTags 
+                tags={tags}
+                selectedTags={selectedTags}
+                onSelectTag={handleSelectTag}
+              />
+              
+              {selectedTagDescription && (
+                <DescriptionBox description={selectedTagDescription} />
+              )}
+            </div>
+            
+            {/* Right section - Resource Preview */}
+            <div className="w-full md:w-3/5">
+              <ResourcePreview resources={filteredResources} />
+            </div>
+          </div>
         </div>
       </main>
       

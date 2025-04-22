@@ -39,37 +39,36 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   return (
     <div className="mb-8">
       <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">Category</h2>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-4 gap-4">
         {categories.map((category) => (
           <div key={category.id} className="aspect-square relative">
             {/* 底部固定矩形，向左上偏移 */}
-            <div className="absolute top-[-1px] left-[-1px] w-full h-full bg-[#D7D7D7] rounded-lg" />
+            <div className="absolute top-[-0.25px] left-[-0.25px] w-full h-full bg-[#D7D7D7] rounded" />
             
             <button
               className={`
-                w-full h-full ${category.id === 'all' ? 'bg-[#9A9A9A]' : 'bg-[#F1F1F1]'} rounded-lg relative p-5
+                w-full h-full ${category.id === 'all' ? 'bg-[#9A9A9A]' : 'bg-[#F1F1F1]'} rounded relative p-3
                 ${getShadowStyle(category.id, selectedCategory === category.id)}
                 relative transition-all duration-300 ease-in-out
               `}
               onClick={() => handleClick(category.id, category.disabled)}
             >
-              <span className={`font-mono text-sm uppercase ${
+              <span className={`font-mono text-xs uppercase ${
                 category.id === 'all' ? 'text-white' : 'text-gray-600'
-              } absolute top-3 left-3 max-w-[calc(100%-24px)] truncate`}>{category.name}</span>
+              } absolute top-2 left-2 max-w-[calc(100%-16px)] truncate`}>{category.name}</span>
               <span 
-                className={`absolute bottom-3 left-3 w-2 h-2 rounded-full transition-colors duration-300 ${
+                className={`absolute bottom-2 left-2 w-2 h-2 rounded-full transition-colors duration-300 ${
                   selectedCategory === category.id 
                     ? category.id === 'all' ? 'bg-[#FF3B30]' : 'bg-[#FF3B30]'
                     : category.id === 'all' ? 'bg-[#808080]' : 'bg-[#CDCDCD]'
                 }`} 
               />
               
-              {/* 右下角的星形图标 */}
               {category.icon && (
-                <div className="absolute bottom-3 right-3">
+                <div className="absolute bottom-2 right-2">
                   <svg 
-                    width="16" 
-                    height="16" 
+                    width="14" 
+                    height="14" 
                     viewBox="0 0 16 16" 
                     fill="none" 
                     xmlns="http://www.w3.org/2000/svg"
