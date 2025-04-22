@@ -1,13 +1,14 @@
 import { Category, Tag } from '../types';
 
 export const categories: Category[] = [
-  { id: 'webs', name: 'web' },
+  { id: 'docs', name: 'doc' },
   { id: 'tutorials', name: 'Tutorials' },
   { id: 'tools', name: 'Tools' },
   { id: 'templates', name: 'Templates' },
   { id: 'code', name: 'Code' },
   { id: 'design', name: 'Design' },
   { id: 'ai', name: 'AI' },
+  { id: 'prompt' , name: 'Prompt' },
 
 ];
 
@@ -165,6 +166,70 @@ export const resources: Resource[] = [
   },
   {
     id: '8',
+    title: 'React UI 设计系统',
+    url: 'https://react-design-system.com',
+    description: '完整的React UI设计系统，包含组件库和设计规范。',
+    updatedAt: '2天前更新',
+    rating: 4.9,
+    reviews: 1800,
+    tags: ['Design', 'UI', 'System'],
+    category: 'design'
+  },
+  {
+    id: '13',
+    title: 'React UI 设计系统',
+    url: 'https://react-design-system.com',
+    description: '完整的React UI设计系统，包含组件库和设计规范。',
+    updatedAt: '2天前更新',
+    rating: 4.9,
+    reviews: 1800,
+    tags: ['Design', 'UI', 'System'],
+    category: 'design'
+  },
+  {
+    id: '9',
+    title: 'React UI 设计系统',
+    url: 'https://react-design-system.com',
+    description: '完整的React UI设计系统，包含组件库和设计规范。',
+    updatedAt: '2天前更新',
+    rating: 4.9,
+    reviews: 1800,
+    tags: ['Design', 'UI', 'System'],
+    category: 'design'
+  },
+  {
+    id: '10',
+    title: 'React UI 设计系统',
+    url: 'https://react-design-system.com',
+    description: '完整的React UI设计系统，包含组件库和设计规范。',
+    updatedAt: '2天前更新',
+    rating: 4.9,
+    reviews: 1800,
+    tags: ['Design', 'UI', 'System'],
+    category: 'design'
+  },{
+    id: '11',
+    title: 'React UI 设计系统',
+    url: 'https://react-design-system.com',
+    description: '完整的React UI设计系统，包含组件库和设计规范。',
+    updatedAt: '2天前更新',
+    rating: 4.9,
+    reviews: 1800,
+    tags: ['Design', 'UI', 'System'],
+    category: 'design'
+  },{
+    id: '12',
+    title: 'React UI 设计系统',
+    url: 'https://react-design-system.com',
+    description: '完整的React UI设计系统，包含组件库和设计规范。',
+    updatedAt: '2天前更新',
+    rating: 4.9,
+    reviews: 1800,
+    tags: ['Design', 'UI', 'System'],
+    category: 'design'
+  },
+  {
+    id: '14',
     title: 'React UI 设计系统',
     url: 'https://react-design-system.com',
     description: '完整的React UI设计系统，包含组件库和设计规范。',

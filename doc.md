@@ -71,6 +71,27 @@ interface Tag {
 }
 ```
 
+
+```typescript
+// 分页参数
+interface PaginationParams {
+  page: number;
+  pageSize: number;
+}
+
+// 分页响应
+interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  currentPage: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+}
+```
+
+
+
 ### 待实现的数据库设计
 
 ```sql
@@ -158,6 +179,60 @@ interface TagAPI {
   updateTag(id: string, tag: TagInput): Promise<Tag>;
   deleteTag(id: string): Promise<void>;
 }
+```
+
+```typescript
+// 分页Hook
+interface UsePagination {
+  currentPage: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPrevPage: boolean;
+  onNextPage: () => void;
+  onPrevPage: () => void;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+}
+
+const usePagination = (
+  initialPage = 1,
+  initialPageSize = 12
+): UsePagination => {
+  // 实现分页逻辑
+};
+
+// 资源列表组件中使用
+const ResourceList: React.FC = () => {
+  const pagination = usePagination();
+  const [resources, setResources] = useState<Resource[]>([]);
+  
+  useEffect(() => {
+    // 获取分页数据
+    const fetchResources = async () => {
+      const response = await api.getResources({
+        page: pagination.currentPage,
+        pageSize: pagination.pageSize
+      });
+      setResources(response.data);
+    };
+  
+    fetchResources();
+  }, [pagination.currentPage, pagination.pageSize]);
+  
+  return (
+    <>
+      <ResourceGrid resources={resources} />
+      <Footer 
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        onNextPage={pagination.onNextPage}
+        onPrevPage={pagination.onPrevPage}
+      />
+    </>
+  );
+};
 ```
 
 ## 开发进度

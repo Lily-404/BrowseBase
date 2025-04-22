@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ExternalLink } from 'lucide-react';
+import Footer from './Footer';
 
 interface Resource {
   id: string;
@@ -15,17 +16,37 @@ interface Resource {
 
 interface ResourcePreviewProps {
   resources: Resource[];
+  currentPage: number;
+  itemsPerPage: number;
+  onNextPage: () => void;
+  onPrevPage: () => void;
 }
 
-const ResourcePreview: React.FC<ResourcePreviewProps> = ({ resources }) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
-  const totalPages = Math.ceil(resources.length / itemsPerPage);
+const ResourcePreview: React.FC<ResourcePreviewProps> = ({ 
+  resources, 
+  currentPage, 
+  itemsPerPage,
+  onNextPage,
+  onPrevPage
+}) => {
+  // 确保当前页码不超过总页数
+  const totalPages = Math.max(1, Math.ceil(resources.length / itemsPerPage));
+  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
   
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentResources = resources.slice(startIndex, endIndex);
-
+  // 计算当前页的资源索引范围
+  const startIndex = (safeCurrentPage - 1) * itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, resources.length);
+  
+  // 使用资源的唯一ID创建一个集合，确保没有重复
+  const uniqueResourceIds = new Set();
+  const uniqueResources = resources.slice(startIndex, endIndex).filter(resource => {
+    if (uniqueResourceIds.has(resource.id)) {
+      return false;
+    }
+    uniqueResourceIds.add(resource.id);
+    return true;
+  });
+  
   if (!resources.length) {
     return (
       <div>
@@ -42,8 +63,8 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({ resources }) => {
   return (
     <div>
       <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">Resources</h2>
-      <div className="grid grid-cols-2 gap-4">
-        {currentResources.map(resource => (
+      <div className="grid grid-cols-2 gap-4 mb-8">  {/* 将 mb-4 改为 mb-8，增加底部间距 */}
+        {uniqueResources.map(resource => (
           <div key={resource.id} 
             className="bg-[#F1F1F1] rounded p-4
             shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.9),inset_2px_2px_4px_rgba(0,0,0,0.2)]"
@@ -54,9 +75,12 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({ resources }) => {
                 href={resource.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-1.5 hover:bg-black/5 rounded transition-colors flex-shrink-0"
+                className="relative flex items-center justify-center w-7 h-7 bg-[#F1F1F1] rounded hover:scale-105 transition-transform
+                shadow-[4px_4px_7px_rgba(0,0,0,0.25),-1px_-1px_0_rgba(255,255,255,1),inset_-1px_-1px_2px_rgba(0,0,0,0.1),inset_1px_1px_2px_rgba(255,255,255,0.9)]
+                active:shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.3),inset_1px_1px_2px_rgba(255,255,255,1),4px_4px_7px_rgba(0,0,0,0.15)] active:scale-[0.995]"
+                onClick={() => new Audio('/click.mp3').play().catch(() => {})}
               >
-                <ExternalLink size={16} className="text-gray-600" />
+                <ExternalLink size={16} className="text-gray-600 group-hover:text-gray-800" />
               </a>
             </div>
 
@@ -66,6 +90,12 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({ resources }) => {
           </div>
         ))}
       </div>
+      <Footer 
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onNextPage={onNextPage}
+        onPrevPage={onPrevPage}
+      />
     </div>
   );
 };

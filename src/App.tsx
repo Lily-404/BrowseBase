@@ -10,6 +10,7 @@ import { categories, tags, previewContent, resources } from './data/mockData';
 function App() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   
   // 筛选资源：根据分类和标签筛选
   const filteredResources = resources.filter(resource => {
@@ -19,10 +20,21 @@ function App() {
     return categoryMatch && tagMatch;
   });
   
+  const itemsPerPage = 10; // 修改这里的值从8改为10
+  const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
+  
+  const handleNextPage = () => {
+    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  };
+  
+  const handlePrevPage = () => {
+    setCurrentPage(prev => Math.max(prev - 1, 1));
+  };
+  
+  // 当筛选条件改变时，重置页码到第一页
   const handleSelectCategory = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    // 移除这行，不再清空标签
-    // setSelectedTags([]); 
+    setCurrentPage(1);
   };
   
   const handleSelectTag = (tagId: string) => {
@@ -31,6 +43,7 @@ function App() {
         ? prev.filter(id => id !== tagId)
         : [...prev, tagId]
     );
+    setCurrentPage(1);
   };
   
   // Get description of the first selected tag
@@ -42,7 +55,7 @@ function App() {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-grow my-8">
+      <main className="flex-grow">
         <div className="max-w-screen-xl mx-auto px-6">
           <div className="flex flex-col md:flex-row gap-8">
             {/* Left section - Categories and Tags */}
@@ -66,13 +79,17 @@ function App() {
             
             {/* Right section - Resource Preview */}
             <div className="w-full md:w-3/5">
-              <ResourcePreview resources={filteredResources} />
+              <ResourcePreview 
+                resources={filteredResources} 
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                onNextPage={handleNextPage}
+                onPrevPage={handlePrevPage}
+              />
             </div>
           </div>
         </div>
       </main>
-      
-      <Footer />
     </div>
   );
 }
