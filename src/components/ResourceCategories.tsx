@@ -27,32 +27,28 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
 
   return (
     <div className="mb-8">
-      <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">Voice</h2>
+      <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">Category</h2>
       <div className="grid grid-cols-3 gap-4">
         {categories.map((category) => (
-          <div key={category.id} className="aspect-square">
+          <div key={category.id} className="aspect-square relative">
+            {/* 底部固定矩形，向左上偏移 */}
+            <div className="absolute top-[-1px] left-[-1px] w-full h-full bg-[#D7D7D7] rounded-lg" />
+            
             <button
               className={`
-                w-full h-full bg-[#F1F1F1] rounded-2xl relative p-5
+                w-full h-full bg-[#F1F1F1] rounded-lg relative p-5
                 ${selectedCategory === category.id 
-                  ? 'shadow-[0_4px_12px_rgba(0,0,0,0.06)] scale-[0.98]' // 选中状态：较小的阴影和缩小效果
-                  : 'shadow-[0_8px_24px_rgba(0,0,0,0.08)]'} // 未选中状态：较大的阴影
-                hover:bg-[#F8F8F8] hover:shadow-[0_12px_32px_rgba(0,0,0,0.12)]
-                transition-all duration-200
+                  ? 'shadow-[0_2px_4px_rgba(0,0,0,0.25),inset_-2px_-2px_4px_rgba(0,0,0,0.1),inset_2px_2px_4px_rgba(255,255,255,0.9),0_1px_2px_#CAC9C9] scale-[0.98]' 
+                  : 'shadow-[0_3px_6px_rgba(0,0,0,0.25),inset_-3px_-3px_6px_rgba(0,0,0,0.1),inset_3px_3px_6px_rgba(255,255,255,0.9),0_1px_2px_#CAC9C9]'}
+                relative transition-all duration-300 ease-in-out
               `}
               onClick={() => handleClick(category.id, category.disabled)}
             >
-              <span className="font-mono text-sm uppercase text-gray-500 absolute top-5 left-5">
-                {category.name}
-              </span>
-              
-              {/* 左下角的指示点 */}
-              <div 
-                className={`
-                  w-2 h-2 rounded-full absolute bottom-3 left-3
-                  ${selectedCategory === category.id ? 'bg-[#FB3208]' : 'bg-[#575757]'}
-                  transition-colors duration-200
-                `}
+              <span className="font-mono text-sm uppercase text-gray-600">{category.name}</span>
+              <span 
+                className={`absolute bottom-3 left-3 w-2 h-2 rounded-full transition-colors duration-300 ${
+                  selectedCategory === category.id ? 'bg-[#FF3B30]' : 'bg-[#CDCDCD]'
+                }`} 
               />
               
               {/* 右下角的星形图标 */}
