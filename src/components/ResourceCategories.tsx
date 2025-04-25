@@ -28,11 +28,11 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
     }
   };
 
-  // 添加开源按钮到分类列表中
+
   const allCategories = [
     ...categories.map(category => ({
       ...category,
-      icon: category.id === 'ai' || category.id === 'opensource' // 为 AI 和开源分类添加图标
+      icon: category.id === 'ai' || category.id === 'opensource' || category.id === 'all' || category.id === 'design'? 'true' : undefined
     })),
     {
       id: 'opensource',
@@ -67,7 +67,6 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
                     height="14" 
                     viewBox="0 0 16 16" 
                     fill="none" 
-                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path 
                       d="M8 3l2 4.5L14 9l-4.5 2L8 15l-1.5-4L2 9l4-1.5L8 3z" 

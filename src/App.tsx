@@ -3,7 +3,6 @@ import Header from './components/Header';
 import ResourceCategories from './components/ResourceCategories';
 import ResourceTags from './components/ResourceTags';
 import ResourcePreview from './components/ResourcePreview';
-
 import { categories, tags,  resources } from './data/mockData';
 
 function App() {
