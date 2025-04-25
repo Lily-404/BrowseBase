@@ -34,3 +34,8 @@
 body {
   background-color: #E7E7E7;
 }
+
+:root {
+  --radius-md: 8px;
+  --primary: #FF3B30;
+}

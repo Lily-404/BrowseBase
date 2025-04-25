@@ -1,4 +1,6 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button, ButtonLED } from './ui/Button';
 
 interface Category {
   id: string;
@@ -18,6 +20,7 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   selectedCategory,
   onSelectCategory
 }) => {
+  const { t } = useTranslation();
   const handleClick = (categoryId: string, disabled: boolean | undefined) => {
     if (!disabled) {
       new Audio('/click.wav').play().catch(() => {});
@@ -25,44 +28,37 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
     }
   };
 
-  const getShadowStyle = (categoryId: string, isSelected: boolean) => {
-    if (categoryId === 'all') {
-      return isSelected
-        ? 'shadow-[-1px_-1px_2px_rgba(255,255,255,0.15),4px_4px_7px_rgba(0,0,0,0.25),inset_-1px_-1px_2px_rgba(0,0,0,0.15),inset_1px_1px_2px_rgba(255,255,255,0.1)] scale-[0.995]'
-        : 'shadow-[-3px_-3px_6px_rgba(255,255,255,0.15),6px_6px_10px_rgba(0,0,0,0.25),inset_-1px_-1px_2px_rgba(0,0,0,0.15),inset_1px_1px_2px_rgba(255,255,255,0.1)]';
+  // 添加开源按钮到分类列表中
+  const allCategories = [
+    ...categories.map(category => ({
+      ...category,
+      icon: category.id === 'ai' || category.id === 'opensource' // 为 AI 和开源分类添加图标
+    })),
+    {
+      id: 'opensource',
+      name: 'Open Source',
+      icon: true
     }
-    return isSelected
-      ? 'shadow-[inset_-1px_-1px_2px_rgba(0,0,0,0.3),inset_1px_1px_2px_rgba(255,255,255,1),4px_4px_7px_rgba(0,0,0,0.15)] scale-[0.995]'
-      : 'shadow-[4px_4px_7px_rgba(0,0,0,0.25),-1px_-1px_0_rgba(255,255,255,1),inset_-1px_-1px_2px_rgba(0,0,0,0.1),inset_1px_1px_2px_rgba(255,255,255,0.9)]';
-  };
+  ];
 
   return (
     <div className="mb-8">
-      <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">Category</h2>
-      <div className="grid grid-cols-4 gap-4">
-        {categories.map((category) => (
+      <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">{t('category.title')}</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {allCategories.map((category) => (
           <div key={category.id} className="aspect-square relative">
-            {/* 底部固定矩形，向左上偏移 */}
-            <div className="absolute top-[-0.25px] left-[-0.25px] w-full h-full bg-[#D7D7D7] rounded" />
-            
-            <button
-              className={`
-                w-full h-full ${category.id === 'all' ? 'bg-[#9A9A9A]' : 'bg-[#F1F1F1]'} rounded relative p-3
-                ${getShadowStyle(category.id, selectedCategory === category.id)}
-                relative transition-all duration-300 ease-in-out
-              `}
+            <Button
+              color={category.id === 'all' ? 'secondary' : undefined}
+              selected={selectedCategory === category.id}
+              disabled={category.disabled}
+              className="w-full h-full p-3"
               onClick={() => handleClick(category.id, category.disabled)}
             >
-              <span className={`font-mono text-xs uppercase ${
-                category.id === 'all' ? 'text-white' : 'text-gray-600'
-              } absolute top-2 left-2 max-w-[calc(100%-16px)] truncate`}>{category.name}</span>
-              <span 
-                className={`absolute bottom-2 left-2 w-2 h-2 rounded-full transition-colors duration-300 ${
-                  selectedCategory === category.id 
-                    ? category.id === 'all' ? 'bg-[#FF3B30]' : 'bg-[#FF3B30]'
-                    : category.id === 'all' ? 'bg-[#808080]' : 'bg-[#CDCDCD]'
-                }`} 
-              />
+              <span className={`font-mono text-xs uppercase absolute top-2 left-2 max-w-[calc(100%-16px)] truncate`}>
+                {t(`category.${category.id}`)}
+              </span>
+              
+              <ButtonLED />
               
               {category.icon && (
                 <div className="absolute bottom-2 right-2">
@@ -80,7 +76,7 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
                   </svg>
                 </div>
               )}
-            </button>
+            </Button>
           </div>
         ))}
       </div>

@@ -1,60 +1,32 @@
 import { Category, Tag } from '../types';
 
 export const categories: Category[] = [
+  { id: 'ai', name: 'AI' },
   { id: 'docs', name: 'doc' },
   { id: 'tutorials', name: 'Tutorials' },
   { id: 'tools', name: 'Tools' },
-  { id: 'templates', name: 'Templates' },
-  { id: 'code', name: 'Code' },
+  { id: 'dev', name: 'dev' },
   { id: 'design', name: 'Design' },
-  { id: 'ai', name: 'AI' },
-  { id: 'prompt' , name: 'Prompt' },
-
+  { id: 'blog', name: 'Blog' },
 ];
 
 export const tags: Tag[] = [
   { 
     id: 'trending', 
-    name: 'Trending', 
-    description: 'Currently most popular and widely used development resources.'
   },
   { 
-    id: 'new', 
-    name: 'New Added', 
-    description: 'High-quality development resources added in the last week.'
+    id: 'newAdded', 
   },
   { 
-    id: 'beginner', 
-    name: 'Beginner Friendly', 
-    description: 'Basic tutorials and tool recommendations suitable for beginners.'
+    id: 'beginnerFriendly', 
   },
   { 
     id: 'enterprise', 
-    name: 'Enterprise', 
-    description: 'Professional resources for large projects and enterprise applications.'
   },
   { 
-    id: 'community', 
-    name: 'Community Choice', 
-    description: 'High-quality resources recommended by the developer community.'
+    id: 'communityChoice', 
   },
-  {
-    id: 'opensource',
-    name: 'Open Source',
-    description: 'Excellent open source projects and tool libraries.'
-  }
 ];
-
-export const previewContent = `
-React is a JavaScript library for building user interfaces.
-
-Key concepts:
-• Component-Based: Build encapsulated components that manage their own state, then compose them to make complex UIs.
-• Declarative: Design simple views for each state in your application, and React will efficiently update and render just the right components when your data changes.
-• Learn Once, Write Anywhere: You can develop new features in React without rewriting existing code.
-
-Get started by exploring the documentation, tutorials, and tools available in our curated resource collection.
-`;
 
 export interface Resource {
   id: string;
@@ -73,51 +45,33 @@ export const resources: Resource[] = [
     id: '1',
     title: 'React 官方文档',
     url: 'https://react.dev',
-    description: `React官方文档是学习React的最佳起点。
-
-主要特点：
-• 完整的API参考和最佳实践指南
-• 互动式代码示例和教程
-• 性能优化和调试技巧
-• 服务端渲染和并发模式详解`,
+    description: `React官方文档是学习React的最佳起点。`,
     updatedAt: '2天前更新',
     rating: 4.9,
     reviews: 2100,
-    tags: ['Official', 'Documentation', 'Free'],
+    tags: ['trending'],  // 修改为数组格式
     category: 'docs'
   },
   {
     id: '2',
     title: 'React Router 教程',
     url: 'https://reactrouter.com',
-    description: `深入学习React Router的完整指南。
-
-核心内容：
-• 路由配置和动态路由
-• 嵌套路由和路由保护
-• 路由钩子和中间件
-• 代码分割和懒加载策略`,
+    description: `深入学习React Router的完整指南。`,
     updatedAt: '1周前更新',
     rating: 4.7,
     reviews: 1500,
-    tags: ['Tutorial', 'Popular', 'Free'],
+    tags: ['tutorials', 'trending', 'newAdded'],
     category: 'tutorials'
   },
   {
     id: '3',
     title: 'React DevTools',
     url: 'https://chrome.google.com/webstore/detail/react-developer-tools',
-    description: `React开发者必备的浏览器调试工具。
-
-工具功能：
-• 组件树检查和编辑
-• Props和State实时监控
-• 性能分析和优化建议
-• Hook依赖追踪`,
+    description: `React开发者必备的浏览器调试工具。`,
     updatedAt: '3天前更新',
     rating: 4.8,
     reviews: 1800,
-    tags: ['Tool', 'Development', 'Free'],
+    tags: ['enterprise', 'tools'],
     category: 'tools'
   },
   {
@@ -128,7 +82,7 @@ export const resources: Resource[] = [
     updatedAt: '1周前更新',
     rating: 4.6,
     reviews: 980,
-    tags: ['Tutorial', 'Performance', 'Free'],
+    tags: ['tutorials', 'beginnerFriendly'],
     category: 'tutorials'
   },
   {
@@ -139,7 +93,7 @@ export const resources: Resource[] = [
     updatedAt: '5天前更新',
     rating: 4.8,
     reviews: 2500,
-    tags: ['Tool', 'UI', 'Development'],
+    tags: ['tools', 'enterprise'],
     category: 'tools'
   },
   {
@@ -150,7 +104,7 @@ export const resources: Resource[] = [
     updatedAt: '3天前更新',
     rating: 4.5,
     reviews: 750,
-    tags: ['Template', 'Starter', 'Free'],
+    tags: ['trending', 'beginnerFriendly'],
     category: 'templates'
   },
   {
@@ -161,7 +115,7 @@ export const resources: Resource[] = [
     updatedAt: '4天前更新',
     rating: 4.7,
     reviews: 1200,
-    tags: ['Library', 'Animation', 'UI'],
+    tags: ['tools', 'communityChoice'],
     category: 'code'
   },
   {
@@ -172,71 +126,7 @@ export const resources: Resource[] = [
     updatedAt: '2天前更新',
     rating: 4.9,
     reviews: 1800,
-    tags: ['Design', 'UI', 'System'],
+    tags: ['design', 'enterprise', 'communityChoice'],
     category: 'design'
   },
-  {
-    id: '13',
-    title: 'React UI 设计系统',
-    url: 'https://react-design-system.com',
-    description: '完整的React UI设计系统，包含组件库和设计规范。',
-    updatedAt: '2天前更新',
-    rating: 4.9,
-    reviews: 1800,
-    tags: ['Design', 'UI', 'System'],
-    category: 'design'
-  },
-  {
-    id: '9',
-    title: 'React UI 设计系统',
-    url: 'https://react-design-system.com',
-    description: '完整的React UI设计系统，包含组件库和设计规范。',
-    updatedAt: '2天前更新',
-    rating: 4.9,
-    reviews: 1800,
-    tags: ['Design', 'UI', 'System'],
-    category: 'design'
-  },
-  {
-    id: '10',
-    title: 'React UI 设计系统',
-    url: 'https://react-design-system.com',
-    description: '完整的React UI设计系统，包含组件库和设计规范。',
-    updatedAt: '2天前更新',
-    rating: 4.9,
-    reviews: 1800,
-    tags: ['Design', 'UI', 'System'],
-    category: 'design'
-  },{
-    id: '11',
-    title: 'React UI 设计系统',
-    url: 'https://react-design-system.com',
-    description: '完整的React UI设计系统，包含组件库和设计规范。',
-    updatedAt: '2天前更新',
-    rating: 4.9,
-    reviews: 1800,
-    tags: ['Design', 'UI', 'System'],
-    category: 'design'
-  },{
-    id: '12',
-    title: 'React UI 设计系统',
-    url: 'https://react-design-system.com',
-    description: '完整的React UI设计系统，包含组件库和设计规范。',
-    updatedAt: '2天前更新',
-    rating: 4.9,
-    reviews: 1800,
-    tags: ['Design', 'UI', 'System'],
-    category: 'design'
-  },
-  {
-    id: '14',
-    title: 'React UI 设计系统',
-    url: 'https://react-design-system.com',
-    description: '完整的React UI设计系统，包含组件库和设计规范。',
-    updatedAt: '2天前更新',
-    rating: 4.9,
-    reviews: 1800,
-    tags: ['Design', 'UI', 'System'],
-    category: 'design'
-  }
 ];

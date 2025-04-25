@@ -1,25 +1,33 @@
 import React from 'react';
-import { ArrowRight, X } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n/config';
 
 const Header: React.FC = () => {
+  const { t } = useTranslation();
+  
   const handleClick = () => {
     new Audio('/click.mp3').play().catch(() => {});
-    const button = document.querySelector('.shake-button');
-    button?.classList.remove('shake');
-    void button?.offsetWidth; // 触发重排，重置动画
-    button?.classList.add('shake');
+  };
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'zh' : 'en';
+    i18n.changeLanguage(newLang);
   };
 
   return (
     <header>
       <div className="max-w-screen-xl mx-auto px-6 py-5">
         <div className="flex justify-between items-center">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-xl font-bold text-[#1A1A1A]">BrowseBase</h1>
-            <p className="text-xs text-[#9A9A9A]">Discover the best of the web.</p>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <img src="/logo.png" alt="BrowseBase Logo" className="w-8 h-8" />
+              <h1 className="text-xl font-bold text-[#1A1A1A] flex items-center">BrowseBase</h1>
+            </div>
+            <p className="hidden md:block text-xs text-[#9A9A9A] self-end pb-[5px]">{t('header.slogan')}</p>
           </div>
           
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 ml-auto pr-2">
             <a 
               href="https://www.jimmy-blog.top/" 
               onClick={handleClick}
@@ -27,7 +35,7 @@ const Header: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="font-bold uppercase text-sm">Blog</span>
+              <span className="font-bold uppercase text-sm">{t('header.blog')}</span>
               <ArrowRight size={16} />
             </a>
             <a 
@@ -37,29 +45,23 @@ const Header: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="font-bold uppercase text-sm">Open Source</span>
+              <span className="font-bold uppercase text-sm">{t('header.openSource')}</span>
               <ArrowRight size={16} />
             </a>
-            <button 
-              onClick={handleClick}
-              className="p-1 hover:bg-[#F1F1F1] rounded-full transition-colors shake-button"
+            <button
+              onClick={() => {
+                handleClick();
+                toggleLanguage();
+              }}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity text-[#1A1A1A]"
             >
-              <X size={20} />
+              <span className="font-bold uppercase text-sm">
+                {i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
+              </span>
             </button>
           </div>
         </div>
       </div>
-      <style jsx>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          25% { transform: translateX(-2px); }
-          75% { transform: translateX(2px); }
-        }
-        
-        .shake {
-          animation: shake 0.2s ease-in-out 3;
-        }
-      `}</style>
     </header>
   );
 };

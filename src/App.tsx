@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import Header from './components/Header';
 import ResourceCategories from './components/ResourceCategories';
 import ResourceTags from './components/ResourceTags';
-import DescriptionBox from './components/DescriptionBox';
 import ResourcePreview from './components/ResourcePreview';
-import Footer from './components/Footer';
-import { categories, tags, previewContent, resources } from './data/mockData';
+
+import { categories, tags,  resources } from './data/mockData';
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [activeFilter, setActiveFilter] = useState({ type: 'category', id: 'all' });
   const [currentPage, setCurrentPage] = useState(1);
   
-  // 筛选资源：根据分类和标签筛选
+  // 筛选资源：根据活动筛选条件筛选
   const filteredResources = resources.filter(resource => {
-    const categoryMatch = selectedCategory === 'all' || resource.category === selectedCategory;
-    const tagMatch = selectedTags.length === 0 || 
-      resource.tags.some(tag => selectedTags.includes(tag));
-    return categoryMatch && tagMatch;
+    if (activeFilter.type === 'category') {
+      return activeFilter.id === 'all' || resource.category === activeFilter.id;
+    } else if (activeFilter.type === 'tag') {
+      return resource.tags.includes(activeFilter.id);
+    }
+    return true;
   });
   
-  const itemsPerPage = 10; // 修改这里的值从8改为10
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
   
   const handleNextPage = () => {
@@ -31,25 +31,17 @@ function App() {
     setCurrentPage(prev => Math.max(prev - 1, 1));
   };
   
-  // 当筛选条件改变时，重置页码到第一页
+  // 处理分类选择
   const handleSelectCategory = (categoryId: string) => {
-    setSelectedCategory(categoryId);
+    setActiveFilter({ type: 'category', id: categoryId });
     setCurrentPage(1);
   };
   
+  // 处理标签选择
   const handleSelectTag = (tagId: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tagId)
-        ? prev.filter(id => id !== tagId)
-        : [...prev, tagId]
-    );
+    setActiveFilter({ type: 'tag', id: tagId });
     setCurrentPage(1);
   };
-  
-  // Get description of the first selected tag
-  const selectedTagDescription = selectedTags.length > 0
-    ? tags.find(tag => tag.id === selectedTags[0])?.description
-    : '';
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -62,19 +54,15 @@ function App() {
             <div className="w-full md:w-2/5">
               <ResourceCategories 
                 categories={[{ id: 'all', name: 'all' }, ...categories]}
-                selectedCategory={selectedCategory}
+                selectedCategory={activeFilter.type === 'category' ? activeFilter.id : ''}
                 onSelectCategory={handleSelectCategory}
               />
               
               <ResourceTags 
                 tags={tags}
-                selectedTags={selectedTags}
+                selectedTags={activeFilter.type === 'tag' ? [activeFilter.id] : []}
                 onSelectTag={handleSelectTag}
               />
-              
-              {selectedTagDescription && (
-                <DescriptionBox description={selectedTagDescription} />
-              )}
             </div>
             
             {/* Right section - Resource Preview */}
