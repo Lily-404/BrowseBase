@@ -11,21 +11,11 @@ export const categories: Category[] = [
 ];
 
 export const tags: Tag[] = [
-  { 
-    id: 'trending', 
-  },
-  { 
-    id: 'newAdded', 
-  },
-  { 
-    id: 'beginnerFriendly', 
-  },
-  { 
-    id: 'enterprise', 
-  },
-  { 
-    id: 'communityChoice', 
-  },
+  { id: 'trending', },
+  { id: 'newAdded', },
+  { id: 'beginnerFriendly', },
+  { id: 'enterprise', },
+  { id: 'communityChoice', },
 ];
 
 export interface Resource {

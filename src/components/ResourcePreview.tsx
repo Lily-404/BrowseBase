@@ -31,6 +31,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   onPrevPage
 }) => {
   const { t } = useTranslation();
+  
   // 确保当前页码不超过总页数
   const totalPages = Math.max(1, Math.ceil(resources.length / itemsPerPage));
   const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
@@ -57,10 +58,26 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
           <div className="flex flex-1 h-[1px] bg-foreground/8" />
         </div>
         <div className="flex flex-1 flex-col pt-3 rounded-lg">
-          <div className="w-full h-full bg-[#F1F1F1] rounded-lg p-5 flex items-center justify-center
-            shadow-[inset_-0.5px_-0.5px_1px_rgba(255,255,255,0.9),inset_0.5px_0.5px_1px_rgba(0,0,0,0.25)]"
-          >
-            <p className="text-gray-500">{t('resourcePreview.noMatch')}</p>
+          <div className="grid grid-cols-2 gap-4">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
+              <div key={item} 
+                className="bg-[#F1F1F1] rounded-lg p-4 animate-pulse
+                shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)]"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <div className="h-6 bg-gray-200 rounded w-4/5"></div>
+                    <div className="h-4 bg-gray-200 rounded w-2/3 mt-2"></div>
+                  </div>
+                  <div className="w-7 h-7 bg-gray-200 rounded-lg ml-4 flex-shrink-0"></div>
+                </div>
+                <div className="space-y-2 mt-4">
+                  <div className="h-3 bg-gray-200 rounded w-full"></div>
+                  <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+                  <div className="h-3 bg-gray-200 rounded w-4/6"></div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
