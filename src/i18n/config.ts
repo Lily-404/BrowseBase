@@ -29,8 +29,8 @@ const resources = {
         title: 'Filter',
         trending: 'Trending',
         newAdded: 'New Added',
-        beginnerFriendly: 'YouTube Creators',
-        enterprise: 'Mac Apps',
+        youtuber: 'YouTube Creators',
+        mac: 'Mac Apps',
         communityChoice: 'Community Choice',
         openSource: 'Open Source'
       },
@@ -72,8 +72,8 @@ const resources = {
         title: '合集',
         trending: '热门',
         newAdded: '最新',
-        beginnerFriendly: '油管博主',
-        enterprise: 'Mac软件',
+        youtuber: '油管博主',
+        mac: 'Mac软件',
         communityChoice: '社区',
         openSource: '开源'
       },

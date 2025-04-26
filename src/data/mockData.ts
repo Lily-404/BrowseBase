@@ -14,9 +14,10 @@ export const categories: Category[] = [
 export const tags: Tag[] = [
   { id: 'trending', },
   { id: 'newAdded', },
-  { id: 'beginnerFriendly', },
-  { id: 'enterprise', },
+  { id: 'youtuber', },
+  { id: 'mac', },
   { id: 'communityChoice', },
+  { id: 'openSource', },
 ];
 
 export interface Resource {

@@ -124,7 +124,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <div>加载中...</div>;
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  // 如果是访问 management-console，直接重定向到登录页
+  if (window.location.pathname === '/management-console') {
+    return <Navigate to="/login" replace />;
+  }
+
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
@@ -139,6 +144,12 @@ function App() {
             <ProtectedRoute>
               <Admin />
             </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/management-console" 
+          element={
+            <Navigate to="/login" replace />
           } 
         />
       </Routes>

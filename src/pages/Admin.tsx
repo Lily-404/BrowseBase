@@ -6,8 +6,8 @@ import { Resource } from '../types/resource';
 const tags = [
   { id: 'trending', name: '热门' },
   { id: 'newAdded', name: '最新' },
-  { id: 'beginnerFriendly', name: '油管博主' },
-  { id: 'enterprise', name: 'Mac软件' },
+  { id: 'youtuber', name: '油管博主' },
+  { id: 'mac', name: 'Mac软件' },
   { id: 'communityChoice', name: '社区' },
 ];
 

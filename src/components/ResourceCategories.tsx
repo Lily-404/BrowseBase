@@ -21,12 +21,7 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
     ...categories.map(category => ({
       ...category,
       icon: category.id === 'ai' || category.id === 'opensource' || category.id === 'all' || category.id === 'design'? 'true' : undefined
-    })),
-    {
-      id: 'opensource',
-      name: 'Open Source',
-      icon: true
-    }
+    }))
   ];
 
   return (
