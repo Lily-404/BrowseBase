@@ -2,26 +2,7 @@ import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import Footer from './Footer';
 import { useTranslation } from 'react-i18next';
-
-interface Resource {
-  id: string;
-  title: string;
-  url: string;
-  description: string;
-  updatedAt: string;
-  rating: number;
-  reviews: number;
-  tags: string[];
-  category: string;
-}
-
-interface ResourcePreviewProps {
-  resources: Resource[];
-  currentPage: number;
-  itemsPerPage: number;
-  onNextPage: () => void;
-  onPrevPage: () => void;
-}
+import { ResourcePreviewProps } from '../types/resourcePreview';
 
 const ResourcePreview: React.FC<ResourcePreviewProps> = ({ 
   resources, 

@@ -1,19 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonLED } from './ui/Button';
-
-interface Tag {
-  id: string;
-  name: string;
-  description: string;
-}
-
-interface ResourceTagsProps {
-  tags: Tag[];
-  selectedTags: string[];
-  onSelectTag: (tagId: string) => void;
-  disabled?: boolean; 
-}
+import { ResourceTagsProps } from '../types/resourceTags';
 
 const ResourceTags: React.FC<ResourceTagsProps> = ({
   tags,

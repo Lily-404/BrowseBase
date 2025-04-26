@@ -22,6 +22,7 @@ const resources = {
         dev: 'Dev',
         design: 'Design',
         blog: 'Blog',
+        resources: 'Resources',
         opensource: 'Open Source' 
       },
       filter: {
@@ -64,7 +65,8 @@ const resources = {
         dev: '开发',
         design: '设计',
         blog: '博客',
-        opensource: '开源' 
+        opensource: '开源' ,
+        resources: '资源'
       },
       filter: {
         title: '合集',

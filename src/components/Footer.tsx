@@ -2,13 +2,7 @@ import React from 'react';
 import { ChevronRight, ChevronLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './ui/Button';
-
-interface FooterProps {
-  currentPage: number;
-  totalPages: number;
-  onNextPage: () => void;
-  onPrevPage: () => void;
-}
+import { FooterProps } from '../types/footer';
 
 const Footer: React.FC<FooterProps> = ({ currentPage, totalPages, onNextPage, onPrevPage }) => {
   const { t } = useTranslation();

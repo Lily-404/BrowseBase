@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { resourceService, Resource } from '../services/resourceService';
+import { resourceService } from '../services/resourceService';
 import { categories } from '../data/mockData';
-
-// 定义标签数据
+import { Resource } from '../types/resource';
+// 给定分类ID获取分类名称
 const tags = [
   { id: 'trending', name: '热门' },
   { id: 'newAdded', name: '最新' },
@@ -10,17 +10,6 @@ const tags = [
   { id: 'enterprise', name: 'Mac软件' },
   { id: 'communityChoice', name: '社区' },
 ];
-
-interface Resource {
-  id: string;
-  title: string;
-  url: string;
-  description: string;
-  category: string;
-  tags: string[];
-  rating: number;
-  reviews: number;
-}
 
 const Admin = () => {
   const [resources, setResources] = useState<Resource[]>([]);
@@ -47,6 +36,7 @@ const Admin = () => {
   
   useEffect(() => {
     fetchResources();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchResources() {

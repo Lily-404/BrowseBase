@@ -1,19 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonLED } from './ui/Button';
-
-interface Category {
-  id: string;
-  name: string;
-  disabled?: boolean;
-  icon?: string;
-}
-
-interface ResourceCategoriesProps {
-  categories: Category[];
-  selectedCategory: string;
-  onSelectCategory: (categoryId: string) => void;
-}
+import { ResourceCategoriesProps } from '../types/resourceCategories';
 
 const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   categories,

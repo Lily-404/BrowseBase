@@ -1,12 +1,7 @@
 import React from "react";
 import s from "./Button.module.css";
 import clsx from "clsx";
-
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  color?: "primary" | "secondary" | "tertiary" | "neutral" | "default";
-  block?: boolean;
-  selected?: boolean;
-}
+import { ButtonProps } from "../../types/button";
 
 export const ButtonLED = () => <span className={s.LED} />;
 
