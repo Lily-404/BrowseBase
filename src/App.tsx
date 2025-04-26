@@ -103,6 +103,7 @@ const Home = () => {
 // 路由保护组件
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -112,7 +113,18 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   async function checkAuth() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
+      if (session) {
+        setIsAuthenticated(true);
+        // 检查用户是否是管理员
+        const { data: { user } } = await supabase.auth.getUser();
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', user?.id)
+          .single();
+        
+        setIsAdmin(profile?.role === 'admin');
+      }
     } catch (error) {
       console.error('认证检查失败:', error);
     } finally {
@@ -124,12 +136,15 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <div>加载中...</div>;
   }
 
-  // 如果是访问 management-console，直接重定向到登录页
-  if (window.location.pathname === '/management-console') {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  if (!isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
 };
 
 function App() {
