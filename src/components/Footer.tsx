@@ -1,27 +1,31 @@
 import React from 'react';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { Button } from './ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Button } from './ui/Button';
-import { FooterProps } from '../types/footer';
 
-const Footer: React.FC<FooterProps> = ({ currentPage, totalPages, onNextPage, onPrevPage }) => {
+interface FooterProps {
+  currentPage: number;
+  totalPages: number;
+  onNextPage: () => void;
+  onPrevPage: () => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ 
+  currentPage, 
+  totalPages, 
+  onNextPage, 
+  onPrevPage 
+}) => {
   const { t } = useTranslation();
   
-  const handleClick = (isNext: boolean) => {
-    new Audio('/pressed.wav').play().catch(() => {});
-    if (isNext && currentPage < totalPages) {
-      onNextPage();
-    } else if (!isNext && currentPage > 1) {
-      onPrevPage();
-    }
-  };
-
+  console.log('Footer render:', { currentPage, totalPages }); // 添加调试信息
+  
   return (
-    <footer className="mt-[-1rem]">
+    <footer className="mt-0">
       <div className="max-w-screen-xl mx-auto px-0 py-4 flex justify-end gap-8">
         <Button
           color={currentPage <= 1 ? "neutral" : "secondary"}
-          onClick={() => handleClick(false)}
+          onClick={onPrevPage}
           disabled={currentPage <= 1}
           className="min-w-[160px] justify-center"
         >
@@ -33,7 +37,7 @@ const Footer: React.FC<FooterProps> = ({ currentPage, totalPages, onNextPage, on
 
         <Button
           color={currentPage >= totalPages ? "neutral" : "secondary"}
-          onClick={() => handleClick(true)}
+          onClick={onNextPage}
           disabled={currentPage >= totalPages}
           className="min-w-[160px] justify-center"
         >

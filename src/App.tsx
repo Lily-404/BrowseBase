@@ -15,39 +15,93 @@ const Home = () => {
   const [resources, setResources] = useState([]);
   const [activeFilter, setActiveFilter] = useState({ type: 'category', id: 'all' });
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const itemsPerPage = 10;
+  const [isLoading, setIsLoading] = useState(false);
+  const [cachedData, setCachedData] = useState<Record<string, any>>({});
   
-  useEffect(() => {
-    fetchResources();
-  }, []);
-
   async function fetchResources() {
     try {
-      const { data } = await resourceService.fetchResources(1, 1000); // 获取所有资源用于前端过滤
-      setResources(data);
+      setIsLoading(true);
+      
+      // 生成缓存键
+      const cacheKey = `${currentPage}-${activeFilter.type}-${activeFilter.id}`;
+      
+      // 检查缓存中是否有数据
+      if (cachedData[cacheKey]) {
+        setResources(cachedData[cacheKey].data);
+        setTotalCount(cachedData[cacheKey].count);
+        setIsLoading(false);
+        return;
+      }
+      
+      const { data, count } = await resourceService.fetchResources(
+        currentPage,
+        itemsPerPage,
+        {
+          category: activeFilter.type === 'category' ? activeFilter.id : undefined,
+          tag: activeFilter.type === 'tag' ? activeFilter.id : undefined
+        }
+      );
+      
+      // 更新状态
+      setResources(data || []);
+      setTotalCount(count || 0);
+      
+      // 更新缓存
+      setCachedData(prev => ({
+        ...prev,
+        [cacheKey]: { data, count }
+      }));
     } catch (error) {
       console.error('Error fetching resources:', error);
+    } finally {
+      setIsLoading(false);
     }
   }
   
-  // 筛选资源：根据活动筛选条件筛选
-  const filteredResources = resources.filter(resource => {
-    if (activeFilter.type === 'category') {
-      return activeFilter.id === 'all' || resource.category === activeFilter.id;
-    } else if (activeFilter.type === 'tag') {
-      return resource.tags.includes(activeFilter.id);
+  useEffect(() => {
+    fetchResources();
+    
+    // 预加载下一页
+    if (currentPage < Math.ceil(totalCount / itemsPerPage)) {
+      const nextPage = currentPage + 1;
+      const preloadCacheKey = `${nextPage}-${activeFilter.type}-${activeFilter.id}`;
+      
+      // 如果缓存中没有下一页数据，则预加载
+      if (!cachedData[preloadCacheKey]) {
+        resourceService.fetchResources(
+          nextPage,
+          itemsPerPage,
+          {
+            category: activeFilter.type === 'category' ? activeFilter.id : undefined,
+            tag: activeFilter.type === 'tag' ? activeFilter.id : undefined
+          }
+        ).then(({ data, count }) => {
+          // 更新缓存
+          setCachedData(prev => ({
+            ...prev,
+            [preloadCacheKey]: { data, count }
+          }));
+        }).catch(error => {
+          console.error('Error preloading next page:', error);
+        });
+      }
     }
-    return true;
-  });
-  
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
-  
+  }, [currentPage, activeFilter]); // 依赖项中包含分页和筛选条件
+
   const handleNextPage = () => {
-    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    console.log('Next page clicked, current:', currentPage, 'max:', Math.ceil(totalCount / itemsPerPage));
+    if (currentPage < Math.ceil(totalCount / itemsPerPage)) {
+      setCurrentPage(prev => prev + 1);
+    }
   };
   
   const handlePrevPage = () => {
-    setCurrentPage(prev => Math.max(prev - 1, 1));
+    console.log('Prev page clicked, current:', currentPage);
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
   };
   
   // 处理分类选择
@@ -85,13 +139,25 @@ const Home = () => {
             
             {/* Right section - Resource Preview */}
             <div className="w-full md:w-3/5">
-              <ResourcePreview 
-                resources={filteredResources} 
-                currentPage={currentPage}
-                itemsPerPage={itemsPerPage}
-                onNextPage={handleNextPage}
-                onPrevPage={handlePrevPage}
-              />
+              {isLoading ? (
+                <ResourcePreview 
+                  resources={[]}
+                  currentPage={currentPage}
+                  itemsPerPage={itemsPerPage}
+                  onNextPage={handleNextPage}
+                  onPrevPage={handlePrevPage}
+                  totalPages={Math.ceil(totalCount / itemsPerPage)}
+                />
+              ) : (
+                <ResourcePreview 
+                  resources={isLoading ? [] : resources}
+                  currentPage={currentPage}
+                  itemsPerPage={itemsPerPage}
+                  onNextPage={handleNextPage}
+                  onPrevPage={handlePrevPage}
+                  totalPages={Math.ceil(totalCount / itemsPerPage)}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -165,7 +231,20 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (isLoading) {
-    return <div>加载中...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-lg flex flex-col items-center space-y-4">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-blue-100 rounded-full"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+          </div>
+          <div className="flex flex-col items-center">
+            <span className="text-lg font-medium text-gray-700">验证身份中</span>
+            <span className="text-sm text-gray-500">请稍候...</span>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (!isAuthenticated || !isAdmin) {

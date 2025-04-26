@@ -9,12 +9,14 @@ const tags = [
   { id: 'youtuber', name: '油管博主' },
   { id: 'mac', name: 'Mac软件' },
   { id: 'communityChoice', name: '社区' },
+  { id: 'openSource', name: '开源' },
 ];
 
 const Admin = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [isInitialLoading, setIsInitialLoading] = useState(true); // 添加初始加载状态
   const itemsPerPage = 15;
   const [newResource, setNewResource] = useState<Partial<Resource>>({
     title: '',
@@ -41,11 +43,15 @@ const Admin = () => {
 
   async function fetchResources() {
     try {
+      setIsLoading(true);
       const { data, count } = await resourceService.fetchResources(currentPage, itemsPerPage, filters);
       setResources(data);
       setTotalCount(count);
     } catch (error) {
       console.error('Error fetching resources:', error);
+    } finally {
+      setIsLoading(false);
+      setIsInitialLoading(false); // 初始加载完成
     }
   }
 
@@ -122,6 +128,33 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
+        {/* 优化后的初始加载状态 */}
+        {isInitialLoading && (
+          <div className="fixed inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white/90 p-8 rounded-2xl shadow-xl flex flex-col items-center space-y-4">
+              <div className="relative">
+                <div className="w-16 h-16 border-4 border-blue-100 rounded-full"></div>
+                <div className="absolute inset-0 w-16 h-16 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+              </div>
+              <div className="flex flex-col items-center">
+                <span className="text-lg font-medium text-gray-700">资源加载中</span>
+                <span className="text-sm text-gray-500">请稍候...</span>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* 优化后的操作加载状态 */}
+        {!isInitialLoading && isLoading && (
+          <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur px-6 py-3 rounded-full shadow-lg flex items-center space-x-3 z-50 border border-gray-100">
+            <div className="relative">
+              <div className="w-5 h-5 border-2 border-gray-200 rounded-full"></div>
+              <div className="absolute inset-0 w-5 h-5 border-2 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
+            </div>
+            <span className="text-gray-700 text-sm font-medium">处理中...</span>
+          </div>
+        )}
+        
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
             BrowseBase 资源管理

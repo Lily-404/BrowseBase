@@ -9,27 +9,13 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   currentPage, 
   itemsPerPage,
   onNextPage,
-  onPrevPage
+  onPrevPage,
+  totalPages  // 直接使用传入的 totalPages
 }) => {
   const { t } = useTranslation();
   
-  // 确保当前页码不超过总页数
-  const totalPages = Math.max(1, Math.ceil(resources.length / itemsPerPage));
-  const safeCurrentPage = Math.min(Math.max(1, currentPage), totalPages);
-  
-  // 计算当前页的资源索引范围
-  const startIndex = (safeCurrentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, resources.length);
-  
-  // 使用资源的唯一ID创建一个集合，确保没有重复
-  const uniqueResourceIds = new Set();
-  const uniqueResources = resources.slice(startIndex, endIndex).filter(resource => {
-    if (uniqueResourceIds.has(resource.id)) {
-      return false;
-    }
-    uniqueResourceIds.add(resource.id);
-    return true;
-  });
+  // 移除这行，直接使用传入的 totalPages
+  // const totalPages = Math.ceil(resources.length / itemsPerPage);
   
   if (!resources.length) {
     return (
@@ -44,6 +30,10 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
               <div key={item} 
                 className="bg-[#F1F1F1] rounded-lg p-4 animate-pulse
                 shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)]"
+                style={{ 
+                  '--animation-delay': `${item * 0.05}s`,
+                  animationDelay: 'var(--animation-delay)'
+                } as React.CSSProperties}
               >
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex-1">
@@ -73,7 +63,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
       </div>
       <div className="flex flex-1 flex-col pt-3 rounded-lg">
         <div className="grid grid-cols-2 gap-4 mb-8">
-          {uniqueResources.map(resource => (
+          {resources.map(resource => (
             <div key={resource.id} 
               className="bg-[#F1F1F1] rounded-lg p-4
               shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)]"
@@ -110,4 +100,4 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   );
 };
 
-export default ResourcePreview;
+export default React.memo(ResourcePreview);
