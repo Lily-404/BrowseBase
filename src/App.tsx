@@ -108,25 +108,57 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     checkAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') {
+        checkAuth();
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+        localStorage.removeItem('userSession'); // 确保登出时清除本地存储
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function checkAuth() {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setIsAuthenticated(true);
-        // 检查用户是否是管理员
-        const { data: { user } } = await supabase.auth.getUser();
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', user?.id)
-          .single();
-        
-        setIsAdmin(profile?.role === 'admin');
+      
+      if (!session) {
+        setIsAuthenticated(false);
+        setIsAdmin(false);
+        localStorage.removeItem('userSession');
+        return;
       }
+
+      // 获取用户信息和角色
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user?.id)
+        .single();
+      
+      const isAdminUser = profile?.role === 'admin';
+      
+      setIsAuthenticated(true);
+      setIsAdmin(isAdminUser);
+      
+      // 更新本地存储
+      localStorage.setItem('userSession', JSON.stringify({
+        isAuthenticated: true,
+        isAdmin: isAdminUser
+      }));
+      
     } catch (error) {
       console.error('认证检查失败:', error);
+      setIsAuthenticated(false);
+      setIsAdmin(false);
+      localStorage.removeItem('userSession');
     } finally {
       setIsLoading(false);
     }
@@ -136,12 +168,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <div>加载中...</div>;
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !isAdmin) {
     return <Navigate to="/login" replace />;
-  }
-
-  if (!isAdmin) {
-    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -167,6 +195,8 @@ function App() {
             <Navigate to="/login" replace />
           } 
         />
+        {/* 添加通配符路由来处理所有未授权的访问 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );

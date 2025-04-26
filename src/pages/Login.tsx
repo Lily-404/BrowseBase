@@ -20,14 +20,12 @@ const Login = () => {
       if (loginMethod === 'password') {
         console.log('尝试登录:', email);
         
+        // 首先验证用户是否存在且是管理员
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role, password')
           .eq('email', email)
           .single();
-
-        console.log('查询结果:', profile);
-        console.log('查询错误:', profileError);
 
         if (profileError) {
           console.error('Profile查询错误:', profileError);
@@ -38,11 +36,9 @@ const Login = () => {
           throw new Error('未找到用户信息');
         }
 
-        // 使用 bcrypt 比较密码
+        // 验证密码
         const isPasswordValid = await bcrypt.compare(password, profile.password);
         
-        console.log('密码验证结果:', isPasswordValid);
-
         if (!isPasswordValid) {
           throw new Error('邮箱或密码错误');
         }
@@ -51,8 +47,24 @@ const Login = () => {
           throw new Error('您没有管理员权限');
         }
 
-        // 登录成功，直接跳转
-        navigate('/admin');
+        // 使用邮箱登录方式创建 Supabase 会话
+        const { data: { session }, error: signInError } = await supabase.auth.signInWithOtp({
+          email,
+          options: {
+            shouldCreateUser: false, // 不创建新用户
+          }
+        });
+
+        if (signInError) {
+          throw signInError;
+        }
+
+        // 等待会话创建完成
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // 登录成功，直接跳转到管理页面
+        navigate('/admin', { replace: true });
+        return;
       } else {
         // Magic link 登录逻辑保持不变
         const { error: magicLinkError } = await supabase.auth.signInWithOtp({
@@ -80,7 +92,11 @@ const Login = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin + '/admin'
+          redirectTo: 'http://localhost:5173/admin',  // 修正URI，移除多余的逗号
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent'
+          }
         }
       });
       
