@@ -7,9 +7,6 @@ import { Link } from 'react-router-dom';
 const Header: React.FC = () => {
   const { t } = useTranslation();
   
-  const handleClick = () => {
-    new Audio('/click.mp3').play().catch(() => {});
-  };
 
   const toggleLanguage = () => {
     const newLang = i18n.language === 'en' ? 'zh' : 'en';
@@ -29,17 +26,9 @@ const Header: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-5 ml-auto pr-2">
-            <Link 
-              to="/admin" 
-              onClick={handleClick}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity text-[#1A1A1A]"
-            >
-              <span className="font-bold uppercase text-sm">{t('header.admin')}</span>
-              <ArrowRight size={16} />
-            </Link>
             <a 
               href="https://www.jimmy-blog.top/" 
-              onClick={handleClick}
+
               className="flex items-center gap-2 hover:opacity-80 transition-opacity text-[#1A1A1A]"
               target="_blank"
               rel="noopener noreferrer"
@@ -49,7 +38,6 @@ const Header: React.FC = () => {
             </a>
             <a 
               href="https://github.com/Lily-404/BrowseBase" 
-              onClick={handleClick}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity text-[#1A1A1A]"
               target="_blank"
               rel="noopener noreferrer"
@@ -59,7 +47,6 @@ const Header: React.FC = () => {
             </a>
             <button
               onClick={() => {
-                handleClick();
                 toggleLanguage();
               }}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity text-[#1A1A1A]"

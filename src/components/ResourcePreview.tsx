@@ -21,7 +21,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
     return (
       <div className="flex flex-1 flex-col shrink-0 mb-10">
         <div className="flex flex-row justify-between -mb-[1px] relative items-center gap-2">
-          <div className="flex uppercase py-1 text-current/70">{t('resourcePreview.title')}</div>
+          <div className="flex uppercase py-1 text-current/70 font-semibold">{t('resourcePreview.title')}</div>
           <div className="flex flex-1 h-[1px] bg-foreground/8" />
         </div>
         <div className="flex flex-1 flex-col pt-3 rounded-lg">
@@ -58,7 +58,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   return (
     <div className="flex flex-1 flex-col shrink-0 mb-10">
       <div className="flex flex-row justify-between -mb-[1px] relative items-center gap-2">
-        <div className="flex uppercase py-1 text-current/70">{t('resourcePreview.title')}</div>
+        <div className="flex uppercase py-1 text-current/70 font-semibold">{t('resourcePreview.title')}</div>
         <div className="flex flex-1 h-[1px] bg-foreground/8" />
       </div>
       <div className="flex flex-1 flex-col pt-3 rounded-lg">
@@ -83,7 +83,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                 </a>
               </div>
 
-              <div className="text-sm leading-relaxed text-[#1A1A1A] line-clamp-3">
+              <div className="text-sm leading-relaxed text-[#1A1A1A]/60 line-clamp-3">
                 {resource.description.split('\n\n')[0]}
               </div>
             </div>

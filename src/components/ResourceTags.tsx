@@ -10,7 +10,9 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
 }) => {
   const { t } = useTranslation();
   const handleClick = (tagId: string) => {
-    new Audio('/pressed.wav').play().catch(() => {});
+    const audio = new Audio('/pressed.wav');
+    audio.volume = 0.4; // 将音量降低到 10%
+    audio.play().catch(() => {});
     onSelectTag(tagId);
   };
 

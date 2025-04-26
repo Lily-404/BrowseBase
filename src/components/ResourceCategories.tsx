@@ -11,7 +11,9 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   const { t } = useTranslation();
   const handleClick = (categoryId: string, disabled: boolean | undefined) => {
     if (!disabled) {
-      new Audio('/click.wav').play().catch(() => {});
+      const audio = new Audio('/pressed.wav');
+      audio.volume = 0.4; 
+      audio.play().catch(() => {});
       onSelectCategory(categoryId);
     }
   };
