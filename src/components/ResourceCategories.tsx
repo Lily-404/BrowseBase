@@ -50,9 +50,9 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
             <Button
               color={category.id === 'all' ? 'secondary' : undefined}
               selected={selectedCategory === category.id}
-              disabled={category.disabled}
+              disabled={'disabled' in category ? category.disabled : undefined}
               className="w-full h-full p-3"
-              onClick={() => handleClick(category.id, category.disabled)}
+              onClick={() => handleClick(category.id, 'disabled' in category ? category.disabled : undefined)}
             >
               <span className={`font-mono text-xs uppercase absolute top-2 left-2 max-w-[calc(100%-16px)] truncate`}>
                 {t(`category.${category.id}`)}
