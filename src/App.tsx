@@ -121,10 +121,10 @@ const Home = () => {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow">
-        <div className="max-w-screen-xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row gap-8">
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6"> {/* 减小移动端padding */}
+          <div className="flex flex-col md:flex-row gap-4 sm:gap-8"> {/* 减小移动端间距 */}
             {/* Left section - Categories and Tags */}
-            <div className="w-full md:w-2/5">
+            <div className="w-full md:w-1/3 space-y-4"> {/* 添加垂直间距 */}
               <ResourceCategories 
                 categories={[{ id: 'all', name: 'all' }, ...categories]}
                 selectedCategory={activeFilter.type === 'category' ? activeFilter.id : ''}
@@ -139,7 +139,7 @@ const Home = () => {
             </div>
             
             {/* Right section - Resource Preview */}
-            <div className="w-full md:w-3/5">
+            <div className="w-full md:w-2/3">
               {isLoading ? (
                 <ResourcePreview 
                   resources={[]}

@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonLED } from './ui/Button';
 import { ResourceCategoriesProps } from '../types/resourceCategories';
+import s from './ui/CapsuleButton.module.css';
 
 const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   categories,
@@ -18,51 +19,59 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
     }
   };
 
+  const allCategories = categories.map(category => ({
+    ...category,
+    icon: ['ai', 'opensource', 'all', 'design'].includes(category.id) ? 'true' : undefined
+  }));
 
-  const allCategories = [
-    ...categories.map(category => ({
-      ...category,
-      icon: category.id === 'ai' || category.id === 'opensource' || category.id === 'all' || category.id === 'design'? 'true' : undefined
-    }))
-  ];
+  // 移动端渲染
+  const renderMobileView = () => (
+    <div className={s.CapsuleWrapper}>
+      <div className={s.CapsuleContainer}>
+        {allCategories.map((category) => (
+          <button
+            key={category.id}
+            className={s.CapsuleButton}
+            data-selected={selectedCategory === category.id}
+            onClick={() => handleClick(category.id, category.disabled)}
+            disabled={category.disabled}
+          >
+            {t(`category.${category.id}`)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  // 桌面端渲染
+  const renderDesktopView = () => (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      {allCategories.map((category) => (
+        <div key={category.id} className="relative aspect-square">
+          <Button
+            selected={selectedCategory === category.id}
+            className="h-full w-full p-3"
+            onClick={() => handleClick(category.id, category.disabled)}
+            disabled={category.disabled}
+          >
+            <span className="font-mono text-xs uppercase text-[#1A1A1A] absolute top-2 left-2 max-w-[calc(100%-16px)] truncate">
+              {t(`category.${category.id}`)}
+            </span>
+            <ButtonLED />
+          </Button>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
-    <div className="mb-8">
-      <h2 className="text-base font-bold uppercase mb-3 text-[#1A1A1A]">{t('category.title')}</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {allCategories.map((category) => (
-          <div key={category.id} className="aspect-square relative">
-            <Button
-              color={category.id === 'all' ? 'secondary' : undefined}
-              selected={selectedCategory === category.id}
-              disabled={'disabled' in category ? category.disabled : undefined}
-              className="w-full h-full p-3"
-              onClick={() => handleClick(category.id, 'disabled' in category ? category.disabled : undefined)}
-            >
-              <span className={`font-mono text-xs uppercase absolute top-2 left-2 max-w-[calc(100%-16px)] truncate`}>
-                {t(`category.${category.id}`)}
-              </span>
-              
-              <ButtonLED />
-              
-              {category.icon && (
-                <div className="absolute bottom-2 right-2">
-                  <svg 
-                    width="14" 
-                    height="14" 
-                    viewBox="0 0 16 16" 
-                    fill="none" 
-                  >
-                    <path 
-                      d="M8 3l2 4.5L14 9l-4.5 2L8 15l-1.5-4L2 9l4-1.5L8 3z" 
-                      fill={category.id === 'all' ? 'white' : '#575757'}
-                    />
-                  </svg>
-                </div>
-              )}
-            </Button>
-          </div>
-        ))}
+    <div className="mb-6">
+      <h2 className="text-base uppercase mb-3 text-[#4D4D4D]">{t('category.title')}</h2>
+      <div className="block md:hidden">
+        {renderMobileView()}
+      </div>
+      <div className="hidden md:block">
+        {renderDesktopView()}
       </div>
     </div>
   );

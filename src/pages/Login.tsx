@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import bcrypt from 'bcryptjs';
+import React from 'react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -48,7 +49,7 @@ const Login = () => {
         }
 
         // 使用邮箱登录方式创建 Supabase 会话
-        const { data: { session }, error: signInError } = await supabase.auth.signInWithOtp({
+        const { error: signInError } = await supabase.auth.signInWithOtp({
           email,
           options: {
             shouldCreateUser: false, // 不创建新用户
@@ -79,8 +80,8 @@ const Login = () => {
         setError('登录链接已发送到您的邮箱，请查收！');
         setEmail('');
       }
-    } catch (error: any) {
-      setError(error.message || '登录失败，请重试');
+    } catch (error: unknown) {
+      setError((error as { message?: string }).message || '登录失败，请重试');
       console.error('登录错误:', error);
     } finally {
       setLoading(false);
@@ -101,8 +102,8 @@ const Login = () => {
       });
       
       if (error) throw error;
-    } catch (error: any) {
-      setError(error.message || '登录失败，请重试');
+    } catch (error: unknown) {
+      setError((error as { message?: string }).message || '登录失败，请重试');
       console.error('Google登录错误:', error);
     }
   }

@@ -7,25 +7,21 @@ import { ResourcePreviewProps } from '../types/resourcePreview';
 const ResourcePreview: React.FC<ResourcePreviewProps> = ({ 
   resources, 
   currentPage, 
-  // itemsPerPage,
   onNextPage,
   onPrevPage,
-  totalPages  // 直接使用传入的 totalPages
+  totalPages
 }) => {
   const { t } = useTranslation();
   
-  // 移除这行，直接使用传入的 totalPages
-  // const totalPages = Math.ceil(resources.length / itemsPerPage);
-  
   if (!resources.length) {
     return (
-      <div className="flex flex-1 flex-col shrink-0 mb-10">
-        <div className="flex flex-row justify-between -mb-[1px] relative items-center gap-2">
-          <div className="flex uppercase py-1 text-current/70 font-semibold">{t('resourcePreview.title')}</div>
+      <div className="flex flex-col h-full">
+        <div className="flex flex-row justify-between relative items-center gap-2 mb-3">
+          <h2 className="text-base uppercase text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
           <div className="flex flex-1 h-[1px] bg-foreground/8" />
         </div>
-        <div className="flex flex-1 flex-col pt-3 rounded-lg">
-          <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-1 flex-col rounded-lg">
+          <div className="grid grid-cols-2 gap-4 mb-8">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
               <div key={item} 
                 className="bg-[#F1F1F1] rounded-lg p-4 animate-pulse
@@ -56,12 +52,12 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   }
 
   return (
-    <div className="flex flex-1 flex-col shrink-0 mb-10">
-      <div className="flex flex-row justify-between -mb-[1px] relative items-center gap-2">
-        <div className="flex uppercase py-1 text-current/70 font-semibold">{t('resourcePreview.title')}</div>
+    <div className="flex flex-col h-full">
+      <div className="flex flex-row justify-between relative items-center gap-2 mb-3">
+        <h2 className="text-base uppercase text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
         <div className="flex flex-1 h-[1px] bg-foreground/8" />
       </div>
-      <div className="flex flex-1 flex-col pt-3 rounded-lg">
+      <div className="flex flex-col flex-1">
         <div className="grid grid-cols-2 gap-4 mb-8">
           {resources.map(resource => (
             <div key={resource.id} 

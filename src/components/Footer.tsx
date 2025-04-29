@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Button } from './ui/button';
+import { Button } from './ui/Button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -44,7 +44,7 @@ const Footer: React.FC<FooterProps> = ({
     <footer className="mt-0">
       <div className="max-w-screen-xl mx-auto px-0 py-4 flex justify-end gap-8">
         <Button
-          color={currentPage <= 1 ? "neutral" : "secondary"}
+          color={currentPage <= 1 ? "neutral" : "tertiary"}
           onClick={handlePrevClick}
           className={`min-w-[160px] justify-center transition-opacity duration-200 ${
             currentPage <= 1 ? 'opacity-50 hover:opacity-70' : ''
@@ -57,7 +57,7 @@ const Footer: React.FC<FooterProps> = ({
         </Button>
 
         <Button
-          color={currentPage >= totalPages ? "neutral" : "secondary"}
+          color={currentPage >= totalPages ? "neutral" : "tertiary"}
           onClick={handleNextClick}
           className={`min-w-[160px] justify-center transition-opacity duration-200 ${
             currentPage >= totalPages ? 'opacity-50 hover:opacity-70' : ''
