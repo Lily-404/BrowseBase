@@ -63,11 +63,20 @@ export const resourceService = {
         .from('resources')
         .update(resource)
         .eq('id', id);
-
-      if (error) throw error;
+      
+      if (error) {
+        console.error('更新资源失败:', {
+          error,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
+        throw error;
+      }
+      
       return data;
     } catch (error) {
-      console.error('Error updating resource:', error);
+      console.error('更新资源时发生错误:', error);
       throw error;
     }
   },

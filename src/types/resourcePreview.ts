@@ -16,4 +16,5 @@ export interface ResourcePreviewProps {
   itemsPerPage: number;
   onNextPage: () => void;
   onPrevPage: () => void;
+  totalPages: number;
 }

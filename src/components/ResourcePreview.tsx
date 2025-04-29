@@ -7,7 +7,7 @@ import { ResourcePreviewProps } from '../types/resourcePreview';
 const ResourcePreview: React.FC<ResourcePreviewProps> = ({ 
   resources, 
   currentPage, 
-  itemsPerPage,
+  // itemsPerPage,
   onNextPage,
   onPrevPage,
   totalPages  // 直接使用传入的 totalPages

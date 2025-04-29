@@ -9,6 +9,7 @@ import Admin from './pages/Admin';
 import Login from './pages/Login';
 import { supabase } from './lib/supabase';
 import { categories, tags } from './data/mockData';
+import React from 'react';
 
 // 主页组件
 const Home = () => {
