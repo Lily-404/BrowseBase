@@ -149,3 +149,14 @@
 .Button[data-selected="true"] .LED {
   background: var(--primary, #FF3B30);
 }
+
+/* 星星图标样式 */
+.Star {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}

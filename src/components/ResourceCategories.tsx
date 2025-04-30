@@ -21,7 +21,7 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
 
   const allCategories = categories.map(category => ({
     ...category,
-    icon: ['ai', 'opensource', 'all', 'design'].includes(category.id) ? 'true' : undefined
+    icon: ['ai', 'resources', 'design'].includes(category.id) ? 'true' : undefined
   }));
 
   // 移动端渲染
@@ -53,6 +53,8 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
             className="h-full w-full p-3"
             onClick={() => handleClick(category.id, category.disabled)}
             disabled={category.disabled}
+            showStar={category.icon === 'true'}
+            starColor={category.id === 'all' ? 'white' : '#575757'}
           >
             <span className="font-mono text-xs uppercase text-[#1A1A1A] absolute top-2 left-2 max-w-[calc(100%-16px)] truncate">
               {t(`category.${category.id}`)}

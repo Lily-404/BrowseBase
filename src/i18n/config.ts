@@ -65,8 +65,7 @@ const resources = {
         dev: '开发',
         design: '设计',
         blog: '博客',
-        opensource: '开源' ,
-        resources: '资源'
+        resources: '聚合站'
       },
       filter: {
         title: '合集',
