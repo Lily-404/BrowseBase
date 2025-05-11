@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonLED } from './ui/Button';
 import { ResourceCategoriesProps } from '../types/resourceCategories';
@@ -10,11 +10,23 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   onSelectCategory
 }) => {
   const { t } = useTranslation();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // 预加载音频
+  useEffect(() => {
+    audioRef.current = new Audio('/pressed.wav');
+    audioRef.current.volume = 0.4;
+    // 预加载音频
+    audioRef.current.load();
+  }, []);
+
   const handleClick = (categoryId: string, disabled: boolean | undefined) => {
     if (!disabled) {
-      const audio = new Audio('/pressed.wav');
-      audio.volume = 0.4; 
-      audio.play().catch(() => {});
+      if (audioRef.current) {
+        // 重置音频到开始位置
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(() => {});
+      }
       onSelectCategory(categoryId);
     }
   };

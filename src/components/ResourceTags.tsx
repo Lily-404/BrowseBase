@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonLED } from './ui/Button';
 import { ResourceTagsProps } from '../types/resourceTags';
@@ -10,12 +10,24 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
   onSelectTag
 }) => {
   const { t } = useTranslation();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // 预加载音频
+  useEffect(() => {
+    audioRef.current = new Audio('/pressed.wav');
+    audioRef.current.volume = 0.4;
+    // 预加载音频
+    audioRef.current.load();
+  }, []);
+
   const handleClick = (tagId: string) => {
-    const audio = new Audio('/pressed.wav');
-    audio.volume = 0.4;
-    audio.play().catch((error) => {
-      console.warn('音频播放失败:', error);
-    });
+    if (audioRef.current) {
+      // 重置音频到开始位置
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch((error) => {
+        console.warn('音频播放失败:', error);
+      });
+    }
     onSelectTag(tagId);
   };
 
