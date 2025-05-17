@@ -223,7 +223,7 @@ const Admin = () => {
                       <tr key={resource.id} className="hover:bg-gray-50 transition-colors">
                         <td className="p-4">
                           <div className="font-normal text-gray-900">{resource.title}</div>
-                          <div className="text-sm text-gray-500 truncate hover:text-gray-700">
+                          <div className="text-sm text-gray-500 truncate hover:text-gray-700 max-w-[250px]">
                             <a href={resource.url} target="_blank" rel="noopener noreferrer">
                               {resource.url}
                             </a>
