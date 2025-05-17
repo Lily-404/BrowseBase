@@ -23,7 +23,7 @@ const Home: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<FilterState>({ type: 'category', id: 'all' });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const [isLoading, setIsLoading] = useState(false);
   const [cachedData, setCachedData] = useState<Record<string, CachedData>>({});
   const [isInitialLoading, setIsInitialLoading] = useState(true);

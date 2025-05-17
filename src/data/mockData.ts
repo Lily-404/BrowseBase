@@ -2,10 +2,9 @@ import { Category, Tag } from '../types';
 
 export const categories: Category[] = [
   { id: 'ai', name: 'AI' },
-  { id: 'docs', name: 'doc' },
-  { id: 'tutorials', name: 'Tutorials' },
+  { id: 'docs', name: 'Doc' },
   { id: 'tools', name: 'Tools' },
-  { id: 'dev', name: 'dev' },
+  { id: 'dev', name: 'Dev' },
   { id: 'design', name: 'Design' },
   { id: 'blog', name: 'Blog' },
   { id: 'resources', name: 'Resources'},

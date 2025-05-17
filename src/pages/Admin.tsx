@@ -11,7 +11,7 @@ const Admin = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [isInitialLoading, setIsInitialLoading] = useState(true); // 添加初始加载状态
-  const itemsPerPage = 15;
+  const itemsPerPage = 13;
   const [newResource, setNewResource] = useState<Partial<Resource>>({
     title: '',
     url: '',
