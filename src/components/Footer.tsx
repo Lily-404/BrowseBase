@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -17,12 +17,21 @@ const Footer: React.FC<FooterProps> = ({
   onPrevPage 
 }) => {
   const { t } = useTranslation();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   
+  // 预加载音频
+  useEffect(() => {
+    audioRef.current = new Audio('/click.wav');
+    audioRef.current.volume = 0.4;
+    audioRef.current.load();
+  }, []);
+
   // 创建音效播放函数
   const playClickSound = useCallback(() => {
-    const audio = new Audio('/click.wav');  // 确保在 public 目录下有这个音频文件
-    audio.volume = 0.4;  // 设置音量为 20%
-    audio.play().catch(err => console.log('音频播放失败:', err));
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(err => console.log('音频播放失败:', err));
+    }
   }, []);
 
   // 包装点击事件处理函数

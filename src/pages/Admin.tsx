@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react';
 import { resourceService } from '../services/resourceService';
-import { categories } from '../data/mockData';
+import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
+import { useTranslation } from 'react-i18next';
 // 给定分类ID获取分类名称
-const tags = [
-  { id: 'trending', name: '热门' },
-  { id: 'newAdded', name: '最新' },
-  { id: 'youtuber', name: '油管博主' },
-  { id: 'mac', name: 'Mac软件' },
-  { id: 'communityChoice', name: '社区' },
-  { id: 'openSource', name: '开源' },
-];
 
 const Admin = () => {
+  const { t } = useTranslation();
   const [resources, setResources] = useState<Resource[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -459,7 +453,7 @@ const Admin = () => {
                               : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                           }`}
                         >
-                          {tag.name}
+                          {t(`filter.${tag.id}`)}
                         </button>
                       ))}
                     </div>

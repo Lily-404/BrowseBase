@@ -29,8 +29,8 @@ const resources = {
         title: 'Filter',
         trending: 'Trending',
         newAdded: 'New Added',
-        youtuber: 'YouTube Creators',
-        mac: 'Mac Apps',
+        socialMedia: 'Social Media',
+        mac: 'Software',
         communityChoice: 'Community Choice',
         openSource: 'Open Source'
       },
@@ -49,11 +49,11 @@ const resources = {
   zh: {
     translation: {
       header: {
-        slogan: '资源，自有分量。',
+        slogan: '发现网络上的优质资源',
         blog: '博客',
         openSource: '开源',
         switchToChinese: '中文',
-        switchToEnglish: '英文'
+        switchToEnglish: 'English'
       },
       category: {
         title: '分类',
@@ -65,22 +65,23 @@ const resources = {
         dev: '开发',
         design: '设计',
         blog: '博客',
-        resources: '聚合站'
+        resources: '资源',
+        opensource: '开源'
       },
       filter: {
-        title: '合集',
+        title: '筛选',
         trending: '热门',
         newAdded: '最新',
-        youtuber: '油管博主',
-        mac: 'Mac软件',
-        communityChoice: '社区',
+        socialMedia: '社交媒体',
+        mac: '软件',
+        communityChoice: '社区精选',
         openSource: '开源'
       },
       resourcePreview: {
         title: '资源',
-        noMatch: '暂无匹配的资源',
+        noMatch: '没有找到匹配的资源',
         updatedAt: '更新于',
-        reviews: '条评论'
+        reviews: '条评价'
       },
       navigation: {
         previous: '上一页',
