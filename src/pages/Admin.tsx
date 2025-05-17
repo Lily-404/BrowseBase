@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
+import React from 'react';
 import { resourceService } from '../services/resourceService';
 import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
-import { useTranslation } from 'react-i18next';
 // 给定分类ID获取分类名称
 
 const Admin = () => {
-  const { t } = useTranslation();
   const [resources, setResources] = useState<Resource[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -323,7 +322,30 @@ const Admin = () => {
           {/* 添加新资源 - 在移动端优先显示，PC端在右侧 */}
           <div className="lg:col-span-4 order-first lg:order-last">
             <div className="bg-white rounded-lg border border-gray-100 p-6">
-              <h2 className="text-lg font-light text-gray-800 mb-6">添加新资源</h2>
+              <div className="flex justify-between items-center mb-6">
+                 <h2 className="text-lg font-light text-gray-800">{editingResource ? '编辑资源' : '添加新资源'}</h2>
+                 {editingResource && (
+                   <button
+                     type="button"
+                     onClick={() => {
+                       setEditingResource(null);
+                       setNewResource({
+                         title: '',
+                         url: '',
+                         description: '',
+                         category: '',
+                         tags: [],
+                         rating: 0,
+                         reviews: 0
+                       });
+                     }}
+                     className="text-gray-600 hover:text-gray-800 text-sm font-normal"
+                   >
+                     取消编辑
+                   </button>
+                 )}
+              </div>
+
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-normal text-gray-700 mb-1">
@@ -368,52 +390,58 @@ const Admin = () => {
                   <label htmlFor="category" className="block text-sm font-normal text-gray-700 mb-1">
                     分类
                   </label>
-                  <select
-                    id="category"
-                    value={newResource.category}
-                    onChange={(e) => setNewResource({ ...newResource, category: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50 text-gray-800"
-                    required
-                  >
-                    <option value="">选择分类</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
+                  <div className="flex flex-wrap gap-1.5 p-2 border border-gray-200 rounded-lg min-h-[40px] bg-gray-50">
+                    {categories.map(category => (
+                      <button
+                        key={category.id}
+                        type="button"
+                        onClick={() => setNewResource({...newResource, category: category.id})}
+                        className={`px-2.5 py-1 rounded-full text-xs font-normal transition-all ${
+                          newResource.category === category.id
+                            ? 'bg-gray-800 text-white shadow-sm'
+                            : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
+                        }`}
+                      >
                         {category.name}
-                      </option>
+                      </button>
                     ))}
-                  </select>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-normal text-gray-700 mb-1">
                     标签
                   </label>
-                  <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
-                      <label
-                        key={tag.id}
-                        className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm cursor-pointer hover:bg-gray-200 transition-colors"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={newResource.tags.includes(tag.id)}
-                          onChange={(e) => {
-                            const newTags = e.target.checked
-                              ? [...newResource.tags, tag.id]
-                              : newResource.tags.filter((id) => id !== tag.id);
+                  <div className="flex flex-wrap gap-1.5 p-1.5 border border-gray-200 rounded-lg min-h-[40px] bg-gray-50">
+                    {tags.map((tag) => {
+                      const isSelected = newResource.tags?.includes(tag.id) || false;
+                      return (
+                        <button
+                          key={tag.id}
+                          type="button"
+                          onClick={() => {
+                            const currentTags = newResource.tags || [];
+                            const newTags = isSelected
+                              ? currentTags.filter((id) => id !== tag.id)
+                              : [...currentTags, tag.id];
                             setNewResource({ ...newResource, tags: newTags });
                           }}
-                          className="sr-only"
-                        />
-                        <span>{tag.name}</span>
-                      </label>
-                    ))}
+                          className={`px-2 py-0.5 rounded-full text-xs font-normal transition-all ${
+                            isSelected
+                              ? 'bg-gray-800 text-white shadow-sm' // Selected style
+                              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200' // Default style
+                          }`}
+                        >
+                          {tag.name}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
                 <button
                   type="submit"
                   className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
                 >
-                  添加资源
+                  {editingResource ? '更新资源' : '添加资源'}
                 </button>
               </form>
             </div>

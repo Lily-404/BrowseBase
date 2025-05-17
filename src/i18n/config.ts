@@ -48,7 +48,7 @@ const resources = {
   zh: {
     translation: {
       header: {
-        slogan: '发现网络上的优质资源',
+        slogan: '资源，自有分量',
         blog: '博客',
         openSource: '开源',
         switchToChinese: '中文',
