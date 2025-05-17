@@ -150,20 +150,21 @@ const Admin = () => {
         )}
         
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
-            BrowseBase 资源管理
+          <h1 className="text-2xl font-light tracking-wide text-gray-800">
+            BrowseBase
+            <span className="text-gray-400 ml-2 text-sm font-normal">资源管理</span>
           </h1>
         </div>
         
         {/* 优化消息提示 */}
         {message && (
-          <div className={`fixed bottom-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg transform transition-all duration-300 flex items-center space-x-2 ${
+          <div className={`fixed bottom-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-sm transform transition-all duration-300 flex items-center space-x-2 ${
             message.type === 'success' 
-              ? 'bg-green-50 text-green-700 border border-green-200' 
-              : 'bg-red-50 text-red-700 border border-red-200'
+              ? 'bg-gray-50 text-gray-700 border border-gray-200' 
+              : 'bg-gray-50 text-gray-700 border border-gray-200'
           }`}>
             <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${
-              message.type === 'success' ? 'bg-green-100' : 'bg-red-100'
+              message.type === 'success' ? 'bg-gray-100' : 'bg-gray-100'
             }`}>
               {message.type === 'success' ? (
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -175,316 +176,246 @@ const Admin = () => {
                 </svg>
               )}
             </span>
-            <span>{message.text}</span>
+            <span className="text-sm">{message.text}</span>
           </div>
         )}
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* 左侧资源列表 */}
-          <div className="lg:col-span-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="p-6">
-                <div className="flex flex-col space-y-4 mb-6">
-                  <h2 className="text-xl font-semibold flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                    <span>资源列表</span>
-                  </h2>
-                  
-                  {/* 过滤器 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <input
-                        type="text"
-                        placeholder="搜索标题或描述..."
-                        value={filters.search}
-                        onChange={e => setFilters({...filters, search: e.target.value})}
-                        className="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </div>
-                    <div>
-                      <select
-                        value={filters.category}
-                        onChange={e => setFilters({...filters, category: e.target.value})}
-                        className="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="">所有分类</option>
-                        {categories.map(category => (
-                          <option key={category.id} value={category.id}>
-                            {category.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <select
-                        value={filters.tag}
-                        onChange={e => setFilters({...filters, tag: e.target.value})}
-                        className="w-full p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="">所有标签</option>
-                        {tags.map(tag => (
-                          <option key={tag.id} value={tag.id}>
-                            {tag.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
+          {/* 资源列表 - 在移动端后显示，PC端在左侧 */}
+          <div className="lg:col-span-8 order-last lg:order-first">
+            <div className="bg-white rounded-lg border border-gray-100 p-6">
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                <h2 className="text-lg font-light text-gray-800">资源列表</h2>
+                <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-auto">
+                  <input
+                    type="text"
+                    placeholder="搜索资源..."
+                    value={filters.search}
+                    onChange={(e) => setFilters({...filters, search: e.target.value})}
+                    className="w-full lg:w-64 px-3 py-2 border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50 text-gray-800"
+                  />
+                  <select
+                    value={filters.category}
+                    onChange={(e) => setFilters({...filters, category: e.target.value})}
+                    className="w-full lg:w-48 px-3 py-2 border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50 text-gray-800"
+                  >
+                    <option value="">所有分类</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="text-left p-4 font-medium text-gray-600 rounded-l-lg">标题</th>
-                        <th className="text-left p-4 font-medium text-gray-600">分类</th>
-                        <th className="text-left p-4 font-medium text-gray-600">标签</th>
-                        <th className="text-left p-4 font-medium text-gray-600 rounded-r-lg">操作</th>
+              </div>
+              
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gray-50">
+                      <th className="text-left p-4 font-normal text-gray-600 text-sm rounded-l-lg">标题</th>
+                      <th className="text-left p-4 font-normal text-gray-600 text-sm">分类</th>
+                      <th className="text-left p-4 font-normal text-gray-600 text-sm">标签</th>
+                      <th className="text-left p-4 font-normal text-gray-600 text-sm rounded-r-lg">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {resources.map(resource => (
+                      <tr key={resource.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="p-4">
+                          <div className="font-normal text-gray-900">{resource.title}</div>
+                          <div className="text-sm text-gray-500 truncate hover:text-gray-700">
+                            <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                              {resource.url}
+                            </a>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                            {getCategoryName(resource.category)}
+                          </span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex flex-wrap gap-1">
+                            {resource.tags.map(tagId => {
+                              const tag = tags.find(t => t.id === tagId);
+                              return (
+                                <span
+                                  key={tagId}
+                                  className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
+                                >
+                                  {tag ? tag.name : tagId}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex space-x-3">
+                            <button
+                              onClick={() => handleEdit(resource)}
+                              className="text-gray-600 hover:text-gray-800 transition-colors flex items-center space-x-1"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              <span className="text-sm">编辑</span>
+                            </button>
+                            <button
+                              onClick={() => handleDelete(resource.id)}
+                              className="text-gray-600 hover:text-gray-800 transition-colors flex items-center space-x-1"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              <span className="text-sm">删除</span>
+                            </button>
+                          </div>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                      {resources.map(resource => (
-                        <tr key={resource.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="p-4">
-                            <div className="font-medium text-gray-900">{resource.title}</div>
-                            <div className="text-sm text-gray-500 truncate hover:text-blue-500">
-                              <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                                {resource.url}
-                              </a>
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm">
-                              {getCategoryName(resource.category)}
-                            </span>
-                          </td>
-                          <td className="p-4">
-                            <div className="flex flex-wrap gap-1">
-                              {resource.tags.map(tagId => {
-                                const tag = tags.find(t => t.id === tagId);
-                                return (
-                                  <span
-                                    key={tagId}
-                                    className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs"
-                                  >
-                                    {tag ? tag.name : tagId}
-                                  </span>
-                                );
-                              })}
-                            </div>
-                          </td>
-                          <td className="p-4">
-                            <div className="flex space-x-3">
-                              <button
-                                onClick={() => handleEdit(resource)}
-                                className="text-blue-500 hover:text-blue-700 transition-colors flex items-center space-x-1"
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                                <span>编辑</span>
-                              </button>
-                              <button
-                                onClick={() => handleDelete(resource.id)}
-                                className="text-red-500 hover:text-red-700 transition-colors flex items-center space-x-1"
-                              >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                                <span>删除</span>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              {/* 分页控制 */}
+              <div className="mt-6 flex items-center justify-between">
+                <div className="text-sm text-gray-500">
+                  显示 {resources.length} 条，共 {totalCount} 条
                 </div>
-                
-                {/* 分页控制 */}
-                <div className="mt-6 flex items-center justify-between">
-                  <div className="text-sm text-gray-700">
-                    显示 {resources.length} 条，共 {totalCount} 条
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                      disabled={currentPage === 1}
-                      className={`px-4 py-2 rounded-lg flex items-center space-x-1 transition-colors ${
-                        currentPage === 1
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                      }`}
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                      </svg>
-                      <span>上一页</span>
-                    </button>
-                    <span className="px-4 py-2 bg-white border border-gray-200 rounded-lg">
-                      第 {currentPage} 页
-                    </span>
-                    <button
-                      onClick={() => setCurrentPage(prev => prev + 1)}
-                      disabled={resources.length < itemsPerPage}
-                      className={`px-4 py-2 rounded-lg flex items-center space-x-1 transition-colors ${
-                        resources.length < itemsPerPage
-                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                      }`}
-                    >
-                      <span>下一页</span>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  </div>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className={`px-4 py-2 rounded-lg flex items-center space-x-1 transition-colors text-sm ${
+                      currentPage === 1
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span>上一页</span>
+                  </button>
+                  <span className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700">
+                    第 {currentPage} 页
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(prev => prev + 1)}
+                    disabled={resources.length < itemsPerPage}
+                    className={`px-4 py-2 rounded-lg flex items-center space-x-1 transition-colors text-sm ${
+                      resources.length < itemsPerPage
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                    }`}
+                  >
+                    <span>下一页</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-          
-          {/* 右侧添加资源表单 */}
-          <div className="lg:col-span-4">
-            <div className="fixed top-23 right-6 w-[calc(33.333%-2rem)] max-w-md">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    <span>{editingResource ? '编辑资源' : '添加新资源'}</span>
-                  </h2>
-                  {editingResource && (
-                    <button
-                      onClick={() => {
-                        setEditingResource(null);
-                        setNewResource({
-                          title: '',
-                          url: '',
-                          description: '',
-                          category: '',
-                          tags: [],
-                          rating: 0,
-                          reviews: 0
-                        });
-                      }}
-                      className="text-gray-600 hover:text-gray-800 transition-colors"
-                    >
-                      取消编辑
-                    </button>
-                  )}
+
+          {/* 添加新资源 - 在移动端优先显示，PC端在右侧 */}
+          <div className="lg:col-span-4 order-first lg:order-last">
+            <div className="bg-white rounded-lg border border-gray-100 p-6">
+              <h2 className="text-lg font-light text-gray-800 mb-6">添加新资源</h2>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-normal text-gray-700 mb-1">
+                    资源名称
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={newResource.title}
+                    onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50 text-gray-800"
+                    required
+                  />
                 </div>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* 标题和URL放在一行 */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">标题</label>
-                      <input
-                        type="text"
-                        value={newResource.title}
-                        onChange={e => setNewResource({...newResource, title: e.target.value})}
-                        className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">URL</label>
-                      <input
-                        type="url"
-                        value={newResource.url}
-                        onChange={e => setNewResource({...newResource, url: e.target.value})}
-                        className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">描述</label>
-                    <textarea
-                      value={newResource.description}
-                      onChange={e => setNewResource({...newResource, description: e.target.value})}
-                      className="w-full p-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm"
-                      rows={3}
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">分类</label>
-                    <div className="flex flex-wrap gap-1.5 p-2 border border-gray-200 rounded-lg min-h-[40px] bg-gray-50">
-                      {categories.map(category => (
-                        <button
-                          key={category.id}
-                          type="button"
-                          onClick={() => setNewResource({...newResource, category: category.id})}
-                          className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-                            newResource.category === category.id
-                              ? 'bg-blue-500 text-white shadow-sm'
-                              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                          }`}
-                        >
-                          {category.name}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">标签</label>
-                    <div className="flex flex-wrap gap-1.5 p-2 border border-gray-200 rounded-lg min-h-[40px] bg-gray-50">
-                      {tags.map(tag => (
-                        <button
-                          key={tag.id}
-                          type="button"
-                          onClick={() => {
-                            const isSelected = newResource.tags?.includes(tag.id);
-                            const updatedTags = isSelected
-                              ? (newResource.tags || []).filter(t => t !== tag.id)
-                              : [...(newResource.tags || []), tag.id];
-                            setNewResource({...newResource, tags: updatedTags});
-                          }}
-                          className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
-                            newResource.tags?.includes(tag.id)
-                              ? 'bg-blue-500 text-white shadow-sm'
-                              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                          }`}
-                        >
-                          {t(`filter.${tag.id}`)}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`w-full px-4 py-2 bg-blue-500 text-white rounded-lg font-medium text-sm
-                      hover:bg-blue-600 transition-all ${isLoading ? 'opacity-50 cursor-not-allowed' : ''} 
-                      flex items-center justify-center space-x-2`}
+                <div>
+                  <label htmlFor="url" className="block text-sm font-normal text-gray-700 mb-1">
+                    资源链接
+                  </label>
+                  <input
+                    type="url"
+                    id="url"
+                    value={newResource.url}
+                    onChange={(e) => setNewResource({ ...newResource, url: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50 text-gray-800"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="description" className="block text-sm font-normal text-gray-700 mb-1">
+                    资源描述
+                  </label>
+                  <textarea
+                    id="description"
+                    value={newResource.description}
+                    onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50 text-gray-800"
+                    rows={3}
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="category" className="block text-sm font-normal text-gray-700 mb-1">
+                    分类
+                  </label>
+                  <select
+                    id="category"
+                    value={newResource.category}
+                    onChange={(e) => setNewResource({ ...newResource, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50 text-gray-800"
+                    required
                   >
-                    {isLoading ? (
-                      <>
-                        <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                        </svg>
-                        <span>处理中...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>{editingResource ? '更新资源' : '添加资源'}</span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                        </svg>
-                      </>
-                    )}
-                  </button>
-                </form>
-              </div>
+                    <option value="">选择分类</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-normal text-gray-700 mb-1">
+                    标签
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag) => (
+                      <label
+                        key={tag.id}
+                        className="inline-flex items-center px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-sm cursor-pointer hover:bg-gray-200 transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={newResource.tags.includes(tag.id)}
+                          onChange={(e) => {
+                            const newTags = e.target.checked
+                              ? [...newResource.tags, tag.id]
+                              : newResource.tags.filter((id) => id !== tag.id);
+                            setNewResource({ ...newResource, tags: newTags });
+                          }}
+                          className="sr-only"
+                        />
+                        <span>{tag.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  添加资源
+                </button>
+              </form>
             </div>
           </div>
         </div>

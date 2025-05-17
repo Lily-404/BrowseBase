@@ -109,30 +109,28 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-8 border border-gray-100">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">管理员登录</h2>
-          <p className="text-gray-600">请使用管理员账号登录</p>
+          <h2 className="text-2xl font-light text-gray-800 mb-2">管理员登录</h2>
+          <p className="text-gray-500 text-sm font-normal">请使用管理员账号登录</p>
         </div>
         
         <div className="flex space-x-4 mb-6">
           <button
             onClick={() => setLoginMethod('password')}
-            className={`flex-1 py-2 px-4 text-sm font-medium rounded-lg ${
-              loginMethod === 'password'
-                ? 'bg-blue-100 text-blue-700'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            className={`flex-1 py-2 px-4 text-sm font-normal rounded-lg transition-colors ${loginMethod === 'password'
+                ? 'bg-gray-800 text-white' // Selected state
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200' // Default state
             }`}
           >
             密码登录
           </button>
           <button
             onClick={() => setLoginMethod('magic')}
-            className={`flex-1 py-2 px-4 text-sm font-medium rounded-lg ${
-              loginMethod === 'magic'
-                ? 'bg-blue-100 text-blue-700'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            className={`flex-1 py-2 px-4 text-sm font-normal rounded-lg transition-colors ${loginMethod === 'magic'
+                ? 'bg-gray-800 text-white' // Selected state
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200' // Default state
             }`}
           >
             邮箱链接登录
@@ -141,14 +139,13 @@ const Login = () => {
         
         {error && (
           <div 
-            className={`p-4 rounded-lg mb-6 flex items-center ${
-              error.includes('已发送') 
-                ? 'bg-green-50 text-green-700 border border-green-200' 
-                : 'bg-red-50 text-red-700 border border-red-200'
+            className={`p-4 rounded-lg mb-6 flex items-center space-x-2 text-sm ${error.includes('已发送') 
+                ? 'bg-gray-100 text-gray-700 border border-gray-200' // Success-like style
+                : 'bg-gray-100 text-gray-700 border border-gray-200' // Error-like style (using grayscale)
             }`}
           >
             <svg 
-              className={`w-5 h-5 mr-2 ${error.includes('已发送') ? 'text-green-500' : 'text-red-500'}`}
+              className={`flex-shrink-0 w-5 h-5 mr-2 ${error.includes('已发送') ? 'text-gray-500' : 'text-gray-500'}`}
               fill="currentColor" 
               viewBox="0 0 20 20"
             >
@@ -164,13 +161,13 @@ const Login = () => {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">邮箱地址</label>
+            <label className="block text-sm font-normal text-gray-700 mb-2">邮箱地址</label>
             <div className="relative">
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors bg-gray-50 text-gray-800"
                 placeholder="请输入管理员邮箱"
                 required
               />
@@ -179,21 +176,22 @@ const Login = () => {
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
+                strokeWidth={1.5} // Adjust stroke width
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
           </div>
 
           {loginMethod === 'password' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">密码</label>
+              <label className="block text-sm font-normal text-gray-700 mb-2">密码</label>
               <div className="relative">
                 <input
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors bg-gray-50 text-gray-800"
                   placeholder="请输入密码"
                   required={loginMethod === 'password'}
                 />
@@ -202,8 +200,9 @@ const Login = () => {
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
+                  strokeWidth={1.5} // Adjust stroke width
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
             </div>
@@ -212,8 +211,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-              loading ? 'opacity-50 cursor-not-allowed' : ''
+            className={`w-full bg-gray-800 text-white py-3 rounded-lg font-normal hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:ring-offset-0 transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
             {loading ? (
@@ -231,16 +229,16 @@ const Login = () => {
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
+              <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">或者</span>
+              <span className="px-2 bg-white text-gray-500 font-normal">或者</span>
             </div>
           </div>
 
           <button
             onClick={handleGoogleLogin}
-            className="mt-4 w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="mt-4 w-full flex items-center justify-center px-4 py-3 border border-gray-200 rounded-lg shadow-sm bg-white text-sm font-normal text-gray-700 hover:bg-gray-50 transition-colors"
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
