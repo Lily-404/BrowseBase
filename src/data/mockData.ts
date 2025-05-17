@@ -12,12 +12,12 @@ export const categories: Category[] = [
 ];
 
 export const tags: Tag[] = [
-  { id: 'trending', },
-  { id: 'newAdded', },
-  { id: 'youtuber', },
-  { id: 'mac', },
-  { id: 'communityChoice', },
-  { id: 'openSource', },
+  { id: 'trending', name: '热门', description: '当前最受欢迎的资源' },
+  { id: 'newAdded', name: '最新', description: '最近添加的资源' },
+  { id: 'youtuber', name: '油管博主', description: '来自 YouTube 创作者的资源' },
+  { id: 'mac', name: 'Mac软件', description: 'Mac 平台相关软件' },
+  { id: 'communityChoice', name: '社区', description: '社区精选资源' },
+  { id: 'openSource', name: '开源', description: '开源项目资源' },
 ];
 
 export interface Resource {

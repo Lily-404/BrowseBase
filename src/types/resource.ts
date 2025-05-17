@@ -7,6 +7,7 @@ export interface Resource {
   tags: string[];
   rating: number;
   reviews: number;
+  updatedAt: string;
 }
 
 export interface ResourceFilters {

@@ -7,4 +7,6 @@ export interface Category {
 
 export interface Tag {
   id: string;
+  name: string;
+  description: string;
 }
