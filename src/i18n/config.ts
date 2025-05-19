@@ -52,7 +52,7 @@ const resources = {
         blog: '博客',
         openSource: '开源',
         switchToChinese: '中文',
-        switchToEnglish: 'English'
+        switchToEnglish: '英文'
       },
       category: {
         title: '分类',

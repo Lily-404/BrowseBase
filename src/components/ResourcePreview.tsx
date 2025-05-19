@@ -9,11 +9,12 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   currentPage, 
   onNextPage,
   onPrevPage,
-  totalPages
+  totalPages,
+  isLoading = false
 }) => {
   const { t } = useTranslation();
   
-  if (!resources.length) {
+  if (isLoading || !resources.length) {
     return (
       <div className="flex flex-col h-full">
         <div className="flex flex-row justify-between relative items-center gap-2 mb-3">
@@ -21,7 +22,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
           <div className="flex flex-1 h-[1px] bg-foreground/8" />
         </div>
         <div className="flex flex-1 flex-col rounded-lg">
-          <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
               <div key={item} 
                 className="bg-[#F1F1F1] rounded-lg p-4 animate-pulse
@@ -58,7 +59,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         <div className="flex flex-1 h-[1px] bg-foreground/8" />
       </div>
       <div className="flex flex-col flex-1">
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           {resources.map(resource => (
             <div key={resource.id} 
               className="bg-[#F1F1F1] rounded-lg p-4
