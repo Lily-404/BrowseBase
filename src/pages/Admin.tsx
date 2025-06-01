@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import React from 'react';
 import { resourceService } from '../services/resourceService';
 import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
+import debounce from 'lodash/debounce';
 // 给定分类ID获取分类名称
 
 const Admin = () => {
@@ -28,13 +29,11 @@ const Admin = () => {
     category: '',
     tag: ''
   });
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   
-  useEffect(() => {
-    fetchResources();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function fetchResources() {
+  // 使用 useCallback 包装 fetchResources 函数
+  const fetchResources = useCallback(async () => {
     try {
       setIsLoading(true);
       const { data, count } = await resourceService.fetchResources(currentPage, itemsPerPage, filters);
@@ -44,19 +43,38 @@ const Admin = () => {
       console.error('Error fetching resources:', error);
     } finally {
       setIsLoading(false);
-      setIsInitialLoading(false); // 初始加载完成
+      setIsInitialLoading(false);
     }
-  }
+  }, [currentPage, itemsPerPage, filters]);
 
-  // 添加过滤器变化监听
-  useEffect(() => {
-    setCurrentPage(1); // 重置页码
-    fetchResources();
-  }, [filters]); // 当过滤条件改变时重新获取数据
+  // 创建防抖的搜索处理函数
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setFilters(prev => ({ ...prev, search: value }));
+      setCurrentPage(1); // 重置页码
+    }, 300),
+    []
+  );
 
+  // 处理搜索输入
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    debouncedSearch(value);
+    setShowSuggestions(true);
+    
+    if (value.trim().length > 0) {
+      resourceService.getSearchSuggestions(value).then(suggestions => {
+        setSearchSuggestions(suggestions);
+      });
+    } else {
+      setSearchSuggestions([]);
+    }
+  };
+
+  // 只保留一个 useEffect
   useEffect(() => {
     fetchResources();
-  }, [currentPage]); // 当页码改变时重新获取数据
+  }, [fetchResources]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -117,6 +135,21 @@ const Admin = () => {
       reviews: resource.reviews
     });
   }
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setFilters(prev => ({ ...prev, search: suggestion }));
+    setShowSuggestions(false);
+  };
+
+  const handleNextPage = () => {
+    if (resources.length < itemsPerPage) return;
+    setCurrentPage(prev => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage === 1) return;
+    setCurrentPage(prev => prev - 1);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -186,13 +219,28 @@ const Admin = () => {
               <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
                 <h2 className="text-lg font-light text-gray-800">资源列表</h2>
                 <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-auto">
-                  <input
-                    type="text"
-                    placeholder="搜索资源..."
-                    value={filters.search}
-                    onChange={(e) => setFilters({...filters, search: e.target.value})}
-                    className="w-full lg:w-64 px-3 py-2 border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50 text-gray-800"
-                  />
+                  <div className="relative w-full lg:w-64">
+                    <input
+                      type="text"
+                      placeholder="搜索资源..."
+                      defaultValue={filters.search}
+                      onChange={handleSearchChange}
+                      className="w-full px-3 py-2 border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50 text-gray-800"
+                    />
+                    {showSuggestions && searchSuggestions.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        {searchSuggestions.map((suggestion, index) => (
+                          <button
+                            key={index}
+                            onClick={() => handleSuggestionClick(suggestion)}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 focus:outline-none"
+                          >
+                            {suggestion}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   <select
                     value={filters.category}
                     onChange={(e) => setFilters({...filters, category: e.target.value})}
@@ -230,9 +278,13 @@ const Admin = () => {
                           </div>
                         </td>
                         <td className="p-4">
-                          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
-                            {getCategoryName(resource.category)}
-                          </span>
+                          {resource.category ? (
+                            <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                              {getCategoryName(resource.category)}
+                            </span>
+                          ) : (
+                            <span className="text-gray-400 text-sm">未分类</span>
+                          )}
                         </td>
                         <td className="p-4">
                           <div className="flex flex-wrap gap-1">
@@ -284,7 +336,7 @@ const Admin = () => {
                 </div>
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    onClick={handlePrevPage}
                     disabled={currentPage === 1}
                     className={`px-4 py-2 rounded-lg flex items-center space-x-1 transition-colors text-sm ${
                       currentPage === 1
@@ -301,7 +353,7 @@ const Admin = () => {
                     第 {currentPage} 页
                   </span>
                   <button
-                    onClick={() => setCurrentPage(prev => prev + 1)}
+                    onClick={handleNextPage}
                     disabled={resources.length < itemsPerPage}
                     className={`px-4 py-2 rounded-lg flex items-center space-x-1 transition-colors text-sm ${
                       resources.length < itemsPerPage

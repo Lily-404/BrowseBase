@@ -1,8 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import bcrypt from 'bcryptjs';
 import React from 'react';
+
+interface TurnstileOptions {
+  sitekey: string;
+  callback: (token: string) => void;
+  theme?: 'light' | 'dark' | 'auto';
+  size?: 'normal' | 'compact';
+  tabindex?: number;
+  'refresh-expired'?: 'auto' | 'manual';
+  'response-field'?: boolean;
+  'response-field-name'?: string;
+}
+
+declare global {
+  interface Window {
+    turnstile: {
+      render: (container: string | HTMLElement, options: TurnstileOptions) => string;
+      reset: (widgetId: string) => void;
+    };
+  }
+}
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,7 +30,36 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [loginMethod, setLoginMethod] = useState<'password' | 'magic'>('password');
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const [turnstileWidgetId, setTurnstileWidgetId] = useState<string>('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Load Turnstile script
+    const script = document.createElement('script');
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Initialize Turnstile after script loads
+    if (window.turnstile) {
+      const widgetId = window.turnstile.render('#turnstile-container', {
+        sitekey: '0x4AAAAAABfm0rVoWSdH2Bpe',
+        callback: (token: string) => {
+          console.log('Turnstile token received:', token);
+          setTurnstileToken(token);
+        },
+      });
+      setTurnstileWidgetId(widgetId);
+    }
+  }, []);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -18,6 +67,12 @@ const Login = () => {
     setError('');
     
     try {
+      if (!turnstileToken) {
+        throw new Error('请完成人机验证');
+      }
+
+      console.log('Attempting login with Turnstile token:', turnstileToken);
+
       if (loginMethod === 'password') {
         console.log('尝试登录:', email);
         
@@ -48,17 +103,23 @@ const Login = () => {
           throw new Error('您没有管理员权限');
         }
 
-        // 使用邮箱登录方式创建 Supabase 会话
+        // 使用邮箱登录方式创建 Supabase 会话，同时传递 Turnstile token
         const { error: signInError } = await supabase.auth.signInWithOtp({
           email,
           options: {
-            shouldCreateUser: false, // 不创建新用户
+            shouldCreateUser: false,
+            data: {
+              turnstile_token: turnstileToken // 将 token 传递给后端
+            }
           }
         });
 
         if (signInError) {
+          console.error('登录错误:', signInError);
           throw signInError;
         }
+
+        console.log('Login successful with Turnstile verification');
 
         // 等待会话创建完成
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -83,17 +144,21 @@ const Login = () => {
     } catch (error: unknown) {
       setError((error as { message?: string }).message || '登录失败，请重试');
       console.error('登录错误:', error);
+      // Reset Turnstile on error
+      if (window.turnstile && turnstileWidgetId) {
+        window.turnstile.reset(turnstileWidgetId);
+      }
     } finally {
       setLoading(false);
     }
-}
+  }
 
   async function handleGoogleLogin() {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'http://localhost:5173/admin',  // 修正URI，移除多余的逗号
+          redirectTo: `${window.location.origin}/admin`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent'
@@ -200,13 +265,15 @@ const Login = () => {
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
-                  strokeWidth={1.5} // Adjust stroke width
+                  strokeWidth={1.5}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
             </div>
           )}
+
+          <div id="turnstile-container" className="flex justify-center mb-4"></div>
 
           <button
             type="submit"

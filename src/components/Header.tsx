@@ -1,8 +1,9 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/config';
 import { Link } from 'react-router-dom';
+import CircleButton from './ui/CircleButton';
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
@@ -13,45 +14,59 @@ const Header: React.FC = () => {
     i18n.changeLanguage(newLang);
   };
 
+  const playClickSound = () => {
+    new Audio('/click.wav').play().catch(() => {});
+  };
+
   return (
     <header>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <Link to="/" className="flex items-center gap-1 sm:gap-2">
-              <img src="/logo.png" alt="BrowseBase Logo" className="w-7 h-7 sm:w-8 sm:h-8" />
-              <h1 className="text-lg sm:text-xl font-bold text-[#1A1A1A] flex items-center">BrowseBase</h1>
+          <div className="flex flex-col">
+            <Link to="/" className="flex items-center gap-2 sm:gap-3">
+              <img src="/logo.png" alt="BrowseBase Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
+              <div className="flex flex-col">
+                <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1A1A1A]/90 drop-shadow-[0_4px_4px_rgba(0,0,0,0.2)] drop-shadow-[0_8px_8px_rgba(0,0,0,0.15)]">
+                  BrowseBase
+                </h1>
+                <p className="text-[10px] sm:text-xs font-medium tracking-wide text-[#9A9A9A]/80 -mt-0.5 drop-shadow-[0_3px_3px_rgba(0,0,0,0.15)] drop-shadow-[0_6px_6px_rgba(0,0,0,0.1)]">
+                  {t('header.slogan')}
+                </p>
+              </div>
             </Link>
-            <p className="hidden md:block text-xs text-[#9A9A9A] self-end pb-[5px]">{t('header.slogan')}</p>
           </div>
           
-          <div className="flex items-center gap-2 sm:gap-5 ml-auto">
-            <a 
-              href="https://www.jimmy-blog.top/" 
-              className="flex items-center gap-1 sm:gap-2 hover:opacity-80 transition-opacity text-[#1A1A1A]"
-              target="_blank"
-              rel="noopener noreferrer"
+          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
+            <CircleButton
+              href="https://www.jimmy-blog.top/"
+              variant="secondary"
+              size="sm"
+              title={t('header.blog')}
+              onClick={playClickSound}
             >
-              <span className="font-bold uppercase text-xs sm:text-sm whitespace-nowrap">{t('header.blog')}</span>
-              <ArrowRight size={14} className="sm:w-4 sm:h-4" />
-            </a>
-            <a 
-              href="https://github.com/Lily-404/BrowseBase" 
-              className="flex items-center gap-1 sm:gap-2 hover:opacity-80 transition-opacity text-[#1A1A1A]"
-              target="_blank"
-              rel="noopener noreferrer"
+              {t('header.blog')}
+            </CircleButton>
+            <CircleButton
+              href="https://github.com/Lily-404/BrowseBase"
+              variant="secondary"
+              size="sm"
+              title={t('header.openSource')}
+              onClick={playClickSound}
             >
-              <span className="font-bold uppercase text-xs sm:text-sm whitespace-nowrap">{t('header.openSource')}</span>
-              <ArrowRight size={14} className="sm:w-4 sm:h-4" />
-            </a>
-            <button
-              onClick={toggleLanguage}
-              className="flex items-center gap-1 sm:gap-2 hover:opacity-80 transition-opacity text-[#1A1A1A]"
+              {t('header.openSource')}
+            </CircleButton>
+            <CircleButton
+              onClick={() => {
+                playClickSound();
+                toggleLanguage();
+              }}
+              variant="secondary"
+              size="sm"
+              iconOnly
+              title={i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
             >
-              <span className="font-bold uppercase text-xs sm:text-sm whitespace-nowrap">
-                {i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
-              </span>
-            </button>
+              <Globe size={18} />
+            </CircleButton>
           </div>
         </div>
       </div>

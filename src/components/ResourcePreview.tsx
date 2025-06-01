@@ -3,6 +3,7 @@ import { ExternalLink } from 'lucide-react';
 import Footer from './Footer';
 import { useTranslation } from 'react-i18next';
 import { ResourcePreviewProps } from '../types/resourcePreview';
+import IconButton from './ui/IconButton';
 
 const ResourcePreview: React.FC<ResourcePreviewProps> = ({ 
   resources, 
@@ -13,6 +14,10 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   isLoading = false
 }) => {
   const { t } = useTranslation();
+  
+  const playClickSound = () => {
+    new Audio('/click.wav').play().catch(() => {});
+  };
   
   if (isLoading || !resources.length) {
     return (
@@ -67,17 +72,16 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
             >
               <div className="flex justify-between items-start mb-2">
                 <h3 className="text-base font-bold text-[#1A1A1A] line-clamp-1 flex-1 mr-4">{resource.title}</h3>
-                <a 
+                <IconButton
                   href={resource.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative flex items-center justify-center w-7 h-7 bg-[#F1F1F1] rounded-lg hover:scale-105 transition-transform ml-auto
-                  shadow-[1px_1px_2px_rgba(0,0,0,0.2),inset_-0.5px_-0.5px_1px_rgba(0,0,0,0.1),inset_0.5px_0.5px_1px_rgba(255,255,255,0.9)]
-                  active:shadow-[inset_-0.5px_-0.5px_2px_rgba(0,0,0,0.25),inset_0.5px_0.5px_2px_rgba(255,255,255,1),0.5px_0.5px_2px_rgba(0,0,0,0.15)] active:scale-[0.995]"
-                  onClick={() => new Audio('/click.mp3').play().catch(() => {})}
+                  size="sm"
+                  title={t('resourcePreview.openLink')}
+                  onClick={playClickSound}
                 >
-                  <ExternalLink size={16} className="text-gray-600 group-hover:text-gray-800" />
-                </a>
+                  <ExternalLink size={16} className="text-gray-600" />
+                </IconButton>
               </div>
 
               <div className="text-sm leading-relaxed text-[#1A1A1A]/60 line-clamp-3">
