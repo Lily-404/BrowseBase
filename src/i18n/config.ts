@@ -1,92 +1,12 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import enTranslations from './locales/en';
+import zhTranslations from './locales/zh';
 
 const resources = {
-  en: {
-    translation: {
-      header: {
-        slogan: 'Discover the best of the web.',
-        blog: 'Blog',
-        openSource: 'Open Source',
-        switchToChinese: 'Chinese',
-        switchToEnglish: 'English'
-      },
-      category: {
-        title: 'Category',
-        all: 'All',
-        ai: 'AI',
-        docs: 'Doc',
-        tools: 'Tools',
-        dev: 'Dev',
-        design: 'Design',
-        blog: 'Blog',
-        resources: 'Resources',
-        opensource: 'Open Source' 
-      },
-      filter: {
-        title: 'Filter',
-        trending: 'Trending',
-        newAdded: 'New Added',
-        socialMedia: 'Social Media',
-        mac: 'Software',
-        communityChoice: 'Community Choice',
-        openSource: 'Open Source'
-      },
-      resourcePreview: {
-        title: 'Resources',
-        noMatch: 'No matching resources found',
-        updatedAt: 'Updated',
-        reviews: 'reviews'
-      },
-      navigation: {
-        previous: 'Previous',
-        next: 'Next'
-      }
-    }
-  },
-  zh: {
-    translation: {
-      header: {
-        slogan: '资源，自有分量',
-        blog: '博客',
-        openSource: '开源',
-        switchToChinese: '中文',
-        switchToEnglish: '英文'
-      },
-      category: {
-        title: '分类',
-        all: '全部',
-        ai: 'AI',
-        docs: '文档',
-        tools: '工具',
-        dev: '开发',
-        design: '设计',
-        blog: '博客',
-        resources: '资源',
-        opensource: '开源'
-      },
-      filter: {
-        title: '筛选',
-        trending: '热门',
-        newAdded: '最新',
-        socialMedia: '社交媒体',
-        mac: '软件',
-        communityChoice: '社区精选',
-        openSource: '开源'
-      },
-      resourcePreview: {
-        title: '资源',
-        noMatch: '没有找到匹配的资源',
-        updatedAt: '更新于',
-        reviews: '条评价'
-      },
-      navigation: {
-        previous: '上一页',
-        next: '下一页'
-      }
-    }
-  }
+  en: enTranslations,
+  zh: zhTranslations
 };
 
 i18n

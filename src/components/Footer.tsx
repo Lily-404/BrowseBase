@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useEffect } from 'react';
 import { Button } from './ui/Button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { audioLoader } from '../utils/audioLoader';
 
 interface FooterProps {
   currentPage: number;
@@ -37,14 +38,14 @@ const Footer: React.FC<FooterProps> = ({
   // 包装点击事件处理函数
   const handlePrevClick = () => {
     if (currentPage > 1) {
-      playClickSound();
+      audioLoader.playSound('/click.wav');
       onPrevPage();
     }
   };
 
   const handleNextClick = () => {
     if (currentPage < totalPages) {
-      playClickSound();
+      audioLoader.playSound('/click.wav');
       onNextPage();
     }
   };

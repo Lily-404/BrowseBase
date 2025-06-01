@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, ButtonLED } from './ui/Button';
 import { ResourceTagsProps } from '../types/resourceTags';
 import s from './ui/CapsuleButton.module.css';
+import { audioLoader } from '../utils/audioLoader';
 
 const ResourceTags: React.FC<ResourceTagsProps> = ({
   tags,
@@ -21,13 +22,7 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
   }, []);
 
   const handleClick = (tagId: string) => {
-    if (audioRef.current) {
-      // 重置音频到开始位置
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch((error) => {
-        console.warn('音频播放失败:', error);
-      });
-    }
+    audioLoader.playSound('/pressed.wav');
     onSelectTag(tagId);
   };
 

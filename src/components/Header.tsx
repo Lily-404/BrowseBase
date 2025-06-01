@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/config';
 import { Link } from 'react-router-dom';
 import CircleButton from './ui/CircleButton';
+import { audioLoader } from '../utils/audioLoader';
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
@@ -15,7 +16,7 @@ const Header: React.FC = () => {
   };
 
   const playClickSound = () => {
-    new Audio('/click.wav').play().catch(() => {});
+    audioLoader.playSound('/click.wav');
   };
 
   return (
@@ -26,23 +27,24 @@ const Header: React.FC = () => {
             <Link to="/" className="flex items-center gap-2 sm:gap-3">
               <img src="/logo.png" alt="BrowseBase Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
               <div className="flex flex-col">
-                <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1A1A1A]/90 drop-shadow-[0_4px_4px_rgba(0,0,0,0.2)] drop-shadow-[0_8px_8px_rgba(0,0,0,0.15)]">
+                <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1A1A1A]/80 drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)]">
                   BrowseBase
                 </h1>
-                <p className="text-[10px] sm:text-xs font-medium tracking-wide text-[#9A9A9A]/80 -mt-0.5 drop-shadow-[0_3px_3px_rgba(0,0,0,0.15)] drop-shadow-[0_6px_6px_rgba(0,0,0,0.1)]">
+                <p className="text-[10px] sm:text-xs font-medium tracking-wide text-[#9A9A9A]/70 -mt-0.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
                   {t('header.slogan')}
                 </p>
               </div>
             </Link>
           </div>
           
-          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
+          <div className="flex items-center gap-2 sm:gap-4 ml-auto">
             <CircleButton
               href="https://www.jimmy-blog.top/"
               variant="secondary"
               size="sm"
               title={t('header.blog')}
               onClick={playClickSound}
+              className="text-[10px] sm:text-xs"
             >
               {t('header.blog')}
             </CircleButton>
@@ -52,6 +54,7 @@ const Header: React.FC = () => {
               size="sm"
               title={t('header.openSource')}
               onClick={playClickSound}
+              className="text-[10px] sm:text-xs"
             >
               {t('header.openSource')}
             </CircleButton>
@@ -65,7 +68,7 @@ const Header: React.FC = () => {
               iconOnly
               title={i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
             >
-              <Globe size={18} />
+              <Globe size={16} />
             </CircleButton>
           </div>
         </div>
