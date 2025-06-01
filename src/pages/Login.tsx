@@ -130,11 +130,12 @@ const Login = () => {
         navigate('/admin', { replace: true });
         return;
       } else {
-        // Magic link 登录逻辑保持不变
+        // Magic link 登录逻辑
+        const currentOrigin = window.location.origin;
         const { error: magicLinkError } = await supabase.auth.signInWithOtp({
           email,
           options: {
-            emailRedirectTo: window.location.origin + '/admin'
+            emailRedirectTo: `${currentOrigin}/admin`
           }
         });
       
