@@ -5,6 +5,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [react()],
   optimizeDeps: {
     exclude: ['lucide-react'],
+    include: ['lodash']
   },
   build: {
     // Cloudflare Pages 优化
@@ -15,7 +16,8 @@ export default defineConfig(({ mode }) => ({
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
           ui: ['lucide-react'],
-          i18n: ['i18next', 'react-i18next']
+          i18n: ['i18next', 'react-i18next'],
+          utils: ['lodash']
         }
       }
     },

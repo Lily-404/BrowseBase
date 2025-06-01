@@ -3,7 +3,7 @@ import React from 'react';
 import { resourceService } from '../services/resourceService';
 import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 // 给定分类ID获取分类名称
 
 const Admin = () => {
