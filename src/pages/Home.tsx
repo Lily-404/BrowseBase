@@ -181,6 +181,7 @@ const [resources, setResources] = useState<Resource[]>([]);
                   onNextPage={handleNextPage}
                   onPrevPage={handlePrevPage}
                   totalPages={Math.ceil(totalCount / itemsPerPage)}
+                  totalCount={totalCount}
                 />
               )}
             </div>

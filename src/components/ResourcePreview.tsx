@@ -11,6 +11,8 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   onNextPage,
   onPrevPage,
   totalPages,
+  totalCount,
+  itemsPerPage,
   isLoading = false
 }) => {
   const { t } = useTranslation();
@@ -23,7 +25,10 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
     return (
       <div className="flex flex-col h-full">
         <div className="flex flex-row justify-between relative items-center gap-2 mb-3">
-          <h2 className="text-base uppercase text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-base uppercase text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
+            <span className="text-sm text-[#4D4D4D]/60">({totalCount})</span>
+          </div>
           <div className="flex flex-1 h-[1px] bg-foreground/8" />
         </div>
         <div className="flex flex-1 flex-col rounded-lg">
@@ -60,7 +65,10 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   return (
     <div className="flex flex-col h-full">
       <div className="flex flex-row justify-between relative items-center gap-2 mb-3">
-        <h2 className="text-base uppercase text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-base uppercase text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
+          <span className="text-sm text-[#4D4D4D]/60">({totalCount})</span>
+        </div>
         <div className="flex flex-1 h-[1px] bg-foreground/8" />
       </div>
       <div className="flex flex-col flex-1">

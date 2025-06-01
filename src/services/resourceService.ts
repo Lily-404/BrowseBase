@@ -103,7 +103,7 @@ export const resourceService = {
     }
   },
 
-  // 清除缓存
+  // 清除所有缓存
   clearCache() {
     searchCache.clear();
   },
