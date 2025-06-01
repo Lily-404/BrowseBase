@@ -5,6 +5,7 @@ import i18n from '../i18n/config';
 import { Link } from 'react-router-dom';
 import CircleButton from './ui/CircleButton';
 import { audioLoader } from '../utils/audioLoader';
+import { Button } from './ui/Button';
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
@@ -21,13 +22,17 @@ const Header: React.FC = () => {
 
   return (
     <header>
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
         <div className="flex justify-between items-center">
           <div className="flex flex-col">
             <Link to="/" className="flex items-center gap-2 sm:gap-3">
-              <img src="/logo.png" alt="BrowseBase Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
+              <Button
+                color="secondary"
+                className="w-8 h-8 sm:w-10 sm:h-10 p-0 flex items-center justify-center rounded-full"
+                onClick={playClickSound}
+              />
               <div className="flex flex-col">
-                <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1A1A1A]/80 drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)]">
+                <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-black drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)]">
                   BrowseBase
                 </h1>
                 <p className="text-[10px] sm:text-xs font-medium tracking-wide text-[#9A9A9A]/70 -mt-0.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)]">

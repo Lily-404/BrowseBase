@@ -12,13 +12,12 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   onPrevPage,
   totalPages,
   totalCount,
-  itemsPerPage,
   isLoading = false
 }) => {
   const { t } = useTranslation();
   
   const playClickSound = () => {
-    new Audio('/click.wav').play().catch(() => {});
+    new Audio('/to.wav').play().catch(() => {});
   };
   
   if (isLoading || !resources.length) {
@@ -27,7 +26,9 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         <div className="flex flex-row justify-between relative items-center gap-2 mb-3">
           <div className="flex items-center gap-2">
             <h2 className="text-base uppercase text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
-            <span className="text-sm text-[#4D4D4D]/60">({totalCount})</span>
+            <span className="text-sm text-[#4D4D4D]/60">
+              {t('resourcePreview.totalResources', { count: totalCount.toLocaleString() })}
+            </span>
           </div>
           <div className="flex flex-1 h-[1px] bg-foreground/8" />
         </div>
@@ -64,12 +65,16 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex flex-row justify-between relative items-center gap-2 mb-3">
-        <div className="flex items-center gap-2">
-          <h2 className="text-base uppercase text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
-          <span className="text-sm text-[#4D4D4D]/60">({totalCount})</span>
+      <div className="flex flex-row justify-between relative gap-2 mb-3">
+        <div className="flex items-end">
+          <h2 className="text-base font-medium text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
         </div>
-        <div className="flex flex-1 h-[1px] bg-foreground/8" />
+        <div className="flex items-end gap-2">
+          <span className="text-sm text-[#4D4D4D]/60">
+            {t('resourcePreview.totalResources', { count: totalCount })}
+          </span>
+          <div className="flex-1 h-[1px] bg-foreground/8" />
+        </div>
       </div>
       <div className="flex flex-col flex-1">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -98,12 +103,14 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
             </div>
           ))}
         </div>
-        <Footer 
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onNextPage={onNextPage}
-          onPrevPage={onPrevPage}
-        />
+        <div className="w-full">
+          <Footer 
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onNextPage={onNextPage}
+            onPrevPage={onPrevPage}
+          />
+        </div>
       </div>
     </div>
   );

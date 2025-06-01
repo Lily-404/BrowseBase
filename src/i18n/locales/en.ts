@@ -32,7 +32,8 @@ export default {
       title: 'Resources',
       noMatch: 'No matching resources found',
       updatedAt: 'Updated',
-      reviews: 'reviews'
+      reviews: 'reviews',
+      totalResources: '{{count, number}} resources'
     },
     navigation: {
       previous: 'Previous',

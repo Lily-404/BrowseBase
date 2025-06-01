@@ -32,7 +32,8 @@ export default {
       title: '资源',
       noMatch: '没有找到匹配的资源',
       updatedAt: '更新于',
-      reviews: '条评价'
+      reviews: '条评价',
+      totalResources: '共 {{count, number}} 个资源'
     },
     navigation: {
       previous: '上一页',

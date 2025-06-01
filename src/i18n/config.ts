@@ -21,7 +21,13 @@ i18n
       caches: ['localStorage']
     },
     interpolation: {
-      escapeValue: false
+      escapeValue: false,
+      format: (value, format) => {
+        if (format === 'number') {
+          return value.toString();
+        }
+        return value;
+      }
     }
   });
 
