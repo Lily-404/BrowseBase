@@ -4,6 +4,7 @@ import Footer from './Footer';
 import { useTranslation } from 'react-i18next';
 import { ResourcePreviewProps } from '../types/resourcePreview';
 import IconButton from './ui/IconButton';
+import { audioLoader } from '../utils/audioLoader';
 
 const ResourcePreview: React.FC<ResourcePreviewProps> = ({ 
   resources, 
@@ -17,7 +18,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   const { t } = useTranslation();
   
   const playClickSound = () => {
-    new Audio('/to.wav').play().catch(() => {});
+    audioLoader.playSound('/to.wav');
   };
   
   if (isLoading || !resources.length) {
@@ -27,7 +28,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
           <div className="flex items-center gap-2">
             <h2 className="text-base uppercase text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
             <span className="text-sm text-[#4D4D4D]/60">
-              {t('resourcePreview.totalResources', { count: totalCount.toLocaleString() })}
+              {t('resourcePreview.totalResources', { count: totalCount })}
             </span>
           </div>
           <div className="flex flex-1 h-[1px] bg-foreground/8" />

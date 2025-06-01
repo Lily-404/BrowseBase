@@ -1,13 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 import styles from './IconButton.module.css';
+import { audioLoader } from '../../utils/audioLoader';
 
-interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
+export interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children?: React.ReactNode;
+  className?: string;
   size?: 'sm' | 'md' | 'lg';
   href?: string;
-  disabled?: boolean;
-  onClick?: () => void;
   target?: string;
   rel?: string;
 }
@@ -31,8 +31,8 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
       if (onClick) {
         onClick();
       }
-      // Play click sound
-      new Audio('/click.mp3').play().catch(() => {});
+      // Play click sound using audioLoader
+      audioLoader.playSound('/click.mp3');
     };
 
     return (
