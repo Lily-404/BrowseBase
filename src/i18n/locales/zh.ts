@@ -20,7 +20,7 @@ export default {
       opensource: '开源'
     },
     filter: {
-      title: '筛选',
+      title: '合集',
       trending: '热门',
       newAdded: '最新',
       socialMedia: '社交媒体',

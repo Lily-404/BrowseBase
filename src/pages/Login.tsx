@@ -103,14 +103,16 @@ const Login = () => {
           throw new Error('您没有管理员权限');
         }
 
+        const currentOrigin = window.location.origin;
         // 使用邮箱登录方式创建 Supabase 会话，同时传递 Turnstile token
         const { error: signInError } = await supabase.auth.signInWithOtp({
           email,
           options: {
             shouldCreateUser: false,
             data: {
-              turnstile_token: turnstileToken // 将 token 传递给后端
-            }
+              turnstile_token: turnstileToken
+            },
+            emailRedirectTo: `${currentOrigin}/admin`
           }
         });
 
@@ -155,10 +157,11 @@ const Login = () => {
 
   async function handleGoogleLogin() {
     try {
+      const currentOrigin = window.location.origin;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/admin`,
+          redirectTo: `${currentOrigin}/admin`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent'
