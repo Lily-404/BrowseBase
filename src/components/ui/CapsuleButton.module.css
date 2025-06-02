@@ -19,6 +19,7 @@
   position: relative;
   white-space: nowrap;
   font-size: 14px;
+  margin: 4px 0;
 }
 
 .CapsuleButton[data-selected="true"] {
@@ -67,6 +68,7 @@
     black 98%,
     transparent 100%
   );
+  margin: -4px 0;
 }
 
 .CapsuleContainer::-webkit-scrollbar {
@@ -75,6 +77,9 @@
 
 .CapsuleWrapper {
   position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 4px 0;
 }
 
 /* 移除原来的渐变遮罩 */
