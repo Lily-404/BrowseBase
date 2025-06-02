@@ -32,6 +32,7 @@ const Login = () => {
   const [loginMethod, setLoginMethod] = useState<'password' | 'magic'>('password');
   const [turnstileToken, setTurnstileToken] = useState('');
   const [turnstileWidgetId, setTurnstileWidgetId] = useState<string>('');
+  const [isRetroTheme, setIsRetroTheme] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -178,28 +179,46 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-sm p-8 border border-gray-100">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-light text-gray-800 mb-2">管理员登录</h2>
-          <p className="text-gray-500 text-sm font-normal">请使用管理员账号登录</p>
+    <div className={`min-h-screen flex items-center justify-center ${isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-50'}`}>
+      <div className={`max-w-md w-full ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-white rounded-lg shadow-sm border border-gray-100'} p-8`}>
+        <div className="flex justify-between items-center mb-8">
+          <div className="text-center">
+            <h2 className={`text-2xl ${isRetroTheme ? 'font-mono' : 'font-light'} text-gray-800 mb-2`}>管理员登录</h2>
+            <p className={`text-gray-500 text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'}`}>请使用管理员账号登录</p>
+          </div>
+          <button
+            onClick={() => setIsRetroTheme(!isRetroTheme)}
+            className={`px-4 py-2 ${isRetroTheme ? 'bg-[#2c2c2c] border-2 border-[#2c2c2c]' : 'bg-gray-800 rounded-lg'} text-white hover:opacity-90 transition-all ${isRetroTheme ? 'font-mono' : ''}`}
+          >
+            {isRetroTheme ? '现代模式' : '复古模式'}
+          </button>
         </div>
         
         <div className="flex space-x-4 mb-6">
           <button
             onClick={() => setLoginMethod('password')}
-            className={`flex-1 py-2 px-4 text-sm font-normal rounded-lg transition-colors ${loginMethod === 'password'
-                ? 'bg-gray-800 text-white' // Selected state
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200' // Default state
+            className={`flex-1 py-2 px-4 text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} transition-colors ${
+              loginMethod === 'password'
+                ? isRetroTheme 
+                  ? 'bg-[#2c2c2c] text-white border-2 border-[#2c2c2c]' 
+                  : 'bg-gray-800 text-white rounded-lg'
+                : isRetroTheme
+                  ? 'bg-[#f0f0f0] text-gray-700 hover:bg-gray-200 border-2 border-[#2c2c2c]'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg'
             }`}
           >
             密码登录
           </button>
           <button
             onClick={() => setLoginMethod('magic')}
-            className={`flex-1 py-2 px-4 text-sm font-normal rounded-lg transition-colors ${loginMethod === 'magic'
-                ? 'bg-gray-800 text-white' // Selected state
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200' // Default state
+            className={`flex-1 py-2 px-4 text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} transition-colors ${
+              loginMethod === 'magic'
+                ? isRetroTheme 
+                  ? 'bg-[#2c2c2c] text-white border-2 border-[#2c2c2c]' 
+                  : 'bg-gray-800 text-white rounded-lg'
+                : isRetroTheme
+                  ? 'bg-[#f0f0f0] text-gray-700 hover:bg-gray-200 border-2 border-[#2c2c2c]'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg'
             }`}
           >
             邮箱链接登录
@@ -208,10 +227,15 @@ const Login = () => {
         
         {error && (
           <div 
-            className={`p-4 rounded-lg mb-6 flex items-center space-x-2 text-sm ${error.includes('已发送') 
-                ? 'bg-gray-100 text-gray-700 border border-gray-200' // Success-like style
-                : 'bg-gray-100 text-gray-700 border border-gray-200' // Error-like style (using grayscale)
-            }`}
+            className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-lg'} mb-6 flex items-center space-x-2 text-sm ${
+              error.includes('已发送') 
+                ? isRetroTheme 
+                  ? 'bg-[#f0f0f0] text-[#2c2c2c]' 
+                  : 'bg-gray-100 text-gray-700 border border-gray-200'
+                : isRetroTheme 
+                  ? 'bg-[#f0f0f0] text-[#2c2c2c]' 
+                  : 'bg-gray-100 text-gray-700 border border-gray-200'
+            } ${isRetroTheme ? 'font-mono' : ''}`}
           >
             <svg 
               className={`flex-shrink-0 w-5 h-5 mr-2 ${error.includes('已发送') ? 'text-gray-500' : 'text-gray-500'}`}
@@ -230,13 +254,13 @@ const Login = () => {
 
         <form onSubmit={handleLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-normal text-gray-700 mb-2">邮箱地址</label>
+            <label className={`block text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-700 mb-2`}>邮箱地址</label>
             <div className="relative">
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors bg-gray-50 text-gray-800"
+                className={`w-full px-4 py-3 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300'} transition-colors text-gray-800`}
                 placeholder="请输入管理员邮箱"
                 required
               />
@@ -245,7 +269,7 @@ const Login = () => {
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
-                strokeWidth={1.5} // Adjust stroke width
+                strokeWidth={1.5}
               >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
@@ -254,13 +278,13 @@ const Login = () => {
 
           {loginMethod === 'password' && (
             <div>
-              <label className="block text-sm font-normal text-gray-700 mb-2">密码</label>
+              <label className={`block text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-700 mb-2`}>密码</label>
               <div className="relative">
                 <input
                   type="password"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300 transition-colors bg-gray-50 text-gray-800"
+                  className={`w-full px-4 py-3 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 focus:border-gray-300'} transition-colors text-gray-800`}
                   placeholder="请输入密码"
                   required={loginMethod === 'password'}
                 />
@@ -282,8 +306,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-gray-800 text-white py-3 rounded-lg font-normal hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-300 focus:ring-offset-0 transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''
-            }`}
+            className={`w-full ${isRetroTheme ? 'bg-[#2c2c2c] border-2 border-[#2c2c2c]' : 'bg-gray-800 rounded-lg'} text-white py-3 ${isRetroTheme ? 'font-mono' : 'font-normal'} hover:opacity-90 focus:outline-none transition-colors ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {loading ? (
               <div className="flex items-center justify-center">
@@ -300,16 +323,16 @@ const Login = () => {
         <div className="mt-6">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className={`w-full ${isRetroTheme ? 'border-t-2 border-[#2c2c2c]' : 'border-t border-gray-200'}`}></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500 font-normal">或者</span>
+              <span className={`px-2 ${isRetroTheme ? 'bg-[#f0f0f0] text-[#2c2c2c] font-mono' : 'bg-white text-gray-500 font-normal'}`}>或者</span>
             </div>
           </div>
 
           <button
             onClick={handleGoogleLogin}
-            className="mt-4 w-full flex items-center justify-center px-4 py-3 border border-gray-200 rounded-lg shadow-sm bg-white text-sm font-normal text-gray-700 hover:bg-gray-50 transition-colors"
+            className={`mt-4 w-full flex items-center justify-center px-4 py-3 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'border border-gray-200 rounded-lg shadow-sm bg-white'} text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-700 hover:bg-gray-50 transition-colors`}
           >
             <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
               <path
