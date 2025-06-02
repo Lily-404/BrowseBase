@@ -1,8 +1,10 @@
 export default {
   translation: {
     header: {
-      slogan: '资源，自有分量',
+      slogan: '链接，自有分量',
       blog: '博客',
+      about: '关于',
+      language: '切换语言',
       openSource: '开源',
       switchToChinese: '中文',
       switchToEnglish: '英文'

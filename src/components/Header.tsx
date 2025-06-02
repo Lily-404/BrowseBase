@@ -53,16 +53,16 @@ const Header: React.FC = () => {
             >
               {t('header.blog')}
             </CircleButton>
-            <CircleButton
-              href="https://github.com/Lily-404/BrowseBase"
-              variant="secondary"
-              size="sm"
-              title={t('header.openSource')}
-              onClick={playClickSound}
-              className="text-[10px] sm:text-xs"
-            >
-              {t('header.openSource')}
-            </CircleButton>
+            <Link to="/about" onClick={playClickSound}>
+              <CircleButton
+                variant="secondary"
+                size="sm"
+                title={t('header.about')}
+                className="text-[10px] sm:text-xs"
+              >
+                {t('header.about')}
+              </CircleButton>
+            </Link>
             <CircleButton
               onClick={() => {
                 playClickSound();

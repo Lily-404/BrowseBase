@@ -41,25 +41,33 @@ const Login = () => {
     script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
     script.async = true;
     script.defer = true;
+    script.onload = () => {
+      console.log('Turnstile script loaded');
+      // Initialize Turnstile after script loads
+      if (window.turnstile) {
+        const widgetId = window.turnstile.render('#turnstile-container', {
+          sitekey: '0x4AAAAAABfm0rVoWSdH2Bpe',
+          callback: (token: string) => {
+            console.log('Turnstile token received:', token);
+            setTurnstileToken(token);
+          },
+          theme: 'light',
+          size: 'normal',
+          'refresh-expired': 'auto'
+        });
+        setTurnstileWidgetId(widgetId);
+      }
+    };
+    script.onerror = (error) => {
+      console.error('Failed to load Turnstile script:', error);
+    };
     document.head.appendChild(script);
 
     return () => {
-      document.head.removeChild(script);
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     };
-  }, []);
-
-  useEffect(() => {
-    // Initialize Turnstile after script loads
-    if (window.turnstile) {
-      const widgetId = window.turnstile.render('#turnstile-container', {
-        sitekey: '0x4AAAAAABfm0rVoWSdH2Bpe',
-        callback: (token: string) => {
-          console.log('Turnstile token received:', token);
-          setTurnstileToken(token);
-        },
-      });
-      setTurnstileWidgetId(widgetId);
-    }
   }, []);
 
   async function handleLogin(e: React.FormEvent) {

@@ -1,8 +1,10 @@
 export default {
   translation: {
     header: {
-      slogan: 'Find the best.',
+      slogan: 'Discover Quality Web Resources',
       blog: 'Blog',
+      about: 'About',
+      language: 'Switch Language',
       openSource: 'GitHub',
       switchToChinese: 'Chinese',
       switchToEnglish: 'English'

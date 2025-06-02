@@ -4,6 +4,7 @@ import { supabase } from './lib/supabase';
 import Home from './pages/Home';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
+import About from './pages/About';
 
 // 路由保护组件
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -104,6 +105,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<About />} />
         <Route 
           path="/admin" 
           element={
