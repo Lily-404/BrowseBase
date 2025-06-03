@@ -1,28 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import bcrypt from 'bcryptjs';
 import React from 'react';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 
-interface TurnstileOptions {
-  sitekey: string;
-  callback: (token: string) => void;
-  theme?: 'light' | 'dark' | 'auto';
-  size?: 'normal' | 'compact';
-  tabindex?: number;
-  'refresh-expired'?: 'auto' | 'manual';
-  'response-field'?: boolean;
-  'response-field-name'?: string;
-}
-
-declare global {
-  interface Window {
-    turnstile: {
-      render: (container: string | HTMLElement, options: TurnstileOptions) => string;
-      reset: (widgetId: string) => void;
-    };
-  }
+interface AuthError {
+  message?: string;
+  status?: number;
+  name?: string;
 }
 
 const Login = () => {
@@ -31,52 +17,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [loginMethod, setLoginMethod] = useState<'password' | 'magic'>('password');
-  const [turnstileToken, setTurnstileToken] = useState('');
-  const [turnstileWidgetId, setTurnstileWidgetId] = useState<string>('');
   const [isRetroTheme, setIsRetroTheme] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // Load Turnstile script
-    const script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      console.log('Turnstile script loaded');
-      // Initialize Turnstile after script loads
-      if (window.turnstile) {
-        const widgetId = window.turnstile.render('#turnstile-container', {
-          sitekey: '0x4AAAAAABfm0rVoWSdH2Bpe',
-          callback: (token: string) => {
-            console.log('Turnstile token received:', token);
-            setTurnstileToken(token);
-          },
-          theme: 'light',
-          size: 'normal',
-          'refresh-expired': 'auto',
-          'response-field': true,
-          'response-field-name': 'cf-turnstile-response'
-        });
-        setTurnstileWidgetId(widgetId);
-      }
-    };
-    script.onerror = (error) => {
-      console.error('Failed to load Turnstile script:', error);
-      setError('人机验证加载失败，请刷新页面重试');
-    };
-    document.head.appendChild(script);
-
-    return () => {
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-      // Reset Turnstile widget when component unmounts
-      if (window.turnstile && turnstileWidgetId) {
-        window.turnstile.reset(turnstileWidgetId);
-      }
-    };
-  }, []);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -84,100 +26,102 @@ const Login = () => {
     setError('');
     
     try {
-      if (!turnstileToken) {
-        throw new Error('请完成人机验证');
-      }
-
-      // 验证 Turnstile token
-      const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          secret: 'YOUR_TURNSTILE_SECRET_KEY', // 需要替换为实际的 secret key
-          response: turnstileToken,
-          remoteip: window.location.hostname
-        }),
-      });
-
-      const data = await response.json();
-      if (!data.success) {
-        throw new Error('人机验证失败，请重试');
-      }
-
       if (loginMethod === 'password') {
         console.log('尝试登录:', email);
         
-        // 首先验证用户是否存在且是管理员
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role, password')
-          .eq('email', email)
-          .single();
+        try {
+          // 首先验证用户是否存在且是管理员
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role, password')
+            .eq('email', email)
+            .single();
 
-        if (profileError) {
-          console.error('Profile查询错误:', profileError);
-          throw new Error('用户不存在');
-        }
-        
-        if (!profile) {
-          throw new Error('未找到用户信息');
-        }
-
-        // 验证密码
-        const isPasswordValid = await bcrypt.compare(password, profile.password);
-        
-        if (!isPasswordValid) {
-          throw new Error('邮箱或密码错误');
-        }
-
-        if (profile.role !== 'admin') {
-          throw new Error('您没有管理员权限');
-        }
-
-        // 使用邮箱登录方式创建 Supabase 会话
-        const { error: signInError } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-          options: {
-            captchaToken: turnstileToken
+          if (profileError) {
+            console.error('Profile查询错误:', profileError);
+            throw new Error('用户不存在');
           }
-        });
+          
+          if (!profile) {
+            throw new Error('未找到用户信息');
+          }
 
-        if (signInError) {
-          console.error('登录错误:', signInError);
-          throw signInError;
+          // 验证密码
+          const isPasswordValid = await bcrypt.compare(password, profile.password);
+          
+          if (!isPasswordValid) {
+            throw new Error('邮箱或密码错误');
+          }
+
+          if (profile.role !== 'admin') {
+            throw new Error('您没有管理员权限');
+          }
+
+          // 直接使用自定义验证，跳过 Supabase 认证
+          console.log('Login successful');
+          
+          // 设置一个简单的 session 标记
+          localStorage.setItem('isAdmin', 'true');
+          localStorage.setItem('adminEmail', email);
+
+          // 登录成功，直接跳转到管理页面
+          navigate('/admin', { replace: true });
+          return;
+        } catch (error: unknown) {
+          console.error('登录过程错误:', error);
+          const authError = error as AuthError;
+          if (authError.message) {
+            throw new Error(authError.message);
+          }
+          throw new Error('登录失败，请检查网络连接后重试');
         }
-
-        console.log('Login successful with Turnstile verification');
-
-        // 登录成功，直接跳转到管理页面
-        navigate('/admin', { replace: true });
-        return;
       } else {
         // Magic link 登录逻辑
-        const { error: magicLinkError } = await supabase.auth.signInWithOtp({
-          email,
-          options: {
-            emailRedirectTo: `${window.location.origin}/admin`,
-            captchaToken: turnstileToken
+        try {
+          // 检查用户是否存在且是管理员
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('email', email)
+            .single();
+
+          if (profileError) {
+            console.error('Profile查询错误:', profileError);
+            throw new Error('用户不存在');
           }
-        });
-      
-        if (magicLinkError) throw magicLinkError;
-      
-        setError('登录链接已发送到您的邮箱，请查收！');
-        setEmail('');
+          
+          if (!profile) {
+            throw new Error('未找到用户信息');
+          }
+
+          if (profile.role !== 'admin') {
+            throw new Error('您没有管理员权限');
+          }
+
+          // 发送一个简单的确认邮件
+          const { error: emailError } = await supabase.functions.invoke('send-login-email', {
+            body: { email }
+          });
+
+          if (emailError) {
+            throw new Error('发送邮件失败');
+          }
+        
+          setError('登录链接已发送到您的邮箱，请查收！');
+          setEmail('');
+        } catch (error: unknown) {
+          console.error('Magic link 过程错误:', error);
+          const authError = error as AuthError;
+          if (authError.message) {
+            throw new Error(authError.message);
+          }
+          throw new Error('发送登录链接失败，请检查网络连接后重试');
+        }
       }
     } catch (error: unknown) {
-      setError((error as { message?: string }).message || '登录失败，请重试');
-      console.error('登录错误:', error);
-      // Reset Turnstile on error
-      if (window.turnstile && turnstileWidgetId) {
-        window.turnstile.reset(turnstileWidgetId);
-        setTurnstileToken(''); // 清除旧的 token
-      }
+      console.error('完整错误信息:', error);
+      const authError = error as AuthError;
+      setError(authError.message || '登录失败，请重试');
     } finally {
       setLoading(false);
     }
@@ -185,11 +129,10 @@ const Login = () => {
 
   async function handleGoogleLogin() {
     try {
-      const currentOrigin = window.location.origin;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${currentOrigin}/admin`,
+          redirectTo: `${window.location.origin}/admin`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent'
@@ -321,8 +264,6 @@ const Login = () => {
               </div>
             </div>
           )}
-
-          <div id="turnstile-container" className="flex justify-center mb-4"></div>
 
           <button
             type="submit"

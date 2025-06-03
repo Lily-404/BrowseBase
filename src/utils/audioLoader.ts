@@ -9,7 +9,6 @@ class AudioLoader {
     '/click.wav',
     '/pressed.wav',
     '/to.wav',
-    '/click.mp3'
   ];
   private loadingPromises: Promise<void>[] = [];
 
