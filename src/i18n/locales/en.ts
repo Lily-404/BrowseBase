@@ -1,7 +1,7 @@
 export default {
   translation: {
     header: {
-      slogan: 'Discover Quality Web Resources',
+      slogan: 'Links, with weight',
       blog: 'Blog',
       about: 'About',
       language: 'Switch Language',

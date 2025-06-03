@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import bcrypt from 'bcryptjs';
 import React from 'react';
+import { ThemeToggle } from '../components/ui/ThemeToggle';
 
 interface TurnstileOptions {
   sitekey: string;
@@ -38,7 +39,7 @@ const Login = () => {
   useEffect(() => {
     // Load Turnstile script
     const script = document.createElement('script');
-    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
     script.async = true;
     script.defer = true;
     script.onload = () => {
@@ -53,19 +54,26 @@ const Login = () => {
           },
           theme: 'light',
           size: 'normal',
-          'refresh-expired': 'auto'
+          'refresh-expired': 'auto',
+          'response-field': true,
+          'response-field-name': 'cf-turnstile-response'
         });
         setTurnstileWidgetId(widgetId);
       }
     };
     script.onerror = (error) => {
       console.error('Failed to load Turnstile script:', error);
+      setError('人机验证加载失败，请刷新页面重试');
     };
     document.head.appendChild(script);
 
     return () => {
       if (script.parentNode) {
         script.parentNode.removeChild(script);
+      }
+      // Reset Turnstile widget when component unmounts
+      if (window.turnstile && turnstileWidgetId) {
+        window.turnstile.reset(turnstileWidgetId);
       }
     };
   }, []);
@@ -80,7 +88,23 @@ const Login = () => {
         throw new Error('请完成人机验证');
       }
 
-      console.log('Attempting login with Turnstile token:', turnstileToken);
+      // 验证 Turnstile token
+      const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          secret: 'YOUR_TURNSTILE_SECRET_KEY', // 需要替换为实际的 secret key
+          response: turnstileToken,
+          remoteip: window.location.hostname
+        }),
+      });
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error('人机验证失败，请重试');
+      }
 
       if (loginMethod === 'password') {
         console.log('尝试登录:', email);
@@ -112,16 +136,12 @@ const Login = () => {
           throw new Error('您没有管理员权限');
         }
 
-        const currentOrigin = window.location.origin;
-        // 使用邮箱登录方式创建 Supabase 会话，同时传递 Turnstile token
-        const { error: signInError } = await supabase.auth.signInWithOtp({
+        // 使用邮箱登录方式创建 Supabase 会话
+        const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
+          password,
           options: {
-            shouldCreateUser: false,
-            data: {
-              turnstile_token: turnstileToken
-            },
-            emailRedirectTo: `${currentOrigin}/admin`
+            captchaToken: turnstileToken
           }
         });
 
@@ -132,19 +152,16 @@ const Login = () => {
 
         console.log('Login successful with Turnstile verification');
 
-        // 等待会话创建完成
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
         // 登录成功，直接跳转到管理页面
         navigate('/admin', { replace: true });
         return;
       } else {
         // Magic link 登录逻辑
-        const currentOrigin = window.location.origin;
         const { error: magicLinkError } = await supabase.auth.signInWithOtp({
           email,
           options: {
-            emailRedirectTo: `${currentOrigin}/admin`
+            emailRedirectTo: `${window.location.origin}/admin`,
+            captchaToken: turnstileToken
           }
         });
       
@@ -159,6 +176,7 @@ const Login = () => {
       // Reset Turnstile on error
       if (window.turnstile && turnstileWidgetId) {
         window.turnstile.reset(turnstileWidgetId);
+        setTurnstileToken(''); // 清除旧的 token
       }
     } finally {
       setLoading(false);
@@ -194,12 +212,7 @@ const Login = () => {
             <h2 className={`text-2xl ${isRetroTheme ? 'font-mono' : 'font-light'} text-gray-800 mb-2`}>管理员登录</h2>
             <p className={`text-gray-500 text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'}`}>请使用管理员账号登录</p>
           </div>
-          <button
-            onClick={() => setIsRetroTheme(!isRetroTheme)}
-            className={`px-4 py-2 ${isRetroTheme ? 'bg-[#2c2c2c] border-2 border-[#2c2c2c]' : 'bg-gray-800 rounded-lg'} text-white hover:opacity-90 transition-all ${isRetroTheme ? 'font-mono' : ''}`}
-          >
-            {isRetroTheme ? '现代模式' : '复古模式'}
-          </button>
+          <ThemeToggle isRetroTheme={isRetroTheme} onToggle={() => setIsRetroTheme(!isRetroTheme)} />
         </div>
         
         <div className="flex space-x-4 mb-6">

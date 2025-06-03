@@ -4,6 +4,7 @@ import { resourceService } from '../services/resourceService';
 import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
 import { debounce } from 'lodash';
+import { ThemeToggle } from '../components/ui/ThemeToggle';
 // 给定分类ID获取分类名称
 
 // 自定义下拉选择组件
@@ -226,18 +227,13 @@ const Admin = () => {
   return (
     <div className={`min-h-screen ${isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-50'} p-6`}>
       <div className="max-w-7xl mx-auto">
-        {/* Theme Toggle Button */}
+        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h1 className={`text-2xl ${isRetroTheme ? 'font-mono' : 'font-light'} tracking-wide text-gray-800`}>
             BrowseBase
             <span className="text-gray-400 ml-2 text-sm font-normal">资源管理</span>
           </h1>
-          <button
-            onClick={() => setIsRetroTheme(!isRetroTheme)}
-            className={`px-4 py-2 ${isRetroTheme ? 'bg-[#2c2c2c] border-2 border-[#2c2c2c]' : 'bg-gray-800 rounded-lg'} text-white hover:opacity-90 transition-all ${isRetroTheme ? 'font-mono' : ''}`}
-          >
-            {isRetroTheme ? '现代模式' : '复古模式'}
-          </button>
+          <ThemeToggle isRetroTheme={isRetroTheme} onToggle={() => setIsRetroTheme(!isRetroTheme)} />
         </div>
         
         {/* 优化后的初始加载状态 */}
