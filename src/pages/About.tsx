@@ -1,13 +1,8 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
 import { audioLoader } from '../utils/audioLoader';
-import { aboutContent } from '../data/aboutContent';
 
 const About: React.FC = () => {
-  const { t } = useTranslation();
-
   const playClickSound = () => {
     audioLoader.playSound('/click.wav');
   };
@@ -17,44 +12,48 @@ const About: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
-          <Link to="/" className="flex items-center gap-2 sm:gap-3" onClick={playClickSound}>
-            <Button
-              color="secondary"
-              className="w-8 h-8 sm:w-10 sm:h-10 p-0 flex items-center justify-center rounded-full"
-              onClick={playClickSound}
-            />
-            <div className="flex flex-col">
-              <h1 className="text-lg sm:text-xl font-mono tracking-tight text-black drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)]">
-                BrowseBase
-              </h1>
-              <p className="text-[10px] sm:text-xs font-mono tracking-wide text-[#9A9A9A]/70 -mt-0.5 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)]">
-                {t('header.slogan')}
-              </p>
-            </div>
+          <Link 
+            to="/" 
+            onClick={playClickSound}
+            className="text-gray-600 hover:text-gray-800 font-mono text-sm transition-colors"
+          >
+            返回
           </Link>
         </div>
 
         {/* Main Content */}
         <div className="border-2 border-[#2c2c2c] bg-[#f0f0f0] p-6 sm:p-8">
-          <h2 className="text-2xl font-mono text-gray-800 mb-6">关于 BrowseBase</h2>
+          <h2 className="text-2xl font-mono text-gray-800 mb-6">关于</h2>
           
-          <div className="space-y-6">
-            {aboutContent.map((section, index) => (
-              <section key={index}>
-                <h3 className="text-lg font-mono text-gray-700 mb-3">{section.title}</h3>
-                {Array.isArray(section.content) ? (
-                  <ul className="list-disc list-inside space-y-2 text-gray-600 font-mono">
-                    {section.content.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-gray-600 font-mono leading-relaxed">
-                    {section.content}
-                  </p>
-                )}
-              </section>
-            ))}
+          <div className="space-y-8">
+            <section>
+              <h3 className="text-lg font-mono text-gray-700 mb-4">初衷</h3>
+              <div className="text-gray-600 font-mono leading-relaxed space-y-4">
+                <p>在信息过载的时代，算法决定你看到什么，热榜塑造你的兴趣。</p>
+                <p>我们被困在标签、点赞和推荐里，以为那是选择，其实只是圈养。<br />
+                资源唾手可得，却越来越难遇见真正惊喜的内容。</p>
+                <p>所以我建了这个站。</p>
+                <p>没有算法，没有商业推荐，没有千篇一律的"高效学习"。<br />
+                只有我亲自筛选的链接，凭喜好分类，凭心情编辑。</p>
+                <p>点开它们，像打开一个盲盒：你永远不知道会遇见什么。<br />
+                博主、知识、资源、有趣——这是我为自己，也为你准备的一点自由。</p>
+                <p>目标是1000个资源。还在路上，但每一个都值得你停留。</p>
+              </div>
+            </section>
+
+            <section>
+              <h3 className="text-lg font-mono text-gray-700 mb-4">更新</h3>
+              <p className="text-gray-600 font-mono leading-relaxed">
+                本站资源会不定期更新，如果遇到资源失效，请及时联系我。
+              </p>
+            </section>
+
+            <section>
+              <h3 className="text-lg font-mono text-gray-700 mb-4">联系</h3>
+              <p className="text-gray-600 font-mono leading-relaxed">
+                微信：OOIll0
+              </p>
+            </section>
           </div>
         </div>
       </div>
