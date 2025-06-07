@@ -1,3 +1,4 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase';
@@ -5,6 +6,10 @@ import Home from './pages/Home';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
 import About from './pages/About';
+import { initGA, trackPageView } from './utils/analytics';
+
+
+initGA('G-W0ZSDCR0XB');
 
 // 路由保护组件
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -15,8 +20,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     checkAuth();
+    // Track page view when location changes
+    trackPageView(location.pathname);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         checkAuth();
         // 清理 URL 中的认证参数

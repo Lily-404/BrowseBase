@@ -5,6 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { ResourcePreviewProps } from '../types/resourcePreview';
 import IconButton from './ui/IconButton';
 import { audioLoader } from '../utils/audioLoader';
+import { trackEvent } from '../utils/analytics';
+import { Resource } from '../types/resourcePreview';
 
 const ResourcePreview: React.FC<ResourcePreviewProps> = ({ 
   resources, 
@@ -18,7 +20,12 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   const { t } = useTranslation();
   
   const playClickSound = () => {
-    audioLoader.playSound('/to.wav');
+    audioLoader.playSound('/click.wav');
+  };
+  
+  const handleResourceClick = (resource: Resource) => {
+    playClickSound();
+    trackEvent('Resource', 'Click', resource.title);
   };
   
   if (isLoading || !resources.length) {
@@ -92,7 +99,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                   rel="noopener noreferrer"
                   size="sm"
                   title={t('resourcePreview.openLink')}
-                  onClick={playClickSound}
+                  onClick={() => handleResourceClick(resource)}
                 >
                   <ExternalLink size={16} className="text-gray-600" />
                 </IconButton>
