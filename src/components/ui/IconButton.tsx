@@ -32,7 +32,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         onClick();
       }
       // Play click sound using audioLoader
-      audioLoader.playSound('/click.mp3');
+      audioLoader.playSound('/click.wav');
     };
 
     return (

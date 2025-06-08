@@ -101,6 +101,12 @@ const [resources, setResources] = useState<Resource[]>([]);
       setCurrentPage(prev => prev - 1);
     }
   };
+
+  const handlePageChange = (page: number): void => {
+    if (page >= 1 && page <= Math.ceil(totalCount / itemsPerPage)) {
+      setCurrentPage(page);
+    }
+  };
   
   const handleSelectCategory = (categoryId: string): void => {
     setActiveFilter({ type: 'category', id: categoryId });
@@ -139,51 +145,17 @@ const [resources, setResources] = useState<Resource[]>([]);
             
             {/* Right section - Resource Preview */}
             <div className="w-full md:w-2/3">
-              {(isInitialLoading || isLoading) ? (
-                <div className="flex flex-col h-full">
-                  <div className="flex flex-row justify-between relative items-center gap-2 mb-3">
-                    <h2 className="text-base uppercase text-[#4D4D4D]">资源</h2>
-                    <div className="flex flex-1 h-[1px] bg-foreground/8" />
-                  </div>
-                  <div className="flex flex-1 flex-col rounded-lg">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                      {[...Array(8)].map((_, index) => (
-                        <div key={index} 
-                          className="bg-[#F1F1F1] rounded-lg p-4 animate-pulse
-                          shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)]"
-                          style={{ 
-                            '--animation-delay': `${index * 0.05}s`,
-                            animationDelay: 'var(--animation-delay)'
-                          } as React.CSSProperties}
-                        >
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="flex-1">
-                              <div className="h-6 bg-gray-200 rounded w-4/5"></div>
-                              <div className="h-4 bg-gray-200 rounded w-2/3 mt-2"></div>
-                            </div>
-                            <div className="w-7 h-7 bg-gray-200 rounded-lg ml-4 flex-shrink-0"></div>
-                          </div>
-                          <div className="space-y-2 mt-4">
-                            <div className="h-3 bg-gray-200 rounded w-full"></div>
-                            <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                            <div className="h-3 bg-gray-200 rounded w-4/6"></div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <ResourcePreview 
-                  resources={resources}
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                  onNextPage={handleNextPage}
-                  onPrevPage={handlePrevPage}
-                  totalPages={Math.ceil(totalCount / itemsPerPage)}
-                  totalCount={totalCount}
-                />
-              )}
+              <ResourcePreview 
+                resources={resources}
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                onNextPage={handleNextPage}
+                onPrevPage={handlePrevPage}
+                onPageChange={handlePageChange}
+                totalPages={Math.ceil(totalCount / itemsPerPage)}
+                totalCount={totalCount}
+                isLoading={isLoading || isInitialLoading}
+              />
             </div>
           </div>
         </div>

@@ -15,7 +15,8 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   onPrevPage,
   totalPages,
   totalCount,
-  isLoading = false
+  isLoading = false,
+  onPageChange
 }) => {
   const { t } = useTranslation();
   
@@ -26,6 +27,12 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   const handleResourceClick = (resource: Resource) => {
     playClickSound();
     trackEvent('Resource', 'Click', resource.title);
+  };
+
+  const handlePageChange = (page: number) => {
+    if (onPageChange) {
+      onPageChange(page);
+    }
   };
   
   if (isLoading || !resources.length) {
@@ -61,10 +68,22 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                 <div className="space-y-2 mt-4">
                   <div className="h-3 bg-gray-200 rounded w-full"></div>
                   <div className="h-3 bg-gray-200 rounded w-5/6"></div>
-                  <div className="h-3 bg-gray-200 rounded w-4/6"></div>
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+        <div className="pb-28">
+          <div className="fixed bottom-0 left-0 right-0 bg-[#E7E7E7] py-4 border-t border-[#D1D1D1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),inset_0_-1px_1px_rgba(0,0,0,0.1)]">
+            <div className="max-w-7xl mx-auto px-4">
+              <Footer 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onNextPage={onNextPage}
+                onPrevPage={onPrevPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -81,7 +100,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
           <span className="text-sm text-[#4D4D4D]/60">
             {t('resourcePreview.totalResources', { count: totalCount })}
           </span>
-          <div className="flex-1 h-[1px] bg-foreground/8" />
+          <div className="flex flex-1 h-[1px] bg-foreground/8" />
         </div>
       </div>
       <div className="flex flex-col flex-1">
@@ -111,13 +130,18 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
             </div>
           ))}
         </div>
-        <div className="w-full">
-          <Footer 
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onNextPage={onNextPage}
-            onPrevPage={onPrevPage}
-          />
+        <div className="pb-28">
+          <div className="fixed bottom-0 left-0 right-0 bg-[#E7E7E7] py-4 border-t border-[#D1D1D1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),inset_0_-1px_1px_rgba(0,0,0,0.1)]">
+            <div className="max-w-7xl mx-auto px-4">
+              <Footer 
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onNextPage={onNextPage}
+                onPrevPage={onPrevPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

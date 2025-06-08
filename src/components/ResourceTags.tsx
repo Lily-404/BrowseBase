@@ -65,8 +65,8 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
   );
 
   return (
-    <div className="mb-6">
-      <h2 className="text-base uppercase mb-3 text-[#4D4D4D]">{t('filter.title')}</h2>
+    <div className="mb-1 md:mb-6">
+      <h2 className="text-base uppercase font-medium mb-1 md:mb-3 text-[#4D4D4D]">{t('filter.title')}</h2>
       <div className="block md:hidden">
         {renderMobileView()}
       </div>
