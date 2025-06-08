@@ -1,7 +1,7 @@
 export default {
   translation: {
     header: {
-      slogan: '链接，自有分量',
+      slogan: '链接, 像盲盒一样简单',
       blog: '博客',
       about: '关于',
       language: '切换语言',
@@ -39,7 +39,12 @@ export default {
     },
     navigation: {
       previous: '上一页',
-      next: '下一页'
+      next: '下一页',
+      selectPage: '选择页码',
+      totalPages: '共 {{count}} 页',
+      minPage: '最小: 1',
+      maxPage: '最大: {{count}}',
+      goToPage: '跳转到该页'
     }
   }
 }; 

@@ -39,7 +39,12 @@ export default {
     },
     navigation: {
       previous: 'Previous',
-      next: 'Next'
+      next: 'Next',
+      selectPage: 'Select Page',
+      totalPages: '{{count}} pages',
+      minPage: 'Min: 1',
+      maxPage: 'Max: {{count}}',
+      goToPage: 'Go to Page'
     }
   }
 }; 

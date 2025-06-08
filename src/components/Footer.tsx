@@ -96,7 +96,7 @@ const Footer: React.FC<FooterProps> = ({
   
   return (
     <footer className="mt-0">
-      <div className="max-w-screen-xl mx-auto px-0 py-4 flex items-center justify-center gap-6">
+      <div className="max-w-screen-xl mx-auto px-0 py-2 sm:py-4 flex items-center justify-center gap-6">
         <Button
           color={currentPage <= 1 ? "neutral" : "tertiary"}
           onClick={handlePrevClick}
@@ -105,7 +105,7 @@ const Footer: React.FC<FooterProps> = ({
           }`}
         >
           <ChevronLeft size={20} />
-          <span className="text-sm font-medium ml-1">上一页</span>
+          <span className="text-sm font-medium ml-1">{t('navigation.previous')}</span>
         </Button>
 
         <div className="relative">
@@ -122,11 +122,11 @@ const Footer: React.FC<FooterProps> = ({
                 className="fixed inset-0 z-40"
                 onClick={() => setIsPageSelectorOpen(false)}
               />
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] p-4 w-56 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <div className="fixed sm:absolute sm:bottom-full sm:left-1/2 sm:-translate-x-1/2 sm:mb-3 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 sm:translate-y-0 bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] p-4 w-48 sm:w-56 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200">
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-sm font-medium text-gray-700">选择页码</div>
-                    <div className="text-xs text-gray-400">共 {totalPages} 页</div>
+                    <div className="text-sm font-medium text-gray-700">{t('navigation.selectPage')}</div>
+                    <div className="text-xs text-gray-400">{t('navigation.totalPages', { count: totalPages })}</div>
                   </div>
                   <div className="relative">
                     <input
@@ -136,7 +136,7 @@ const Footer: React.FC<FooterProps> = ({
                       value={selectedPage}
                       onChange={handlePageInputChange}
                       onKeyDown={handlePageInputKeyDown}
-                      className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-center text-lg font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 text-center text-base font-medium [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       autoFocus
                     />
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -144,15 +144,15 @@ const Footer: React.FC<FooterProps> = ({
                     </div>
                   </div>
                   <div className="flex justify-between text-xs text-gray-400">
-                    <span>最小: 1</span>
-                    <span>最大: {totalPages}</span>
+                    <span>{t('navigation.minPage')}</span>
+                    <span>{t('navigation.maxPage', { count: totalPages })}</span>
                   </div>
                   <Button
                     color="primary"
                     onClick={() => handlePageChange(selectedPage)}
                     className="w-full mt-1 h-10 text-sm font-medium"
                   >
-                    跳转到该页
+                    {t('navigation.goToPage')}
                   </Button>
                 </div>
               </div>
@@ -167,7 +167,7 @@ const Footer: React.FC<FooterProps> = ({
             currentPage >= totalPages ? 'opacity-50 hover:opacity-70' : ''
           }`}
         >
-          <span className="text-sm font-medium mr-1">下一页</span>
+          <span className="text-sm font-medium mr-1">{t('navigation.next')}</span>
           <ChevronRight size={20} />
         </Button>
       </div>

@@ -5,12 +5,10 @@ import i18n from '../i18n/config';
 import { Link } from 'react-router-dom';
 import CircleButton from './ui/CircleButton';
 import { audioLoader } from '../utils/audioLoader';
-import { Button } from './ui/Button';
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
   
-
   const toggleLanguage = () => {
     const newLang = i18n.language === 'en' ? 'zh' : 'en';
     i18n.changeLanguage(newLang);
@@ -26,11 +24,6 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center">
           <div className="flex flex-col">
             <Link to="/" className="flex items-center gap-2 sm:gap-3">
-              <Button
-                color="secondary"
-                className="w-8 h-8 sm:w-10 sm:h-10 p-0 flex items-center justify-center rounded-full"
-                onClick={playClickSound}
-              />
               <div className="flex flex-col">
                 <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-black drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)]">
                   BrowseBase

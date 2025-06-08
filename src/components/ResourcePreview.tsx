@@ -4,7 +4,6 @@ import Footer from './Footer';
 import { useTranslation } from 'react-i18next';
 import { ResourcePreviewProps } from '../types/resourcePreview';
 import IconButton from './ui/IconButton';
-import { audioLoader } from '../utils/audioLoader';
 import { trackEvent } from '../utils/analytics';
 import { Resource } from '../types/resourcePreview';
 
@@ -20,13 +19,8 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
 }) => {
   const { t } = useTranslation();
   
-  const playClickSound = () => {
-    audioLoader.playSound('/to.wav');
-  };
-  
   const handleResourceClick = (resource: Resource) => {
-    playClickSound();
-    trackEvent('Resource', 'Click', resource.title);
+    trackEvent('Resource', 'To', resource.title);
   };
 
   const handlePageChange = (page: number) => {
@@ -119,6 +113,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                   size="sm"
                   title={t('resourcePreview.openLink')}
                   onClick={() => handleResourceClick(resource)}
+                  className="w-12 sm:w-14 -mt-1"
                 >
                   <ExternalLink size={16} className="text-gray-600" />
                 </IconButton>
