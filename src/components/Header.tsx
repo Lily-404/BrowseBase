@@ -20,7 +20,7 @@ const Header: React.FC = () => {
 
   return (
     <header>
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
         <div className="flex justify-between items-center">
           <div className="flex flex-col">
             <Link to="/" className="flex items-center gap-2 sm:gap-3">

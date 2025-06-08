@@ -14,31 +14,34 @@ const [resources, setResources] = useState<Resource[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterState>({ type: 'category', id: 'all' });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [isPageSelectorOpen, setIsPageSelectorOpen] = useState(false);
   const itemsPerPage = 8;
   const [isLoading, setIsLoading] = useState(false);
   const [cachedData, setCachedData] = useState<Record<string, CachedData>>({});
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(0);
+  const [preloadedData, setPreloadedData] = useState<{ data: Resource[]; count: number }>({ data: [], count: 0 });
   
   // 预加载下一页数据
-  const preloadNextPage = async (nextPage: number) => {
-    const preloadCacheKey = `${nextPage}-${activeFilter.type}-${activeFilter.id}`;
+  const preloadNextPage = async () => {
+    if (currentPage >= totalPages) return;
     
-    if (!cachedData[preloadCacheKey]) {
-      try {
-        const { data, count } = await resourceService.fetchResources(
-          nextPage,
-          itemsPerPage,
-          {
-            category: activeFilter.type === 'category' ? activeFilter.id : undefined,
-            tag: activeFilter.type === 'tag' ? activeFilter.id : undefined
-          }
-        );
-        
-        setCachedData(prev => ({
-          ...prev,
-          [preloadCacheKey]: { data, count }
-        }));
-      } catch (error) {
+    try {
+      const nextPage = currentPage + 1;
+      const result = await resourceService.fetchResources(
+        activeFilter.type === 'category' ? activeFilter.id : undefined,
+        activeFilter.type === 'tag' ? [activeFilter.id] : [],
+        nextPage,
+        itemsPerPage
+      );
+      
+      // 只有当有数据时才预加载
+      if (result.data.length > 0) {
+        setPreloadedData(result);
+      }
+    } catch (error) {
+      // 只在非范围错误时记录错误
+      if (error.code !== 'PGRST103') {
         console.error('Error preloading next page:', error);
       }
     }
@@ -53,6 +56,7 @@ const [resources, setResources] = useState<Resource[]>([]);
       if (cachedData[cacheKey]) {
         setResources(cachedData[cacheKey].data);
         setTotalCount(cachedData[cacheKey].count);
+        setTotalPages(Math.ceil(cachedData[cacheKey].count / itemsPerPage));
         setIsLoading(false);
         return;
       }
@@ -62,12 +66,13 @@ const [resources, setResources] = useState<Resource[]>([]);
         itemsPerPage,
         {
           category: activeFilter.type === 'category' ? activeFilter.id : undefined,
-          tag: activeFilter.type === 'tag' ? activeFilter.id : undefined
+          tag: activeFilter.type === 'tag' ? [activeFilter.id] : undefined
         }
       );
       
       setResources(data || []);
       setTotalCount(count || 0);
+      setTotalPages(Math.ceil(count / itemsPerPage));
       
       setCachedData(prev => ({
         ...prev,
@@ -86,7 +91,7 @@ const [resources, setResources] = useState<Resource[]>([]);
     
     // 预加载下一页
     if (currentPage < Math.ceil(totalCount / itemsPerPage)) {
-      preloadNextPage(currentPage + 1);
+      preloadNextPage();
     }
   }, [currentPage, activeFilter, fetchResources, totalCount, preloadNextPage]);
 
@@ -131,6 +136,7 @@ const [resources, setResources] = useState<Resource[]>([]);
                   categories={[{ id: 'all', name: 'all' }, ...categories]}
                   selectedCategory={activeFilter.type === 'category' ? activeFilter.id : ''}
                   onSelectCategory={handleSelectCategory}
+                  isPageSelectorOpen={isPageSelectorOpen}
                 />
               </Suspense>
               
@@ -139,6 +145,7 @@ const [resources, setResources] = useState<Resource[]>([]);
                   tags={tags}
                   selectedTags={activeFilter.type === 'tag' ? [activeFilter.id] : []}
                   onSelectTag={handleSelectTag}
+                  isPageSelectorOpen={isPageSelectorOpen}
                 />
               </Suspense>
             </div>
@@ -152,6 +159,7 @@ const [resources, setResources] = useState<Resource[]>([]);
                 onNextPage={handleNextPage}
                 onPrevPage={handlePrevPage}
                 onPageChange={handlePageChange}
+                onPageSelectorOpenChange={setIsPageSelectorOpen}
                 totalPages={Math.ceil(totalCount / itemsPerPage)}
                 totalCount={totalCount}
                 isLoading={isLoading || isInitialLoading}

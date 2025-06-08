@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, ButtonLED } from './ui/Button';
 import { ResourceTagsProps } from '../types/resourceTags';
@@ -8,32 +8,26 @@ import { audioLoader } from '../utils/audioLoader';
 const ResourceTags: React.FC<ResourceTagsProps> = ({
   tags,
   selectedTags,
-  onSelectTag
+  onSelectTag,
+  isPageSelectorOpen
 }) => {
   const { t } = useTranslation();
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  // 预加载音频
-  useEffect(() => {
-    audioRef.current = new Audio('/pressed.wav');
-    audioRef.current.volume = 0.4;
-    // 预加载音频
-    audioRef.current.load();
-  }, []);
 
   const handleClick = (tagId: string) => {
-    audioLoader.playSound('/pressed.wav');
-    onSelectTag(tagId);
+    if (!isPageSelectorOpen) {
+      audioLoader.playSound('/pressed.wav');
+      onSelectTag(tagId);
+    }
   };
 
   // 移动端渲染
   const renderMobileView = () => (
-    <div className={s.CapsuleWrapper}>
+    <div className={`${s.CapsuleWrapper} ${isPageSelectorOpen ? 'opacity-50 blur-[2px] pointer-events-none' : ''}`}>
       <div className={s.CapsuleContainer}>
         {tags.map((tag) => (
           <button
             key={tag.id}
-            className={s.CapsuleButton}
+            className={`${s.CapsuleButton}`}
             data-selected={selectedTags.includes(tag.id)}
             onClick={() => handleClick(tag.id)}
           >
@@ -46,7 +40,7 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
 
   // 桌面端渲染
   const renderDesktopView = () => (
-    <div className="grid grid-cols-2 gap-4">
+    <div className={`grid grid-cols-2 gap-4 ${isPageSelectorOpen ? 'opacity-50 blur-[2px] pointer-events-none' : ''}`}>
       {tags.map((tag) => (
         <div key={tag.id} className="relative">
           <Button
@@ -65,8 +59,8 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
   );
 
   return (
-    <div className="mb-1 md:mb-6">
-      <h2 className="text-base uppercase font-medium mb-1 md:mb-3 text-[#4D4D4D]">{t('filter.title')}</h2>
+    <div className="mb-0 md:mb-6">
+      <h2 className="text-base uppercase font-medium mb-0 md:mb-3 text-[#4D4D4D]">{t('filter.title')}</h2>
       <div className="block md:hidden">
         {renderMobileView()}
       </div>

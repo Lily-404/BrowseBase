@@ -3,11 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { Button, ButtonLED } from './ui/Button';
 import { ResourceCategoriesProps } from '../types/resourceCategories';
 import s from './ui/CapsuleButton.module.css';
+import { audioLoader } from '../utils/audioLoader';
 
 const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   categories,
   selectedCategory,
-  onSelectCategory
+  onSelectCategory,
+  isPageSelectorOpen
 }) => {
   const { t } = useTranslation();
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -21,12 +23,8 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   }, []);
 
   const handleClick = (categoryId: string, disabled: boolean | undefined) => {
-    if (!disabled) {
-      if (audioRef.current) {
-        // 重置音频到开始位置
-        audioRef.current.currentTime = 0;
-        audioRef.current.play().catch(() => {});
-      }
+    if (!disabled && !isPageSelectorOpen) {
+      audioLoader.playSound('/pressed.wav');
       onSelectCategory(categoryId);
     }
   };
@@ -38,12 +36,12 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
 
   // 移动端渲染
   const renderMobileView = () => (
-    <div className={s.CapsuleWrapper}>
+    <div className={`${s.CapsuleWrapper} ${isPageSelectorOpen ? 'opacity-50 blur-[2px] pointer-events-none' : ''}`}>
       <div className={s.CapsuleContainer}>
         {allCategories.map((category) => (
           <button
             key={category.id}
-            className={s.CapsuleButton}
+            className={`${s.CapsuleButton}`}
             data-selected={selectedCategory === category.id}
             onClick={() => handleClick(category.id, category.disabled)}
             disabled={category.disabled}
@@ -57,7 +55,7 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
 
   // 桌面端渲染
   const renderDesktopView = () => (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 ${isPageSelectorOpen ? 'opacity-50 blur-[2px] pointer-events-none' : ''}`}>
       {allCategories.map((category) => (
         <div key={category.id} className="relative aspect-square">
           <Button
@@ -79,8 +77,8 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
   );
 
   return (
-    <div className="mb-1 md:mb-6">
-      <h2 className="text-base uppercase font-medium mb-1 md:mb-3 text-[#4D4D4D]">{t('category.title')}</h2>
+    <div className="mb-0 md:mb-6">
+      <h2 className="text-base uppercase font-medium mb-0 md:mb-3 text-[#4D4D4D]">{t('category.title')}</h2>
       <div className="block md:hidden">
         {renderMobileView()}
       </div>

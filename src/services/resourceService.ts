@@ -62,7 +62,19 @@ export const resourceService = {
       
       const { data, error, count } = await query;
       
-      if (error) throw error;
+      if (error) {
+        // 如果是范围不满足的错误，返回空数组
+        if (error.code === 'PGRST103') {
+          console.log('No more resources available');
+          return {
+            data: [],
+            count: 0,
+            currentPage: page,
+            totalPages: 0
+          };
+        }
+        throw error;
+      }
 
       // 缓存结果
       const result = {
@@ -81,7 +93,12 @@ export const resourceService = {
       return result;
     } catch (error) {
       console.error('Error fetching resources:', error);
-      throw error;
+      return {
+        data: [],
+        count: 0,
+        currentPage: page,
+        totalPages: 0
+      };
     }
   },
 

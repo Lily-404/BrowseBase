@@ -8,6 +8,7 @@
   -webkit-overflow-scrolling: touch;
   margin: -4px -16px;
   width: calc(100% + 32px);
+  touch-action: pan-x pan-y;
 }
 
 .CapsuleContainer::-webkit-scrollbar {
@@ -19,6 +20,7 @@
   width: 100%;
   overflow: visible;
   padding: 4px 0;
+  touch-action: pan-x pan-y;
 }
 
 /* 移除原来的渐变遮罩 */
@@ -41,12 +43,11 @@
   transition: all 0.15s ease;
   cursor: pointer;
   user-select: none;
-  position: relative;
   white-space: nowrap;
   font-size: 14px;
   margin: 4px 0;
   color: #333;
-  z-index: 1;
+  touch-action: manipulation;
 }
 
 .CapsuleButton[data-selected="true"] {
@@ -70,4 +71,11 @@
   box-shadow: 
     inset -0.5px -0.5px 2px rgba(255, 255, 255, 0.1),
     inset 0.5px 0.5px 2px rgba(0, 0, 0, 0.4);
+}
+
+/* 禁用状态样式 */
+.CapsuleButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  pointer-events: none;
 }

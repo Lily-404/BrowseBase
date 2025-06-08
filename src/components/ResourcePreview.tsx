@@ -2,24 +2,39 @@ import React from 'react';
 import { ExternalLink } from 'lucide-react';
 import Footer from './Footer';
 import { useTranslation } from 'react-i18next';
-import { ResourcePreviewProps } from '../types/resourcePreview';
 import IconButton from './ui/IconButton';
 import { trackEvent } from '../utils/analytics';
 import { Resource } from '../types/resourcePreview';
+import { audioLoader } from '../utils/audioLoader';
+
+interface ResourcePreviewProps {
+  resources: Resource[];
+  currentPage: number;
+  itemsPerPage: number;
+  onNextPage: () => void;
+  onPrevPage: () => void;
+  onPageChange?: (page: number) => void;
+  onPageSelectorOpenChange?: (isOpen: boolean) => void;
+  totalPages: number;
+  totalCount: number;
+  isLoading: boolean;
+}
 
 const ResourcePreview: React.FC<ResourcePreviewProps> = ({ 
   resources, 
   currentPage, 
   onNextPage,
   onPrevPage,
+  onPageChange,
+  onPageSelectorOpenChange,
   totalPages,
   totalCount,
-  isLoading = false,
-  onPageChange
+  isLoading = false
 }) => {
   const { t } = useTranslation();
   
   const handleResourceClick = (resource: Resource) => {
+    audioLoader.playSound('/to.wav');
     trackEvent('Resource', 'To', resource.title);
   };
 
@@ -76,6 +91,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                 onNextPage={onNextPage}
                 onPrevPage={onPrevPage}
                 onPageChange={handlePageChange}
+                onPageSelectorOpenChange={onPageSelectorOpenChange}
               />
             </div>
           </div>
@@ -98,14 +114,14 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         </div>
       </div>
       <div className="flex flex-col flex-1">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 sm:mb-8">
           {resources.map(resource => (
             <div key={resource.id} 
-              className="bg-[#F1F1F1] rounded-lg p-4
+              className="bg-[#F1F1F1] rounded-lg p-3 sm:p-4
               shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)]"
             >
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-base font-bold text-[#1A1A1A] line-clamp-1 flex-1 mr-4">{resource.title}</h3>
+              <div className="flex justify-between items-start mb-1.5 sm:mb-2">
+                <h3 className="text-base font-bold text-[#1A1A1A] line-clamp-1 flex-1 mr-10">{resource.title}</h3>
                 <IconButton
                   href={resource.url}
                   target="_blank"
@@ -113,7 +129,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                   size="sm"
                   title={t('resourcePreview.openLink')}
                   onClick={() => handleResourceClick(resource)}
-                  className="w-12 sm:w-14 -mt-1"
+                  className="w-12 sm:w-14 -mt-1 -mr-1"
                 >
                   <ExternalLink size={16} className="text-gray-600" />
                 </IconButton>
@@ -125,8 +141,8 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
             </div>
           ))}
         </div>
-        <div className="pb-28">
-          <div className="fixed bottom-0 left-0 right-0 bg-[#E7E7E7] py-4 border-t border-[#D1D1D1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),inset_0_-1px_1px_rgba(0,0,0,0.1)]">
+        <div className="pb-20 sm:pb-28">
+          <div className="fixed bottom-0 left-0 right-0 bg-[#E7E7E7] py-3 sm:py-4 border-t border-[#D1D1D1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),inset_0_-1px_1px_rgba(0,0,0,0.1)]">
             <div className="max-w-7xl mx-auto px-4">
               <Footer 
                 currentPage={currentPage}
@@ -134,6 +150,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                 onNextPage={onNextPage}
                 onPrevPage={onPrevPage}
                 onPageChange={handlePageChange}
+                onPageSelectorOpenChange={onPageSelectorOpenChange}
               />
             </div>
           </div>

@@ -2,13 +2,16 @@ import React from 'react';
 import clsx from 'clsx';
 import styles from './CircleButton.module.css';
 
-interface CircleButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface CircleButtonProps {
   children: React.ReactNode;
+  className?: string;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'primary' | 'secondary';
   href?: string;
   disabled?: boolean;
   iconOnly?: boolean;
+  onClick?: (e: React.MouseEvent) => void;
+  title?: string;
 }
 
 const CircleButton = React.forwardRef<HTMLButtonElement, CircleButtonProps>(
@@ -20,13 +23,31 @@ const CircleButton = React.forwardRef<HTMLButtonElement, CircleButtonProps>(
     href, 
     disabled,
     iconOnly,
+    onClick,
     ...props 
   }, ref) => {
-    const Component = href ? 'a' : 'button';
-    const elementProps = href ? { href } : {};
+    if (href) {
+      return (
+        <a
+          href={href}
+          className={clsx(
+            styles.CircleButton,
+            className
+          )}
+          data-variant={variant}
+          data-size={size}
+          data-disabled={disabled}
+          data-icon-only={iconOnly}
+          onClick={onClick}
+          {...props}
+        >
+          {children}
+        </a>
+      );
+    }
 
     return (
-      <Component
+      <button
         ref={ref}
         className={clsx(
           styles.CircleButton,
@@ -37,11 +58,11 @@ const CircleButton = React.forwardRef<HTMLButtonElement, CircleButtonProps>(
         data-disabled={disabled}
         data-icon-only={iconOnly}
         disabled={disabled}
-        {...elementProps}
+        onClick={onClick}
         {...props}
       >
         {children}
-      </Component>
+      </button>
     );
   }
 );

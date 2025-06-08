@@ -5,8 +5,10 @@ export interface Tag {
 }
 
 export interface ResourceTagsProps {
-  tags: Tag[];
+  tags: Array<{
+    id: string;
+  }>;
   selectedTags: string[];
   onSelectTag: (tagId: string) => void;
-  disabled?: boolean; 
+  isPageSelectorOpen?: boolean;
 }

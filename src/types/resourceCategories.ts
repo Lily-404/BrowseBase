@@ -6,7 +6,11 @@ export interface Category {
 }
 
 export interface ResourceCategoriesProps {
-  categories: Category[];
+  categories: Array<{
+    id: string;
+    disabled?: boolean;
+  }>;
   selectedCategory: string;
   onSelectCategory: (categoryId: string) => void;
+  isPageSelectorOpen?: boolean;
 }
