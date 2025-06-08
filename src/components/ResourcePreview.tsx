@@ -20,7 +20,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   const { t } = useTranslation();
   
   const playClickSound = () => {
-    audioLoader.playSound('/click.wav');
+    audioLoader.playSound('/to.wav');
   };
   
   const handleResourceClick = (resource: Resource) => {
@@ -105,7 +105,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                 </IconButton>
               </div>
 
-              <div className="text-sm leading-relaxed text-[#1A1A1A]/60 line-clamp-3">
+              <div className="text-sm leading-relaxed text-[#1A1A1A]/60 line-clamp-3 text-wrap-pretty">
                 {resource.description.split('\n\n')[0]}
               </div>
             </div>

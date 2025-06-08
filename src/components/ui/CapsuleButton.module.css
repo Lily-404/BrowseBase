@@ -1,3 +1,31 @@
+.CapsuleContainer {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 8px 16px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  margin: -4px -16px;
+  width: calc(100% + 32px);
+}
+
+.CapsuleContainer::-webkit-scrollbar {
+  display: none;
+}
+
+.CapsuleWrapper {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  padding: 4px 0;
+}
+
+/* 移除原来的渐变遮罩 */
+.CapsuleWrapper::after {
+  display: none;
+}
+
 .CapsuleButton {
   display: flex;
   align-items: center;
@@ -18,6 +46,7 @@
   font-size: 14px;
   margin: 4px 0;
   color: #333;
+  z-index: 1;
 }
 
 .CapsuleButton[data-selected="true"] {
@@ -41,43 +70,4 @@
   box-shadow: 
     inset -0.5px -0.5px 2px rgba(255, 255, 255, 0.1),
     inset 0.5px 0.5px 2px rgba(0, 0, 0, 0.4);
-}
-
-.CapsuleContainer {
-  display: flex;
-  overflow-x: auto;
-  gap: 8px;
-  padding: 8px 4px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(to right, 
-    transparent 0%,
-    black 3%,
-    black 97%,
-    transparent 100%
-  );
-  -webkit-mask-image: linear-gradient(to right, 
-    transparent 0%,
-    black 3%,
-    black 97%,
-    transparent 100%
-  );
-  margin: -4px 0;
-}
-
-.CapsuleContainer::-webkit-scrollbar {
-  display: none;
-}
-
-.CapsuleWrapper {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  padding: 4px 0;
-}
-
-/* 移除原来的渐变遮罩 */
-.CapsuleWrapper::after {
-  display: none;
 }
