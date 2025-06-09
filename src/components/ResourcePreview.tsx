@@ -1,8 +1,6 @@
 import React from 'react';
-import { ExternalLink } from 'lucide-react';
 import Footer from './Footer';
 import { useTranslation } from 'react-i18next';
-import IconButton from './ui/IconButton';
 import { trackEvent } from '../utils/analytics';
 import { Resource } from '../types/resourcePreview';
 import { audioLoader } from '../utils/audioLoader';
@@ -118,21 +116,15 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
           {resources.map(resource => (
             <div key={resource.id} 
               className="bg-[#F1F1F1] rounded-lg p-3 sm:p-4
-              shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)]"
+              shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)]
+              cursor-pointer hover:bg-[#E8E8E8] transition-colors"
+              onClick={() => {
+                handleResourceClick(resource);
+                window.open(resource.url, '_blank', 'noopener,noreferrer');
+              }}
             >
               <div className="flex justify-between items-start mb-1.5 sm:mb-2">
-                <h3 className="text-base font-bold text-[#1A1A1A] line-clamp-1 flex-1 mr-10">{resource.title}</h3>
-                <IconButton
-                  href={resource.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  size="sm"
-                  title={t('resourcePreview.openLink')}
-                  onClick={() => handleResourceClick(resource)}
-                  className="w-12 sm:w-14 -mt-1 -mr-1"
-                >
-                  <ExternalLink size={16} className="text-gray-600" />
-                </IconButton>
+                <h3 className="text-base font-bold text-[#1A1A1A] line-clamp-1">{resource.title}</h3>
               </div>
 
               <div className="text-sm leading-relaxed text-[#1A1A1A]/60 line-clamp-3 text-wrap-pretty">
