@@ -67,10 +67,9 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
               >
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex-1">
-                    <div className="h-6 bg-gray-200 rounded w-4/5"></div>
+                    <div className="h-6 bg-gray-200 rounded w-1/2"></div>
                     <div className="h-4 bg-gray-200 rounded w-2/3 mt-2"></div>
                   </div>
-                  <div className="w-7 h-7 bg-gray-200 rounded-lg ml-4 flex-shrink-0"></div>
                 </div>
                 <div className="space-y-2 mt-4">
                   <div className="h-3 bg-gray-200 rounded w-full"></div>
