@@ -23,7 +23,7 @@ const Home: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [isPageSelectorOpen, setIsPageSelectorOpen] = useState(false);
-  const itemsPerPage = 8;
+  const itemsPerPage = 12;
   const [isLoading, setIsLoading] = useState(false);
   const [cachedData, setCachedData] = useState<Record<string, CachedData>>({});
   const [isInitialLoading, setIsInitialLoading] = useState(true);
