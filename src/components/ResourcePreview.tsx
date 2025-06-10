@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, memo } from 'react';
+import React, { useEffect, useCallback, memo, useMemo } from 'react';
 import Footer from './Footer';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../utils/analytics';
@@ -58,7 +58,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
     }
   }, [onPageChange]);
   
-  const renderResources = useCallback(() => (
+  const renderResources = useMemo(() => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 sm:mb-8">
       {resources.map(resource => (
         <div key={resource.id} 
@@ -84,7 +84,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   ), [resources, handleResourceClick]);
   
   // 优化骨架屏渲染
-  const renderSkeleton = useCallback(() => (
+  const renderSkeleton = useMemo(() => (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
       {Array.from({ length: 12 }).map((_, index) => (
         <div key={index} 
@@ -112,7 +112,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   ), []);
   
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col min-h-0">
       <div className="flex flex-row justify-between relative gap-2 mb-3">
         <div className="flex items-end">
           <h2 className="text-base font-medium text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
@@ -124,21 +124,21 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
           <div className="flex flex-1 h-[1px] bg-foreground/8" />
         </div>
       </div>
-      <div className="flex flex-col flex-1">
-        <div className="relative">
-          {/* 骨架屏 */}
-          <div className={`absolute inset-0 transition-opacity duration-300 ease-in-out ${isLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
-            {renderSkeleton()}
-          </div>
-          
-          {/* 实际内容 */}
-          <div className={`transition-opacity duration-300 ease-in-out ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
-            {renderResources()}
-          </div>
+      <div className="flex flex-col flex-1 min-h-0">
+        <div className="relative flex-1">
+          {isLoading ? (
+            <div className="transition-opacity duration-300 ease-in-out">
+              {renderSkeleton}
+            </div>
+          ) : (
+            <div className="transition-opacity duration-300 ease-in-out">
+              {renderResources}
+            </div>
+          )}
         </div>
         
-        <div className="pb-20 sm:pb-28">
-          <div className="fixed bottom-0 left-0 right-0 bg-[#E7E7E7] py-3 sm:py-4 border-t border-[#D1D1D1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),inset_0_-1px_1px_rgba(0,0,0,0.1)]">
+        <div className="mt-auto">
+          <div className="fixed bottom-0 left-0 right-0 bg-[#E7E7E7] py-2 sm:py-4 border-t border-[#D1D1D1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),inset_0_-1px_1px_rgba(0,0,0,0.1)]">
             <div className="max-w-7xl mx-auto px-4">
               <Footer 
                 currentPage={currentPage}
@@ -150,6 +150,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
               />
             </div>
           </div>
+          <div className="h-14 sm:h-20" />
         </div>
       </div>
     </div>

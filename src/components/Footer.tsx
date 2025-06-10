@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from './ui/Button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { audioLoader } from '../utils/audioLoader';
+import { memo } from 'react';
 
 interface FooterProps {
   currentPage: number;
@@ -31,35 +32,35 @@ const Footer: React.FC<FooterProps> = ({
   }, [isPageSelectorOpen, onPageSelectorOpenChange]);
 
   // 包装点击事件处理函数
-  const handlePrevClick = () => {
+  const handlePrevClick = useCallback(() => {
     if (currentPage > 1) {
       audioLoader.playSound('/click.wav');
       onPrevPage();
     }
-  };
+  }, [currentPage, onPrevPage]);
 
-  const handleNextClick = () => {
+  const handleNextClick = useCallback(() => {
     if (currentPage < totalPages) {
       audioLoader.playSound('/click.wav');
       onNextPage();
     }
-  };
+  }, [currentPage, totalPages, onNextPage]);
 
-  const handlePageClick = () => {
+  const handlePageClick = useCallback(() => {
     audioLoader.playSound('/to.wav');
     setIsPageSelectorOpen(true);
-  };
+  }, []);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     if (page >= 1 && page <= totalPages && page !== currentPage) {
       audioLoader.playSound('/to.wav');
       setSelectedPage(page);
       onPageChange?.(page);
       setIsPageSelectorOpen(false);
     }
-  };
+  }, [currentPage, totalPages, onPageChange]);
 
-  const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePageInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === '') {
       setSelectedPage(1);
@@ -76,14 +77,14 @@ const Footer: React.FC<FooterProps> = ({
         setSelectedPage(numValue);
       }
     }
-  };
+  }, [totalPages]);
 
-  const handlePageInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handlePageInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       audioLoader.playSound('/click.wav');
       handlePageChange(selectedPage);
     }
-  };
+  }, [selectedPage, handlePageChange]);
   
   return (
     <footer className="mt-0">
@@ -169,4 +170,4 @@ const Footer: React.FC<FooterProps> = ({
   );
 };
 
-export default Footer;
+export default memo(Footer);

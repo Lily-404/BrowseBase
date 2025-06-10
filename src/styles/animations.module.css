@@ -1,0 +1,68 @@
+@keyframes neumorphicFade {
+  0% {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+  30% {
+    opacity: 0.95;
+    filter: brightness(1.05) blur(0.2px);
+  }
+  60% {
+    opacity: 0.85;
+    filter: brightness(1.1) blur(0.4px);
+  }
+  100% {
+    opacity: 0;
+    filter: brightness(1.15) blur(0.6px);
+  }
+}
+
+@keyframes ringExpand {
+  0% {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+  30% {
+    opacity: 0.95;
+    filter: brightness(1.05) blur(0.2px);
+  }
+  60% {
+    opacity: 0.85;
+    filter: brightness(1.1) blur(0.4px);
+  }
+  100% {
+    opacity: 0;
+    filter: brightness(1.15) blur(0.6px);
+  }
+}
+
+@keyframes textFade {
+  0% {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+  30% {
+    opacity: 0.95;
+    filter: brightness(1.05) blur(0.2px);
+  }
+  60% {
+    opacity: 0.85;
+    filter: brightness(1.1) blur(0.4px);
+  }
+  100% {
+    opacity: 0;
+    filter: brightness(1.15) blur(0.6px);
+  }
+}
+
+.fadeIn {
+  animation: neumorphicFade 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.ringExpand {
+  animation: ringExpand 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+}
+
+.textFade {
+  animation: textFade 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+} 
