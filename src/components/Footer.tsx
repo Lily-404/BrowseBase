@@ -115,7 +115,7 @@ const Footer: React.FC<FooterProps> = ({
                 style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
                 onClick={() => setIsPageSelectorOpen(false)}
               />
-              <div className="fixed sm:absolute top-1/2 sm:top-auto left-1/2 -translate-x-1/2 -translate-y-1/2 sm:translate-y-0 sm:bottom-full sm:mb-4 bg-[#F5F5F5] rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.05)] p-4 sm:p-6 w-[280px] sm:w-72 z-[10000] animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <div className="fixed sm:absolute top-[40%] sm:top-auto left-1/2 -translate-x-1/2 -translate-y-1/2 sm:translate-y-0 sm:bottom-full sm:mb-4 bg-[#F5F5F5] rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.05)] p-4 sm:p-6 w-[280px] sm:w-72 z-[10000] animate-in fade-in slide-in-from-bottom-2 duration-200">
                 <div className="flex flex-col gap-3 sm:gap-4">
                   <div className="flex items-center justify-between">
                     <div className="text-sm sm:text-base font-medium text-gray-700">{t('navigation.selectPage')}</div>
