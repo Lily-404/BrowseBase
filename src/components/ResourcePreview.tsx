@@ -150,7 +150,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
               />
             </div>
           </div>
-          <div className="h-14 sm:h-20" />
+          <div className="h-14 sm:h-28" />
         </div>
       </div>
     </div>
