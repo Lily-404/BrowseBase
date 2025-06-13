@@ -25,10 +25,11 @@ const AdSense: React.FC<AdSenseProps> = ({
     try {
       // 确保 adsbygoogle 已定义
       (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-      console.error('AdSense error:', err);
+      console.log('AdSense pushed:', { slot, format, responsive });
+    } catch (error) {
+      console.error('AdSense error:', error);
     }
-  }, []);
+  }, [slot, format, responsive]);
 
   return (
     <ins

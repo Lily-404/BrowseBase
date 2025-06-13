@@ -229,7 +229,8 @@ const Home: React.FC = () => {
                   />
                 </Suspense>
 
-                <div className="w-full mt-8 p-4 bg-white/50 rounded-lg border border-gray-100 shadow-sm">
+                {/* 桌面端广告 */}
+                <div className="hidden md:block w-full mt-8 p-4 bg-white/50 rounded-lg border border-gray-100 shadow-sm">
                   <AdSense
                     slot="ca-pub-2452864169775781"
                     format="auto"
@@ -240,18 +241,30 @@ const Home: React.FC = () => {
               </div>
               
               <div className="w-full md:w-2/3">
-                <ResourcePreview 
-                  resources={resources}
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                  onNextPage={handleNextPage}
-                  onPrevPage={handlePrevPage}
-                  onPageChange={handlePageChange}
-                  onPageSelectorOpenChange={setIsPageSelectorOpen}
-                  totalPages={totalPages}
-                  totalCount={totalCount}
-                  isLoading={isLoading && !isInitialLoading}
-                />
+                <div className="flex flex-col">
+                  <ResourcePreview 
+                    resources={resources}
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
+                    onNextPage={handleNextPage}
+                    onPrevPage={handlePrevPage}
+                    onPageChange={handlePageChange}
+                    onPageSelectorOpenChange={setIsPageSelectorOpen}
+                    totalPages={totalPages}
+                    totalCount={totalCount}
+                    isLoading={isLoading && !isInitialLoading}
+                  />
+
+                  {/* 移动端广告 - 直接跟在资源列表后面 */}
+                  <div className="md:hidden w-full mb-20 p-4 bg-white/50 rounded-lg border border-gray-100 shadow-sm -mt-4">
+                    <AdSense
+                      slot="ca-pub-2452864169775781"
+                      format="auto"
+                      responsive={true}
+                      style={{ display: 'block', minHeight: '250px' }}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
