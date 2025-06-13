@@ -1,0 +1,4 @@
+Contact: mailto:security@browsebase.com
+Expires: 2025-12-31T23:59:59.000Z
+Preferred-Languages: zh-CN, en
+Policy: https://browsebase.pages.dev/security-policy 

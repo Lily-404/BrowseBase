@@ -85,7 +85,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-lg flex flex-col items-center space-y-4">
+        <div className="bg-white/90 p-8 rounded-2xl shadow-lg flex flex-col items-center space-y-4">
           <div className="relative">
             <div className="w-16 h-16 border-4 border-blue-100 rounded-full"></div>
             <div className="absolute inset-0 w-16 h-16 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>

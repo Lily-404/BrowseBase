@@ -10,7 +10,7 @@ import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
 import { FilterState, CachedData } from '../types/home';
 import styles from '../styles/animations.module.css';
-import AdSense from '../components/AdSense';
+// import AdSense from '../components/AdSense';  // 暂时注释，等待 AdSense 审核通过后再启用
 
 // 添加错误类型定义
 interface PostgrestError {
@@ -229,7 +229,7 @@ const Home: React.FC = () => {
                   />
                 </Suspense>
 
-                {/* 桌面端广告 */}
+                {/* 桌面端广告 - 暂时注释，等待 AdSense 审核通过后再启用
                 <div className="hidden md:block w-full mt-8 p-4 bg-white/50 rounded-lg border border-gray-100 shadow-sm">
                   <AdSense
                     slot="ca-pub-2452864169775781"
@@ -238,6 +238,7 @@ const Home: React.FC = () => {
                     style={{ display: 'block', minHeight: '100px' }}
                   />
                 </div>
+                */}
               </div>
               
               <div className="w-full md:w-2/3">
@@ -255,7 +256,7 @@ const Home: React.FC = () => {
                     isLoading={isLoading && !isInitialLoading}
                   />
 
-                  {/* 移动端广告 - 直接跟在资源列表后面 */}
+                  {/* 移动端广告 - 暂时注释，等待 AdSense 审核通过后再启用
                   <div className="md:hidden w-full mb-20 p-4 bg-white/50 rounded-lg border border-gray-100 shadow-sm -mt-4">
                     <AdSense
                       slot="ca-pub-2452864169775781"
@@ -264,6 +265,7 @@ const Home: React.FC = () => {
                       style={{ display: 'block', minHeight: '250px' }}
                     />
                   </div>
+                  */}
                 </div>
               </div>
             </div>

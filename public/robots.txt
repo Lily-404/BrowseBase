@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://browsebase.com/sitemap.xml
+
+# Disallow admin and api routes
+Disallow: /admin/
+Disallow: /api/ 
