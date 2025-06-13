@@ -1,10 +1,10 @@
 import React from 'react';
-import { Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n/config';
 import { Link } from 'react-router-dom';
 import CircleButton from './ui/CircleButton';
 import { audioLoader } from '../utils/audioLoader';
+import Icon from './ui/Icon';
 
 const Header: React.FC = () => {
   const { t } = useTranslation();
@@ -66,7 +66,11 @@ const Header: React.FC = () => {
               iconOnly
               title={i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
             >
-              <Globe size={16} />
+              <Icon 
+                name="Globe" 
+                size={16} 
+                fallback={<span className="text-xs">🌐</span>}
+              />
             </CircleButton>
           </div>
         </div>

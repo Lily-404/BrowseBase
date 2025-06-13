@@ -4,8 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => ({
   plugins: [react()],
   optimizeDeps: {
-    exclude: ['lucide-react'],
-    include: ['lodash']
+    include: ['lodash', 'lucide-react']
   },
   build: {
     // Cloudflare Pages 优化

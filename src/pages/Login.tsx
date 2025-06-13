@@ -20,6 +20,18 @@ const Login = () => {
   const [isRetroTheme, setIsRetroTheme] = useState(false);
   const navigate = useNavigate();
 
+  const isGoogleOAuthSupported = () => {
+    // Check if the browser is Chrome or Edge
+    const isChrome = /Chrome/.test(navigator.userAgent) && !/Edge/.test(navigator.userAgent);
+    const isEdge = /Edge/.test(navigator.userAgent);
+    
+    // Check if content blockers are likely present
+    const hasContentBlocker = window.navigator.userAgent.includes('AdBlock') || 
+                             window.navigator.userAgent.includes('uBlock');
+    
+    return (isChrome || isEdge) && !hasContentBlocker;
+  };
+
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -128,6 +140,11 @@ const Login = () => {
   }
 
   async function handleGoogleLogin() {
+    if (!isGoogleOAuthSupported()) {
+      setError('您的浏览器可能不支持 Google 登录，请尝试使用 Chrome 或 Edge 浏览器，或暂时关闭内容拦截器。');
+      return;
+    }
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',

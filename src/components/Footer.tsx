@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from './ui/Button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { audioLoader } from '../utils/audioLoader';
 import { memo } from 'react';
+import Icon from './ui/Icon';
 
 interface FooterProps {
   currentPage: number;
@@ -26,12 +26,25 @@ const Footer: React.FC<FooterProps> = ({
   const [isPageSelectorOpen, setIsPageSelectorOpen] = useState(false);
   const [selectedPage, setSelectedPage] = useState(currentPage);
 
-  // 监听页码选择器状态变化
   useEffect(() => {
-    onPageSelectorOpenChange?.(isPageSelectorOpen);
-  }, [isPageSelectorOpen, onPageSelectorOpenChange]);
+    setSelectedPage(currentPage);
+  }, [currentPage]);
 
-  // 包装点击事件处理函数
+  const handlePageClick = useCallback(() => {
+    audioLoader.playSound('/click.wav');
+    setIsPageSelectorOpen(true);
+    onPageSelectorOpenChange?.(true);
+  }, [onPageSelectorOpenChange]);
+
+  const handlePageChange = useCallback((page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      audioLoader.playSound('/click.wav');
+      onPageChange?.(page);
+      setIsPageSelectorOpen(false);
+      onPageSelectorOpenChange?.(false);
+    }
+  }, [totalPages, onPageChange, onPageSelectorOpenChange]);
+
   const handlePrevClick = useCallback(() => {
     if (currentPage > 1) {
       audioLoader.playSound('/click.wav');
@@ -46,38 +59,12 @@ const Footer: React.FC<FooterProps> = ({
     }
   }, [currentPage, totalPages, onNextPage]);
 
-  const handlePageClick = useCallback(() => {
-    audioLoader.playSound('/to.wav');
-    setIsPageSelectorOpen(true);
-  }, []);
-
-  const handlePageChange = useCallback((page: number) => {
-    if (page >= 1 && page <= totalPages && page !== currentPage) {
-      audioLoader.playSound('/to.wav');
-      setSelectedPage(page);
-      onPageChange?.(page);
-      setIsPageSelectorOpen(false);
-    }
-  }, [currentPage, totalPages, onPageChange]);
-
   const handlePageInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === '') {
-      setSelectedPage(1);
-      return;
+    const value = parseInt(e.target.value);
+    if (!isNaN(value)) {
+      setSelectedPage(value);
     }
-    
-    const numValue = parseInt(value);
-    if (!isNaN(numValue)) {
-      if (numValue > totalPages) {
-        setSelectedPage(totalPages);
-      } else if (numValue < 1) {
-        setSelectedPage(1);
-      } else {
-        setSelectedPage(numValue);
-      }
-    }
-  }, [totalPages]);
+  }, []);
 
   const handlePageInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -96,7 +83,12 @@ const Footer: React.FC<FooterProps> = ({
             currentPage <= 1 ? 'opacity-50' : 'shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'
           }`}
         >
-          <ChevronLeft size={18} className="sm:w-5 sm:h-5" />
+          <Icon 
+            name="ChevronLeft" 
+            size={18} 
+            className="sm:w-5 sm:h-5"
+            fallback={<span className="text-sm">←</span>}
+          />
           <span className="text-sm font-medium ml-0.5 sm:ml-2">{t('navigation.previous')}</span>
         </Button>
 
@@ -163,7 +155,12 @@ const Footer: React.FC<FooterProps> = ({
           }`}
         >
           <span className="text-sm font-medium mr-0.5 sm:mr-2">{t('navigation.next')}</span>
-          <ChevronRight size={18} className="sm:w-5 sm:h-5" />
+          <Icon 
+            name="ChevronRight" 
+            size={18} 
+            className="sm:w-5 sm:h-5"
+            fallback={<span className="text-sm">→</span>}
+          />
         </Button>
       </div>
     </footer>
