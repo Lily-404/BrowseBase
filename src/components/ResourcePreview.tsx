@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, memo, useMemo } from 'react';
+import React, { useEffect, useCallback, memo, useMemo, useState, useRef } from 'react';
 import Footer from './Footer';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../utils/analytics';
@@ -30,7 +30,46 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   isLoading = false
 }) => {
   const { t } = useTranslation();
-  
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [tilt, setTilt] = useState<{[id: string]: {x: number, y: number}}>({});
+  const cardRefs = useRef<{[id: string]: HTMLDivElement | null}>({});
+  const defaultHeights = useRef<{[id: string]: number}>({});
+  const [hoverTranslateY, setHoverTranslateY] = useState(0);
+
+  // 记录每个卡片的默认高度
+  useEffect(() => {
+    resources.forEach(resource => {
+      const card = cardRefs.current[resource.id];
+      if (card && !defaultHeights.current[resource.id]) {
+        defaultHeights.current[resource.id] = card.getBoundingClientRect().height;
+      }
+    });
+  }, [resources]);
+
+  // 计算所有卡片的最大默认高度
+  const maxDefaultHeight = useMemo(() => {
+    const heights = Object.values(defaultHeights.current);
+    return heights.length > 0 ? Math.max(...heights) : undefined;
+  }, [resources, defaultHeights.current]);
+
+  useEffect(() => {
+    if (hoveredId && cardRefs.current[hoveredId]) {
+      const card = cardRefs.current[hoveredId];
+      if (!card) return;
+      setTimeout(() => {
+        const rect = card.getBoundingClientRect();
+        const overBottom = rect.bottom - window.innerHeight;
+        if (overBottom > 0) {
+          setHoverTranslateY(-overBottom - 16);
+        } else {
+          setHoverTranslateY(0);
+        }
+      }, 0);
+    } else {
+      setHoverTranslateY(0);
+    }
+  }, [hoveredId]);
+
   useEffect(() => {
     // 确保音效文件在组件加载时就开始预加载
     audioLoader.waitForLoad().catch(error => {
@@ -58,30 +97,143 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
     }
   }, [onPageChange]);
   
-  const renderResources = useMemo(() => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 sm:mb-8">
-      {resources.map(resource => (
-        <div key={resource.id} 
-          className="bg-[#F1F1F1] rounded-lg p-3 sm:p-4
-          shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)]
-          cursor-pointer hover:bg-[#E8E8E8] transition-colors duration-300
-          flex flex-col group"
-          onClick={() => {
-            handleResourceClick(resource);
-            window.open(resource.url, '_blank', 'noopener,noreferrer');
-          }}
-        >
-          <div className="flex justify-between items-start mb-1.5 sm:mb-2">
-            <h3 className="text-base font-bold text-[#1A1A1A] line-clamp-2 group-hover:line-clamp-none transition-all duration-300 ease-in-out">{resource.title}</h3>
-          </div>
+  // 判断是否为移动端（动态监听）
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth < 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+  });
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
+    };
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
-          <div className="text-sm leading-relaxed text-[#1A1A1A]/60 line-clamp-4 group-hover:line-clamp-none transition-all duration-300 ease-in-out">
-            {resource.description.split('\n\n')[0]}
+  const renderResources = useMemo(() => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 sm:mb-8 relative">
+      {resources.map(resource => {
+        if (isMobile) {
+          // 移动端：无hover/3D/放大，内容全展开
+          return (
+            <div key={resource.id} className="relative w-full h-full">
+              <div
+                className="relative z-0 h-full bg-[#F1F1F1] rounded-lg p-3 sm:p-4 shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)] cursor-pointer flex flex-col group transition-all duration-300"
+                onClick={() => {
+                  handleResourceClick(resource);
+                  window.open(resource.url, '_blank', 'noopener,noreferrer');
+                }}
+              >
+                <div className="flex justify-between items-start mb-1.5 sm:mb-2">
+                  <h3 className="text-base font-bold text-[#1A1A1A] transition-all duration-300 ease-in-out line-clamp-none">{resource.title}</h3>
+                </div>
+                <div className="text-sm leading-relaxed text-[#1A1A1A]/60 transition-all duration-300 ease-in-out line-clamp-none">
+                  {resource.description.split('\n\n')[0]}
+                </div>
+              </div>
+            </div>
+          );
+        }
+        // ...PC端原有交互...
+        const isHovered = hoveredId === resource.id;
+        const rotateX = isHovered && tilt[resource.id] ? tilt[resource.id].x : 0;
+        const rotateY = isHovered && tilt[resource.id] ? tilt[resource.id].y : 0;
+        // 动态高光和阴影方向
+        let dynamicBoxShadow = undefined;
+        if (isHovered) {
+          const highlightX = -rotateY * 2;
+          const highlightY = -rotateX * 2;
+          const shadowX = rotateY * 2;
+          const shadowY = rotateX * 2;
+          dynamicBoxShadow = `
+            ${shadowX}px ${shadowY}px 40px 0 rgba(0,0,0,0.28),
+            inset ${highlightX}px ${highlightY}px 28px rgba(255,255,255,0.95)
+          `;
+        }
+        let transformOrigin = 'center center';
+        if (isHovered && cardRefs.current[resource.id]) {
+          const card = cardRefs.current[resource.id];
+          if (card) {
+            const rect = card.getBoundingClientRect();
+            if (rect.bottom > window.innerHeight - 40) {
+              transformOrigin = 'center bottom';
+            }
+          }
+        }
+        return (
+          <div key={resource.id} className="relative w-full h-full">
+            <div
+              ref={el => { cardRefs.current[resource.id] = el; }}
+              className={`
+                ${isHovered
+                  ? 'absolute z-20 border-2 border-[#F9FAFB] scale-110 -translate-y-1'
+                  : 'relative z-0 h-full border border-[#E5E7EB] shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'}
+                top-0 left-0 w-full
+                rounded-lg p-3 sm:p-4
+                
+                bg-[#F1F1F1]
+                cursor-pointer flex flex-col group transition-all duration-300
+                duration-1000
+              `}
+              style={{
+                transition: 'transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 1s cubic-bezier(.22,1,.36,1)',
+                height: isHovered ? 'auto' : undefined,
+                minHeight: maxDefaultHeight ? `${maxDefaultHeight}px` : undefined,
+                maxHeight: isHovered ? '80vh' : undefined,
+                overflowY: isHovered ? 'auto' : undefined,
+                transform: isHovered
+                  ? `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.10) translateY(${hoverTranslateY}px)`
+                  : undefined,
+                boxShadow: isHovered
+                  ? dynamicBoxShadow
+                  : `inset -1px -1px 2px rgba(255,255,255,0.9), inset 1px 1px 2px rgba(0,0,0,0.1)`,
+                transformOrigin,
+              }}
+              onMouseEnter={() => setHoveredId(resource.id)}
+              onMouseLeave={() => {
+                setHoveredId(null);
+                setTilt(prev => ({ ...prev, [resource.id]: { x: 0, y: 0 } }));
+              }}
+              onMouseMove={e => {
+                const card = cardRefs.current[resource.id];
+                if (!card) return;
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const px = x / rect.width;
+                const py = y / rect.height;
+                const maxTilt = 6;
+                const rotateY = (px - 0.5) * 2 * maxTilt;
+                const rotateX = -(py - 0.5) * 2 * maxTilt;
+                setTilt(prev => ({ ...prev, [resource.id]: { x: rotateX, y: rotateY } }));
+              }}
+              onClick={() => {
+                handleResourceClick(resource);
+                window.open(resource.url, '_blank', 'noopener,noreferrer');
+              }}
+            >
+              <div className="flex justify-between items-start mb-1.5 sm:mb-2">
+                <h3 className={`text-base font-bold text-[#1A1A1A] transition-all duration-300 ease-in-out ${isHovered ? 'line-clamp-none' : 'line-clamp-2'}`}>{resource.title}</h3>
+              </div>
+              <div
+                className={`
+                  text-sm leading-relaxed text-[#1A1A1A]/60
+                  transition-[max-height] duration-700 ease-[cubic-bezier(.22,1,.36,1)]
+                  overflow-hidden
+                  ${isHovered ? 'line-clamp-none' : 'line-clamp-4'}
+                `}
+                style={{
+                  maxHeight: isHovered ? '600px' : '96px',
+                }}
+              >
+                {resource.description.split('\n\n')[0]}
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
-  ), [resources, handleResourceClick]);
+  ), [resources, handleResourceClick, hoveredId, tilt, hoverTranslateY, defaultHeights, isMobile, maxDefaultHeight]);
   
   // 优化骨架屏渲染
   const renderSkeleton = useMemo(() => (

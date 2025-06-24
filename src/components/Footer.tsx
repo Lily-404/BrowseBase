@@ -24,25 +24,29 @@ const Footer: React.FC<FooterProps> = ({
 }) => {
   const { t } = useTranslation();
   const [isPageSelectorOpen, setIsPageSelectorOpen] = useState(false);
-  const [selectedPage, setSelectedPage] = useState(currentPage);
+  const [selectedPage, setSelectedPage] = useState<number | ''>(currentPage);
 
   useEffect(() => {
     setSelectedPage(currentPage);
   }, [currentPage]);
 
   const handlePageClick = useCallback(() => {
-    audioLoader.playSound('/click.wav');
+    audioLoader.playSound('/to.wav');
     setIsPageSelectorOpen(true);
     onPageSelectorOpenChange?.(true);
   }, [onPageSelectorOpenChange]);
 
-  const handlePageChange = useCallback((page: number) => {
-    if (page >= 1 && page <= totalPages) {
-      audioLoader.playSound('/click.wav');
-      onPageChange?.(page);
-      setIsPageSelectorOpen(false);
-      onPageSelectorOpenChange?.(false);
+  const handlePageChange = useCallback((page: number | '') => {
+    let targetPage = 1;
+    if (typeof page === 'number' && !isNaN(page)) {
+      if (page < 1) targetPage = 1;
+      else if (page > totalPages) targetPage = totalPages;
+      else targetPage = page;
     }
+    audioLoader.playSound('/to.wav');
+    onPageChange?.(targetPage);
+    setIsPageSelectorOpen(false);
+    onPageSelectorOpenChange?.(false);
   }, [totalPages, onPageChange, onPageSelectorOpenChange]);
 
   const handlePrevClick = useCallback(() => {
@@ -60,15 +64,19 @@ const Footer: React.FC<FooterProps> = ({
   }, [currentPage, totalPages, onNextPage]);
 
   const handlePageInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (!isNaN(value)) {
-      setSelectedPage(value);
+    const val = e.target.value;
+    if (val === '') {
+      setSelectedPage('');
+    } else {
+      const value = parseInt(val);
+      if (!isNaN(value)) {
+        setSelectedPage(value);
+      }
     }
   }, []);
 
   const handlePageInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      audioLoader.playSound('/click.wav');
       handlePageChange(selectedPage);
     }
   }, [selectedPage, handlePageChange]);
