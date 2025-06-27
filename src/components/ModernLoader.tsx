@@ -124,10 +124,39 @@ const ModernLoader: React.FC<ModernLoaderProps> = ({
         >
           <div className="w-1.5 h-16 bg-gradient-to-b from-[#888] to-[#ccc] rounded-full shadow-lg origin-bottom" style={{ marginTop: '18px' }} />
           <div
-            className={`absolute top-6 left-1/2 -translate-x-1/2 w-5 h-5 bg-gradient-to-br from-[#fff] to-[#bbb] rounded-full shadow-md border border-[#e0e0e0] transition-all duration-200 ${specialEffect ? 'scale-125 ring-4 ring-yellow-200/60' : ''}`}
-            style={{ boxShadow: specialEffect ? '0 0 16px 6px #ffe066' : undefined }}
+            className={`absolute top-6 left-1/2 -translate-x-1/2 w-5 h-5 transition-all duration-200 ${specialEffect ? 'scale-125 ring-4 ring-yellow-200/60' : ''}`}
+            style={{ zIndex: 10, boxShadow: specialEffect ? '0 0 16px 6px #ffe066' : undefined }}
           >
-            <div className="w-2.5 h-2.5 rounded-full bg-white/80 absolute left-1.5 top-1.5" />
+            {/* 更精致的多层SVG圆形装饰 */}
+            <svg width="100%" height="100%" viewBox="0 0 40 40">
+              {/* 外圈金属边 */}
+              <circle cx="20" cy="20" r="19" fill="url(#metal-outer)" stroke="#e0e0e0" strokeWidth="1.5" />
+              {/* 金属渐变 */}
+              <defs>
+                <radialGradient id="metal-outer" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#fff" stopOpacity="0.9" />
+                  <stop offset="60%" stopColor="#e0e0e0" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#bdbdbd" stopOpacity="1" />
+                </radialGradient>
+                <radialGradient id="metal-inner" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#fff" stopOpacity="0.8" />
+                  <stop offset="80%" stopColor="#d1d1d1" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#b0b0b0" stopOpacity="1" />
+                </radialGradient>
+                <radialGradient id="highlight" cx="30%" cy="30%" r="60%">
+                  <stop offset="0%" stopColor="#fff" stopOpacity="0.7" />
+                  <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+              {/* 内圈金属 */}
+              <circle cx="20" cy="20" r="13" fill="url(#metal-inner)" />
+              {/* 内圈玻璃高光 */}
+              <ellipse cx="16" cy="15" rx="6" ry="2.5" fill="url(#highlight)" />
+              {/* 中心小圆 */}
+              <circle cx="20" cy="20" r="6" fill="#fff" fillOpacity="0.85" stroke="#e0e0e0" strokeWidth="0.7" />
+              {/* 中心阴影 */}
+              <ellipse cx="22" cy="23" rx="3.5" ry="1.2" fill="#bbb" fillOpacity="0.18" />
+            </svg>
           </div>
         </div>
         {/* 更精致的中心按钮 */}
