@@ -47,33 +47,36 @@ class AudioLoader {
   }
 
   private async preloadAudios() {
-    const loadPromises = this.audioFiles.map(file => {
-      return new Promise<void>((resolve) => {
+    const loadAudio = async (file: string, retry = 2): Promise<void> => {
+      return new Promise((resolve) => {
         const audio = new Audio();
         audio.volume = this.volume;
         audio.preload = 'auto';
-        
-        audio.addEventListener('canplaythrough', () => {
+
+        const onLoad = () => {
           this.audioCache[file].loaded = true;
           resolve();
-        }, { once: true });
-        
-        audio.addEventListener('error', (error) => {
-          console.warn(`Failed to load audio: ${file}`, error);
-          this.audioCache[file].error = true;
-          resolve();
-        }, { once: true });
+        };
+        const onError = async () => {
+          if (retry > 0) {
+            // 重试
+            await loadAudio(file, retry - 1);
+          } else {
+            this.audioCache[file].error = true;
+            resolve();
+          }
+        };
+
+        audio.addEventListener('canplaythrough', onLoad, { once: true });
+        audio.addEventListener('error', onError, { once: true });
 
         audio.src = file;
         audio.load();
-        this.audioCache[file] = {
-          audio,
-          loaded: false,
-          error: false
-        };
+        this.audioCache[file] = { audio, loaded: false, error: false };
       });
-    });
+    };
 
+    const loadPromises = this.audioFiles.map(file => loadAudio(file));
     this.loadingPromises = loadPromises;
     await Promise.all(loadPromises);
   }
@@ -134,6 +137,42 @@ class AudioLoader {
     const total = this.audioFiles.length;
     const loaded = Object.values(this.audioCache).filter(cache => cache.loaded).length;
     return total > 0 ? loaded / total : 0;
+  }
+
+  // 懒加载音效
+  public async loadAudioOnDemand(soundFile: string) {
+    if (!this.audioCache[soundFile]) {
+      await this.preloadSingleAudio(soundFile);
+    }
+  }
+
+  // 新增：单个音效预加载
+  private async preloadSingleAudio(file: string, retry = 2): Promise<void> {
+    return new Promise((resolve) => {
+      const audio = new Audio();
+      audio.volume = this.volume;
+      audio.preload = 'auto';
+
+      const onLoad = () => {
+        this.audioCache[file].loaded = true;
+        resolve();
+      };
+      const onError = async () => {
+        if (retry > 0) {
+          await this.preloadSingleAudio(file, retry - 1);
+        } else {
+          this.audioCache[file].error = true;
+          resolve();
+        }
+      };
+
+      audio.addEventListener('canplaythrough', onLoad, { once: true });
+      audio.addEventListener('error', onError, { once: true });
+
+      audio.src = file;
+      audio.load();
+      this.audioCache[file] = { audio, loaded: false, error: false };
+    });
   }
 }
 
