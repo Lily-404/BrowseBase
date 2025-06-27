@@ -51,6 +51,13 @@ const About: React.FC = () => {
             </section>
 
             <section>
+              <h3 className="text-lg font-mono text-gray-700 mb-4">开源</h3>
+              <p className="text-gray-600 font-mono leading-relaxed">
+                链接：https://github.com/Lily-404/BrowseBase
+              </p>
+            </section>
+
+            <section>
               <h3 className="text-lg font-mono text-gray-700 mb-4">联系</h3>
               <p className="text-gray-600 font-mono leading-relaxed">
                 微信：OOIll0
