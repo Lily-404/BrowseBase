@@ -364,7 +364,7 @@ const Home: React.FC = () => {
                     {blindBoxResources[blindBoxIndex].tags?.map(tagId => {
                       const tag = tags.find(t => t.id === tagId);
                       return tag ? (
-                        <span key={tag.id} className="inline-block px-2 py-0.5 rounded-full bg-[#FF3B30]/10 text-[#FF3B30] text-xs font-semibold border border-[#FF3B30]/20 select-none">{tag.name}</span>
+                        <span key={tag.id} className="inline-block px-2 py-0.5 rounded-full bg-[#444]/10 text-[#333] text-xs font-semibold border border-[#444]/15 select-none">{tag.name}</span>
                       ) : null;
                     })}
                   </div>

@@ -64,7 +64,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   const maxDefaultHeight = useMemo(() => {
     const heights = Object.values(defaultHeights.current);
     return heights.length > 0 ? Math.max(...heights) : undefined;
-  }, [resources, defaultHeights.current]);
+  }, []);
 
   useEffect(() => {
     if (hoveredId && cardRefs.current[hoveredId]) {
@@ -187,7 +187,6 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                 
                 bg-[#F1F1F1]
                 cursor-pointer flex flex-col group transition-all duration-300
-                duration-1000
               `}
               style={{
                 transition: 'transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 1s cubic-bezier(.22,1,.36,1)',
@@ -247,7 +246,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         );
       })}
     </div>
-  ), [resources, handleResourceClick, hoveredId, tilt, hoverTranslateY, defaultHeights, isMobile, maxDefaultHeight]);
+  ), [resources, handleResourceClick, hoveredId, tilt, hoverTranslateY, isMobile, maxDefaultHeight]);
   
   // 优化骨架屏渲染
   const renderSkeleton = useMemo(() => (
