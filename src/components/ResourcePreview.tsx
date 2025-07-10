@@ -36,6 +36,20 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   const defaultHeights = useRef<{[id: string]: number}>({});
   const [hoverTranslateY, setHoverTranslateY] = useState(0);
 
+  // Footer高度自适应
+  const getFooterHeight = () => {
+    if (typeof window !== 'undefined' && window.innerWidth >= 640) { // sm: 640px
+      return 112; // h-28
+    }
+    return 56; // h-14
+  };
+  const [footerHeight, setFooterHeight] = useState(getFooterHeight());
+  useEffect(() => {
+    const handleResize = () => setFooterHeight(getFooterHeight());
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // 记录每个卡片的默认高度
   useEffect(() => {
     resources.forEach(resource => {
@@ -58,7 +72,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
       if (!card) return;
       setTimeout(() => {
         const rect = card.getBoundingClientRect();
-        const overBottom = rect.bottom - window.innerHeight;
+        const overBottom = rect.bottom - (window.innerHeight - footerHeight);
         if (overBottom > 0) {
           setHoverTranslateY(-overBottom - 16);
         } else {
@@ -68,7 +82,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
     } else {
       setHoverTranslateY(0);
     }
-  }, [hoveredId]);
+  }, [hoveredId, footerHeight]);
 
   useEffect(() => {
     // 确保音效文件在组件加载时就开始预加载
