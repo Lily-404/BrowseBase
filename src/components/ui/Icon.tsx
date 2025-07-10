@@ -1,11 +1,13 @@
 import React from 'react';
-import { 
+import {
   Globe,
   ChevronLeft,
   ChevronRight,
   Fingerprint,
   ExternalLink,
   Link,
+  Info,
+  HelpCircle,
   // Add other icons you need here
 } from 'lucide-react';
 
@@ -17,6 +19,8 @@ const iconMap = {
   Fingerprint,
   ExternalLink,
   Link,
+  Info,
+  HelpCircle,
   // Add other icons you need here
 } as const;
 

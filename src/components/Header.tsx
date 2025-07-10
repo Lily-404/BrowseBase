@@ -38,10 +38,10 @@ const Header: React.FC<{ onBlindBoxClick?: () => void }> = ({ onBlindBoxClick })
           <div className="flex items-center gap-2 sm:gap-4 ml-auto">
             <CircleButton
               onClick={onBlindBoxClick}
-              variant="primary"
+              variant="secondary"
               size="sm"
               title="盲盒"
-              className="text-[10px] sm:text-xs"
+              className="text-[10px] sm:text-xs bg-gray-400 text-white  border-none"
             >
               盲盒
             </CircleButton>
@@ -56,11 +56,22 @@ const Header: React.FC<{ onBlindBoxClick?: () => void }> = ({ onBlindBoxClick })
               {t('header.blog')}
             </CircleButton>
             <Link to="/about" onClick={playClickSound}>
+              {/* 移动端显示icon */}
               <CircleButton
                 variant="secondary"
                 size="sm"
                 title={t('header.about')}
-                className="text-[10px] sm:text-xs"
+                iconOnly
+                className="text-[10px] sm:text-xs inline-flex sm:hidden"
+              >
+                <Icon name="Info" size={16} />
+              </CircleButton>
+              {/* PC端显示文字 */}
+              <CircleButton
+                variant="secondary"
+                size="sm"
+                title={t('header.about')}
+                className="text-[10px] sm:text-xs hidden sm:inline-flex"
               >
                 {t('header.about')}
               </CircleButton>
@@ -74,6 +85,7 @@ const Header: React.FC<{ onBlindBoxClick?: () => void }> = ({ onBlindBoxClick })
               size="sm"
               iconOnly
               title={i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
+              className="hidden sm:inline-flex"
             >
               <Icon 
                 name="Globe" 
