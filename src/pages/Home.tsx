@@ -327,12 +327,11 @@ const Home: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[6px] animate-fade-in">
           <div className="absolute inset-0" onClick={handleCloseBlindBox} />
           <div className="relative z-10 flex flex-col items-center">
-            <button onClick={handleCloseBlindBox} className="absolute top-2 right-2 sm:top-6 sm:right-6 bg-white/80 rounded-full p-2 shadow hover:bg-white"><Icon name="ChevronLeft" size={24} /></button>
             <div className="w-[90vw] max-w-md mx-auto">
               {/* 卡片内容复用 */}
               <div className="relative w-full h-full select-none">
                 <div
-                  className="relative z-0 h-full bg-gradient-to-br from-[#F8F8F8] to-[#ECECEC] rounded-2xl p-6 shadow-2xl cursor-pointer flex flex-col group transition-all duration-300 min-h-[260px] border border-[#e0e0e0]/60"
+                  className="relative z-0 h-full bg-white/60 rounded-2xl p-6 shadow-2xl cursor-pointer flex flex-col group transition-all duration-300 min-h-[260px] border border-[#e0e0e0]/70 backdrop-blur-xl"
                   style={{ boxShadow: '0 8px 32px 0 rgba(60,60,60,0.10), 0 1.5px 8px 0 rgba(77,77,77,0.06)' }}
                   onClick={() => window.open(blindBoxResources[blindBoxIndex].url, '_blank', 'noopener,noreferrer')}
                 >
@@ -375,7 +374,13 @@ const Home: React.FC = () => {
                 </div>
                 {/* Tinder风格左右滑动按钮 */}
                 <div className="flex justify-between mt-4 items-center">
-                  <button onClick={() => handleSwipe('left')} className="bg-white/80 rounded-full p-2 shadow hover:bg-white"><Icon name="ChevronLeft" size={24} /></button>
+                  <button
+                    onClick={() => handleSwipe('left')}
+                    className="rounded-full p-2 bg-white/60 border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
+                    style={{ boxShadow: '0 2px 12px 0 rgba(60,60,60,0.10)' }}
+                  >
+                    <Icon name="ChevronLeft" size={24} className="text-[#222]" />
+                  </button>
                   <div className="flex gap-3">
                     <button
                       onClick={handleNextBlindBox}
@@ -397,7 +402,13 @@ const Home: React.FC = () => {
                       进入
                     </button>
                   </div>
-                  <button onClick={() => handleSwipe('right')} className="bg-white/80 rounded-full p-2 shadow hover:bg-white"><Icon name="ChevronRight" size={24} /></button>
+                  <button
+                    onClick={() => handleSwipe('right')}
+                    className="rounded-full p-2 bg-white/60 border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
+                    style={{ boxShadow: '0 2px 12px 0 rgba(60,60,60,0.10)' }}
+                  >
+                    <Icon name="ChevronRight" size={24} className="text-[#222]" />
+                  </button>
                 </div>
               </div>
             </div>
