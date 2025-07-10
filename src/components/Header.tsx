@@ -6,7 +6,7 @@ import CircleButton from './ui/CircleButton';
 import { audioLoader } from '../utils/audioLoader';
 import Icon from './ui/Icon';
 
-const Header: React.FC = () => {
+const Header: React.FC<{ onBlindBoxClick?: () => void }> = ({ onBlindBoxClick }) => {
   const { t } = useTranslation();
   
   const toggleLanguage = () => {
@@ -36,6 +36,15 @@ const Header: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-2 sm:gap-4 ml-auto">
+            <CircleButton
+              onClick={onBlindBoxClick}
+              variant="primary"
+              size="sm"
+              title="盲盒"
+              className="text-[10px] sm:text-xs"
+            >
+              盲盒
+            </CircleButton>
             <CircleButton
               href="https://www.jimmy-blog.top/"
               variant="secondary"

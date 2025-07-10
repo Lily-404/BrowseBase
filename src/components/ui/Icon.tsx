@@ -4,6 +4,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Fingerprint,
+  ExternalLink,
+  Link,
   // Add other icons you need here
 } from 'lucide-react';
 
@@ -13,6 +15,8 @@ const iconMap = {
   ChevronLeft,
   ChevronRight,
   Fingerprint,
+  ExternalLink,
+  Link,
   // Add other icons you need here
 } as const;
 

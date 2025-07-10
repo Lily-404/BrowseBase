@@ -11,6 +11,8 @@ import { Resource } from '../types/resource';
 import { FilterState, CachedData } from '../types/home';
 import styles from '../styles/animations.module.css';
 // import AdSense from '../components/AdSense';  // 暂时注释，等待 AdSense 审核通过后再启用
+import Icon from '../components/ui/Icon';
+import { audioLoader } from '../utils/audioLoader';
 
 // 添加错误类型定义
 interface PostgrestError {
@@ -32,6 +34,10 @@ const Home: React.FC = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showBlindBoxModal, setShowBlindBoxModal] = useState(false);
+  const [blindBoxIndex, setBlindBoxIndex] = useState<number | null>(null);
+  // 盲盒专用资源池
+  const [blindBoxResources, setBlindBoxResources] = useState<Resource[]>([]);
 
   // 优化预加载逻辑
   const preloadNextPage = useCallback(async () => {
@@ -150,6 +156,51 @@ const Home: React.FC = () => {
     }
   }, [currentPage]);
 
+  // 打开盲盒弹窗
+  const handleOpenBlindBox = useCallback(async () => {
+    // 获取所有资源（可加过滤条件）
+    const allResources = await resourceService.fetchAllResources(
+      activeFilter.type === 'category' && activeFilter.id !== 'all'
+        ? { category: activeFilter.id }
+        : activeFilter.type === 'tag'
+        ? { tag: activeFilter.id }
+        : undefined
+    );
+    if (allResources.length === 0) return;
+    setBlindBoxResources(allResources); // 只影响盲盒
+    audioLoader.playSound('/to.wav');
+    setShowBlindBoxModal(true);
+    setBlindBoxIndex(Math.floor(Math.random() * allResources.length));
+  }, [activeFilter]);
+
+  // 关闭盲盒弹窗
+  const handleCloseBlindBox = useCallback(() => {
+    setShowBlindBoxModal(false);
+    setBlindBoxIndex(null);
+  }, []);
+
+  // 再来一次/下一张
+  const handleNextBlindBox = useCallback(() => {
+    if (blindBoxResources.length === 0) return;
+    audioLoader.playSound('/to.wav');
+    let nextIndex = Math.floor(Math.random() * blindBoxResources.length);
+    // 保证不和当前重复
+    if (blindBoxResources.length > 1 && nextIndex === blindBoxIndex) {
+      nextIndex = (nextIndex + 1) % blindBoxResources.length;
+    }
+    setBlindBoxIndex(nextIndex);
+  }, [blindBoxResources, blindBoxIndex]);
+
+  // Tinder风格左右滑动
+  const handleSwipe = useCallback((direction: 'left' | 'right') => {
+    if (blindBoxResources.length === 0 || blindBoxIndex === null) return;
+    audioLoader.playSound('/to.wav');
+    let nextIndex = blindBoxIndex + (direction === 'right' ? 1 : -1);
+    if (nextIndex < 0) nextIndex = blindBoxResources.length - 1;
+    if (nextIndex >= blindBoxResources.length) nextIndex = 0;
+    setBlindBoxIndex(nextIndex);
+  }, [blindBoxResources, blindBoxIndex]);
+
   // 监听页面和过滤条件变化
   useEffect(() => {
     fetchResources();
@@ -206,7 +257,7 @@ const Home: React.FC = () => {
           </div>
         )}
         
-        <Header />
+        <Header onBlindBoxClick={handleOpenBlindBox} />
         <main className="flex-grow">
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
             <div className="flex flex-col md:flex-row gap-4 sm:gap-8">
@@ -272,6 +323,87 @@ const Home: React.FC = () => {
           </div>
         </main>
       </div>
+      {showBlindBoxModal && blindBoxIndex !== null && blindBoxResources[blindBoxIndex] && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[6px] animate-fade-in">
+          <div className="absolute inset-0" onClick={handleCloseBlindBox} />
+          <div className="relative z-10 flex flex-col items-center">
+            <button onClick={handleCloseBlindBox} className="absolute top-2 right-2 sm:top-6 sm:right-6 bg-white/80 rounded-full p-2 shadow hover:bg-white"><Icon name="ChevronLeft" size={24} /></button>
+            <div className="w-[90vw] max-w-md mx-auto">
+              {/* 卡片内容复用 */}
+              <div className="relative w-full h-full select-none">
+                <div
+                  className="relative z-0 h-full bg-gradient-to-br from-[#F8F8F8] to-[#ECECEC] rounded-2xl p-6 shadow-2xl cursor-pointer flex flex-col group transition-all duration-300 min-h-[260px] border border-[#e0e0e0]/60"
+                  style={{ boxShadow: '0 8px 32px 0 rgba(60,60,60,0.10), 0 1.5px 8px 0 rgba(77,77,77,0.06)' }}
+                  onClick={() => window.open(blindBoxResources[blindBoxIndex].url, '_blank', 'noopener,noreferrer')}
+                >
+                  {/* 封面图（如有） */}
+                  {blindBoxResources[blindBoxIndex].cover && (
+                    <div className="w-full h-36 rounded-xl overflow-hidden mb-3 bg-[#eaeaea] flex items-center justify-center">
+                      <img
+                        src={blindBoxResources[blindBoxIndex].cover}
+                        alt="cover"
+                        className="object-cover w-full h-full"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-1 mb-2">
+                    <h3 className="text-xl font-bold text-[#1A1A1A] line-clamp-none drop-shadow-sm">
+                      {blindBoxResources[blindBoxIndex].title}
+                    </h3>
+                  </div>
+                  {/* 左下角标签 */}
+                  <div className="absolute left-4 bottom-4 flex flex-wrap gap-2 z-10">
+                    {/* 分类标签 */}
+                    {(() => {
+                      const cat = categories.find(c => c.id === blindBoxResources[blindBoxIndex].category);
+                      return cat ? (
+                        <span key={cat.id} className="inline-block px-2 py-0.5 rounded-full bg-[#222]/10 text-[#222] text-xs font-semibold border border-[#222]/20 select-none">{cat.name}</span>
+                      ) : null;
+                    })()}
+                    {/* 资源标签 */}
+                    {blindBoxResources[blindBoxIndex].tags?.map(tagId => {
+                      const tag = tags.find(t => t.id === tagId);
+                      return tag ? (
+                        <span key={tag.id} className="inline-block px-2 py-0.5 rounded-full bg-[#FF3B30]/10 text-[#FF3B30] text-xs font-semibold border border-[#FF3B30]/20 select-none">{tag.name}</span>
+                      ) : null;
+                    })}
+                  </div>
+                  <div className="text-base leading-relaxed text-[#1A1A1A]/70 line-clamp-none mb-4">
+                    {blindBoxResources[blindBoxIndex].description.split('\n\n')[0]}
+                  </div>
+                </div>
+                {/* Tinder风格左右滑动按钮 */}
+                <div className="flex justify-between mt-4 items-center">
+                  <button onClick={() => handleSwipe('left')} className="bg-white/80 rounded-full p-2 shadow hover:bg-white"><Icon name="ChevronLeft" size={24} /></button>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={handleNextBlindBox}
+                      className="inline-flex items-center gap-1 px-5 py-1.5 rounded-full bg-white/60 text-[#222] font-semibold text-base cursor-pointer select-none border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
+                      style={{ fontSize: '15px', fontWeight: 600, boxShadow: '0 2px 12px 0 rgba(60,60,60,0.10)' }}
+                    >
+                      再来一次
+                    </button>
+                    <button
+                      className="inline-flex items-center gap-1 px-5 py-1.5 rounded-full bg-white/60 text-[#222] font-semibold text-base cursor-pointer select-none border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
+                      style={{ fontSize: '15px', fontWeight: 600, boxShadow: '0 2px 12px 0 rgba(60,60,60,0.10)' }}
+                      onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                        e.stopPropagation();
+                        audioLoader.playSound('/to.wav');
+                        window.open(blindBoxResources[blindBoxIndex].url, '_blank', 'noopener,noreferrer');
+                      }}
+                    >
+                      <Icon name="ExternalLink" size={20} />
+                      进入
+                    </button>
+                  </div>
+                  <button onClick={() => handleSwipe('right')} className="bg-white/80 rounded-full p-2 shadow hover:bg-white"><Icon name="ChevronRight" size={24} /></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </ErrorBoundary>
   );
 };

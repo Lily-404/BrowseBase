@@ -8,6 +8,7 @@ export interface Resource {
   rating: number;
   reviews: number;
   updatedAt: string;
+  cover?: string;
 }
 
 export interface ResourceFilters {

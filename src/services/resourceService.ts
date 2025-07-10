@@ -120,6 +120,37 @@ export const resourceService = {
     }
   },
 
+  // 新增：获取所有资源（不分页）
+  async fetchAllResources(filters?: ResourceFilters) {
+    try {
+      let query = supabase
+        .from('resources')
+        .select('*');
+
+      // 应用过滤条件
+      if (filters?.search) {
+        const searchTerm = filters.search.toLowerCase().trim();
+        if (searchTerm.length > 0) {
+          query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+            .order('updated_at', { ascending: false });
+        }
+      }
+      if (filters?.category && filters.category !== 'all') {
+        query = query.eq('category', filters.category);
+      }
+      if (filters?.tag) {
+        query = query.contains('tags', [filters.tag]);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching all resources:', error);
+      return [];
+    }
+  },
+
   // 清除所有缓存
   clearCache() {
     searchCache.clear();
