@@ -45,7 +45,7 @@ class AudioLoader {
   }
 
   private async preloadAudios() {
-    const loadAudio = async (file: string, retry = 2): Promise<void> => {
+    const loadAudio = async (file: string, retry = 3): Promise<void> => {
       return new Promise((resolve) => {
         // 如果已经加载过，直接返回
         if (this.audioCache[file]?.loaded) {
@@ -62,16 +62,50 @@ class AudioLoader {
           this.audioCache[file] = { audio, loaded: false, error: false };
         }
 
-        const onLoad = () => {
+        let isResolved = false;
+        const resolveOnce = () => {
+          if (isResolved) return;
+          isResolved = true;
           if (this.audioCache[file]) {
             this.audioCache[file].loaded = true;
           }
           resolve();
         };
-        const onError = async () => {
-          if (retry > 0) {
+
+        // 设置超时（国内网络可能需要更长时间）
+        const timeout = setTimeout(() => {
+          // 即使超时，如果音频已经可以播放，也标记为已加载
+          if (audio.readyState >= 2) { // HAVE_CURRENT_DATA
+            resolveOnce();
+          } else if (retry > 0) {
+            clearTimeout(timeout);
             // 重试
-            await loadAudio(file, retry - 1);
+            loadAudio(file, retry - 1).then(resolve).catch(() => {
+              if (this.audioCache[file]) {
+                this.audioCache[file].error = true;
+              }
+              resolve();
+            });
+          } else {
+            // 最后一次重试失败，标记为错误但继续
+            if (this.audioCache[file]) {
+              this.audioCache[file].error = true;
+            }
+            resolve();
+          }
+        }, 10000); // 10秒超时
+
+        const onLoad = () => {
+          clearTimeout(timeout);
+          resolveOnce();
+        };
+        const onError = async () => {
+          clearTimeout(timeout);
+          if (retry > 0) {
+            // 延迟重试，避免立即重试
+            setTimeout(async () => {
+              await loadAudio(file, retry - 1);
+            }, 1000);
           } else {
             if (this.audioCache[file]) {
               this.audioCache[file].error = true;
@@ -80,22 +114,25 @@ class AudioLoader {
           }
         };
 
-        // 使用 canplay 而不是 canplaythrough，更快响应
-        // 但优先使用 canplaythrough 确保完整加载
-        const onCanPlayThrough = () => {
-          audio.removeEventListener('canplay', onCanPlay);
-          onLoad();
-        };
+        // 优先使用 canplay，更快响应（适合慢网络）
         const onCanPlay = () => {
-          // 如果 canplaythrough 还没触发，至少可以开始播放
-          if (!this.audioCache[file]?.loaded) {
+          if (!isResolved && audio.readyState >= 2) {
+            clearTimeout(timeout);
             audio.removeEventListener('canplaythrough', onCanPlayThrough);
             onLoad();
           }
         };
+        const onCanPlayThrough = () => {
+          if (!isResolved) {
+            clearTimeout(timeout);
+            audio.removeEventListener('canplay', onCanPlay);
+            onLoad();
+          }
+        };
 
-        audio.addEventListener('canplaythrough', onCanPlayThrough, { once: true });
+        // 同时监听 canplay 和 canplaythrough
         audio.addEventListener('canplay', onCanPlay, { once: true });
+        audio.addEventListener('canplaythrough', onCanPlayThrough, { once: true });
         audio.addEventListener('error', onError, { once: true });
 
         audio.src = file;
@@ -115,51 +152,68 @@ class AudioLoader {
     if (this.isMuted) return;
 
     try {
-      // 如果音频未加载，立即加载它
+      // 如果音频未加载，立即加载它（带超时）
       if (!this.audioCache[soundFile] || (!this.audioCache[soundFile].loaded && !this.audioCache[soundFile].error)) {
-        await this.loadAudioOnDemand(soundFile);
+        // 使用 Promise.race 添加超时，避免长时间等待
+        await Promise.race([
+          this.loadAudioOnDemand(soundFile),
+          new Promise<void>((resolve) => setTimeout(resolve, 3000)) // 3秒超时
+        ]);
       }
 
       const cache = this.audioCache[soundFile];
-      if (cache && !cache.error && cache.loaded) {
-        // 确保音频已准备好播放
-        const audioClone = cache.audio.cloneNode() as HTMLAudioElement;
-        audioClone.volume = this.volume;
-        
-        // 等待音频可以播放
-        if (audioClone.readyState < 2) { // HAVE_CURRENT_DATA
-          await new Promise<void>((resolve) => {
-            const onCanPlay = () => {
-              audioClone.removeEventListener('canplay', onCanPlay);
-              resolve();
-            };
-            audioClone.addEventListener('canplay', onCanPlay, { once: true });
-            // 设置超时，避免无限等待
-            setTimeout(() => {
-              audioClone.removeEventListener('canplay', onCanPlay);
-              resolve();
-            }, 100);
-          });
-        }
-        
-        audioClone.addEventListener('error', (error) => {
-          console.warn(`Error playing sound: ${soundFile}`, error);
-        }, { once: true });
-
-        await audioClone.play();
-      } else if (cache && cache.error) {
-        console.warn(`Audio failed to load: ${soundFile}`);
-      } else {
-        // 如果缓存不存在，尝试立即加载并播放
-        await this.loadAudioOnDemand(soundFile);
-        const retryCache = this.audioCache[soundFile];
-        if (retryCache && retryCache.loaded && !retryCache.error) {
-          const audioClone = retryCache.audio.cloneNode() as HTMLAudioElement;
+      if (cache && !cache.error) {
+        // 即使未完全加载，如果 readyState >= 2 也可以尝试播放
+        if (cache.loaded || cache.audio.readyState >= 2) {
+          const audioClone = cache.audio.cloneNode() as HTMLAudioElement;
           audioClone.volume = this.volume;
-          await audioClone.play();
+          
+          // 如果音频还没准备好，等待一小段时间（但不超过500ms）
+          if (audioClone.readyState < 2) {
+            await Promise.race([
+              new Promise<void>((resolve) => {
+                const onCanPlay = () => {
+                  audioClone.removeEventListener('canplay', onCanPlay);
+                  resolve();
+                };
+                audioClone.addEventListener('canplay', onCanPlay, { once: true });
+              }),
+              new Promise<void>((resolve) => setTimeout(resolve, 500)) // 500ms 超时
+            ]);
+          }
+          
+          audioClone.addEventListener('error', (error) => {
+            console.warn(`Error playing sound: ${soundFile}`, error);
+          }, { once: true });
+
+          try {
+            await audioClone.play();
+          } catch (playError) {
+            // 播放失败时静默处理，不阻塞用户操作
+            console.warn('Failed to play sound:', playError);
+          }
+        }
+      } else if (!cache || cache.error) {
+        // 如果加载失败，尝试最后一次即时加载
+        try {
+          await Promise.race([
+            this.loadAudioOnDemand(soundFile),
+            new Promise<void>((resolve) => setTimeout(resolve, 2000)) // 2秒超时
+          ]);
+          const retryCache = this.audioCache[soundFile];
+          if (retryCache && (retryCache.loaded || retryCache.audio.readyState >= 2) && !retryCache.error) {
+            const audioClone = retryCache.audio.cloneNode() as HTMLAudioElement;
+            audioClone.volume = this.volume;
+            await audioClone.play().catch(() => {
+              // 静默处理播放失败
+            });
+          }
+        } catch {
+          // 静默处理，不影响用户体验
         }
       }
     } catch (error) {
+      // 静默处理所有错误，不影响用户体验
       console.warn('Error playing sound:', error);
     }
   }
@@ -208,31 +262,91 @@ class AudioLoader {
   }
 
   // 新增：单个音效预加载
-  private async preloadSingleAudio(file: string, retry = 2): Promise<void> {
+  private async preloadSingleAudio(file: string, retry = 3): Promise<void> {
     return new Promise((resolve) => {
+      // 如果已经加载过，直接返回
+      if (this.audioCache[file]?.loaded) {
+        resolve();
+        return;
+      }
+
       const audio = new Audio();
       audio.volume = this.volume;
       audio.preload = 'auto';
 
-      const onLoad = () => {
-        this.audioCache[file].loaded = true;
+      let isResolved = false;
+      const resolveOnce = () => {
+        if (isResolved) return;
+        isResolved = true;
+        if (this.audioCache[file]) {
+          this.audioCache[file].loaded = true;
+        }
         resolve();
       };
-      const onError = async () => {
-        if (retry > 0) {
-          await this.preloadSingleAudio(file, retry - 1);
+
+      // 设置超时
+      const timeout = setTimeout(() => {
+        if (audio.readyState >= 2) {
+          resolveOnce();
+        } else if (retry > 0) {
+          clearTimeout(timeout);
+          this.preloadSingleAudio(file, retry - 1).then(resolve).catch(() => {
+            if (this.audioCache[file]) {
+              this.audioCache[file].error = true;
+            }
+            resolve();
+          });
         } else {
-          this.audioCache[file].error = true;
+          if (this.audioCache[file]) {
+            this.audioCache[file].error = true;
+          }
+          resolve();
+        }
+      }, 8000); // 8秒超时
+
+      const onLoad = () => {
+        clearTimeout(timeout);
+        resolveOnce();
+      };
+      const onError = async () => {
+        clearTimeout(timeout);
+        if (retry > 0) {
+          setTimeout(async () => {
+            await this.preloadSingleAudio(file, retry - 1);
+          }, 1000);
+        } else {
+          if (this.audioCache[file]) {
+            this.audioCache[file].error = true;
+          }
           resolve();
         }
       };
 
-      audio.addEventListener('canplaythrough', onLoad, { once: true });
+      // 优先使用 canplay，更快响应
+      const onCanPlay = () => {
+        if (!isResolved && audio.readyState >= 2) {
+          clearTimeout(timeout);
+          audio.removeEventListener('canplaythrough', onCanPlayThrough);
+          onLoad();
+        }
+      };
+      const onCanPlayThrough = () => {
+        if (!isResolved) {
+          clearTimeout(timeout);
+          audio.removeEventListener('canplay', onCanPlay);
+          onLoad();
+        }
+      };
+
+      audio.addEventListener('canplay', onCanPlay, { once: true });
+      audio.addEventListener('canplaythrough', onCanPlayThrough, { once: true });
       audio.addEventListener('error', onError, { once: true });
 
       audio.src = file;
       audio.load();
-      this.audioCache[file] = { audio, loaded: false, error: false };
+      if (!this.audioCache[file]) {
+        this.audioCache[file] = { audio, loaded: false, error: false };
+      }
     });
   }
 }
