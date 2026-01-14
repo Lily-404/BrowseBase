@@ -34,14 +34,11 @@ class AudioLoader {
   private async initialize() {
     if (this.isInitialized) return;
     
-    // 在页面加载完成后立即开始预加载
-    if (document.readyState === 'complete') {
-      await this.preloadAudios();
-    } else {
-      window.addEventListener('load', () => {
-        this.preloadAudios();
-      });
-    }
+    // 立即开始预加载，不等待 window.load 事件
+    // 这样可以更早地开始加载音效，避免首次使用时延迟
+    this.preloadAudios().catch(error => {
+      console.warn('Failed to preload audios:', error);
+    });
     
     this.isInitialized = true;
   }

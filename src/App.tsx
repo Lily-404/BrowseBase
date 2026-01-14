@@ -7,9 +7,16 @@ import Admin from './pages/Admin';
 import Login from './pages/Login';
 import About from './pages/About';
 import { initGA, trackPageView } from './utils/analytics';
+import { audioLoader } from './utils/audioLoader';
 
-
+// 初始化 Google Analytics
 initGA('G-W0ZSDCR0XB');
+
+// 在应用启动时立即开始预加载所有音效
+// 这样可以在后台加载音效，避免首次使用时延迟
+audioLoader.waitForLoad().catch(error => {
+  console.warn('Failed to preload audio files:', error);
+});
 
 // 路由保护组件
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
