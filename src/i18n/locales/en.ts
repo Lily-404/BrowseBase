@@ -7,7 +7,14 @@ export default {
       language: 'Switch Language',
       openSource: 'GitHub',
       switchToChinese: 'Chinese',
-      switchToEnglish: 'English'
+      switchToEnglish: 'English',
+      back: 'Back',
+      blindBox: 'Blind Box'
+    },
+    blindBox: {
+      loading: 'Loading...',
+      nextOne: 'Next One',
+      enter: 'Enter'
     },
     category: {
       title: 'Category',

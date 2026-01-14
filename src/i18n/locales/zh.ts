@@ -7,7 +7,14 @@ export default {
       language: '切换语言',
       openSource: '开源',
       switchToChinese: '中文',
-      switchToEnglish: '英文'
+      switchToEnglish: '英文',
+      back: '返回',
+      blindBox: '盲盒'
+    },
+    blindBox: {
+      loading: '加载中...',
+      nextOne: '再来一次',
+      enter: '进入'
     },
     category: {
       title: '分类',

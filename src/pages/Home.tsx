@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Suspense, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { resourceService } from '../services/resourceService';
 import Header from '../components/Header';
 import ResourceCategories from '../components/ResourceCategories';
@@ -23,6 +24,7 @@ interface PostgrestError {
 }
 
 const Home: React.FC = () => {
+  const { t } = useTranslation();
   const [resources, setResources] = useState<Resource[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterState>({ type: 'category', id: 'all' });
   const [currentPage, setCurrentPage] = useState(1);
@@ -365,7 +367,7 @@ const Home: React.FC = () => {
                 <div className="relative w-full h-full select-none">
                   <div className="relative z-0 h-full bg-white/60 rounded-2xl p-6 shadow-2xl flex flex-col items-center justify-center min-h-[260px] border border-[#e0e0e0]/70 backdrop-blur-xl">
                     <div className="w-12 h-12 border-4 border-[#4D4D4D]/20 border-t-[#4D4D4D] rounded-full animate-spin mb-4"></div>
-                    <p className="text-[#4D4D4D] text-sm font-medium">加载中...</p>
+                    <p className="text-[#4D4D4D] text-sm font-medium">{t('blindBox.loading')}</p>
                   </div>
                 </div>
               ) : blindBoxIndex !== null && blindBoxResources[blindBoxIndex] ? (
@@ -428,7 +430,7 @@ const Home: React.FC = () => {
                       className="inline-flex items-center gap-1 px-5 py-1.5 rounded-full bg-white/60 text-[#222] font-semibold text-base cursor-pointer select-none border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
                       style={{ fontSize: '15px', fontWeight: 600, boxShadow: '0 2px 12px 0 rgba(60,60,60,0.10)' }}
                     >
-                      再来一次
+                      {t('blindBox.nextOne')}
                     </button>
                     <button
                       className="inline-flex items-center gap-1 px-5 py-1.5 rounded-full bg-white/60 text-[#222] font-semibold text-base cursor-pointer select-none border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
@@ -440,7 +442,7 @@ const Home: React.FC = () => {
                       }}
                     >
                       <Icon name="ExternalLink" size={20} />
-                      进入
+                      {t('blindBox.enter')}
                     </button>
                   </div>
                   <button

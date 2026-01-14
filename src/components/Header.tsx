@@ -40,10 +40,10 @@ const Header: React.FC<{ onBlindBoxClick?: () => void }> = ({ onBlindBoxClick })
               onClick={onBlindBoxClick}
               variant="secondary"
               size="sm"
-              title="盲盒"
+              title={t('header.blindBox')}
               className="text-[10px] sm:text-xs bg-gray-400 text-white  border-none"
             >
-              盲盒
+              {t('header.blindBox')}
             </CircleButton>
             <CircleButton
               href="https://www.jimmy-blog.top/"
