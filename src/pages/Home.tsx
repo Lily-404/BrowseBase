@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, useCallback } from 'react';
+import React, { useState, useEffect, Suspense, useCallback, useRef } from 'react';
 import { resourceService } from '../services/resourceService';
 import Header from '../components/Header';
 import ResourceCategories from '../components/ResourceCategories';
@@ -38,6 +38,10 @@ const Home: React.FC = () => {
   const [blindBoxIndex, setBlindBoxIndex] = useState<number | null>(null);
   // 盲盒专用资源池
   const [blindBoxResources, setBlindBoxResources] = useState<Resource[]>([]);
+  // 盲盒加载状态
+  const [isBlindBoxLoading, setIsBlindBoxLoading] = useState(false);
+  // 盲盒资源池缓存（基于过滤条件）
+  const blindBoxCacheRef = useRef<Record<string, Resource[]>>({});
 
   // 优化预加载逻辑
   const preloadNextPage = useCallback(async () => {
@@ -158,19 +162,47 @@ const Home: React.FC = () => {
 
   // 打开盲盒弹窗
   const handleOpenBlindBox = useCallback(async () => {
-    // 获取所有资源（可加过滤条件）
-    const allResources = await resourceService.fetchAllResources(
-      activeFilter.type === 'category' && activeFilter.id !== 'all'
-        ? { category: activeFilter.id }
-        : activeFilter.type === 'tag'
-        ? { tag: activeFilter.id }
-        : undefined
-    );
-    if (allResources.length === 0) return;
-    setBlindBoxResources(allResources); // 只影响盲盒
-    audioLoader.playSound('/to.wav');
-    setShowBlindBoxModal(true);
-    setBlindBoxIndex(Math.floor(Math.random() * allResources.length));
+    // 生成缓存键
+    const cacheKey = `${activeFilter.type}-${activeFilter.id}`;
+    
+    // 检查本地缓存
+    if (blindBoxCacheRef.current[cacheKey] && blindBoxCacheRef.current[cacheKey].length > 0) {
+      const cachedResources = blindBoxCacheRef.current[cacheKey];
+      setBlindBoxResources(cachedResources);
+      audioLoader.playSound('/to.wav');
+      setShowBlindBoxModal(true);
+      setBlindBoxIndex(Math.floor(Math.random() * cachedResources.length));
+      return;
+    }
+    
+    // 如果没有缓存，显示加载状态并获取资源
+    setIsBlindBoxLoading(true);
+    try {
+      const allResources = await resourceService.fetchAllResources(
+        activeFilter.type === 'category' && activeFilter.id !== 'all'
+          ? { category: activeFilter.id }
+          : activeFilter.type === 'tag'
+          ? { tag: activeFilter.id }
+          : undefined
+      );
+      
+      if (allResources.length === 0) {
+        setIsBlindBoxLoading(false);
+        return;
+      }
+      
+      // 缓存结果
+      blindBoxCacheRef.current[cacheKey] = allResources;
+      
+      setBlindBoxResources(allResources);
+      audioLoader.playSound('/to.wav');
+      setShowBlindBoxModal(true);
+      setBlindBoxIndex(Math.floor(Math.random() * allResources.length));
+    } catch (error) {
+      console.error('Error fetching blind box resources:', error);
+    } finally {
+      setIsBlindBoxLoading(false);
+    }
   }, [activeFilter]);
 
   // 关闭盲盒弹窗
@@ -323,13 +355,22 @@ const Home: React.FC = () => {
           </div>
         </main>
       </div>
-      {showBlindBoxModal && blindBoxIndex !== null && blindBoxResources[blindBoxIndex] && (
+      {(showBlindBoxModal || isBlindBoxLoading) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-[6px] animate-fade-in">
           <div className="absolute inset-0" onClick={handleCloseBlindBox} />
           <div className="relative z-10 flex flex-col items-center">
             <div className="w-[90vw] max-w-md mx-auto">
-              {/* 卡片内容复用 */}
-              <div className="relative w-full h-full select-none">
+              {isBlindBoxLoading ? (
+                // 加载状态 - 简单的加载圈圈
+                <div className="relative w-full h-full select-none">
+                  <div className="relative z-0 h-full bg-white/60 rounded-2xl p-6 shadow-2xl flex flex-col items-center justify-center min-h-[260px] border border-[#e0e0e0]/70 backdrop-blur-xl">
+                    <div className="w-12 h-12 border-4 border-[#4D4D4D]/20 border-t-[#4D4D4D] rounded-full animate-spin mb-4"></div>
+                    <p className="text-[#4D4D4D] text-sm font-medium">加载中...</p>
+                  </div>
+                </div>
+              ) : blindBoxIndex !== null && blindBoxResources[blindBoxIndex] ? (
+                // 卡片内容复用
+                <div className="relative w-full h-full select-none">
                 <div
                   className="relative z-0 h-full bg-white/60 rounded-2xl p-6 shadow-2xl cursor-pointer flex flex-col group transition-all duration-300 min-h-[260px] border border-[#e0e0e0]/70 backdrop-blur-xl"
                   style={{ boxShadow: '0 8px 32px 0 rgba(60,60,60,0.10), 0 1.5px 8px 0 rgba(77,77,77,0.06)' }}
@@ -411,6 +452,7 @@ const Home: React.FC = () => {
                   </button>
                 </div>
               </div>
+              ) : null}
             </div>
           </div>
         </div>

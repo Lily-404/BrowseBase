@@ -70,15 +70,17 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
     if (hoveredId && cardRefs.current[hoveredId]) {
       const card = cardRefs.current[hoveredId];
       if (!card) return;
-      setTimeout(() => {
+      // 使用 requestAnimationFrame 确保在DOM更新后计算，避免抖动
+      requestAnimationFrame(() => {
         const rect = card.getBoundingClientRect();
+        // rect.bottom 已经考虑了卡片放大后的实际位置（scale 1.10）
         const overBottom = rect.bottom - (window.innerHeight - footerHeight);
         if (overBottom > 0) {
           setHoverTranslateY(-overBottom - 16);
         } else {
           setHoverTranslateY(0);
         }
-      }, 0);
+      });
     } else {
       setHoverTranslateY(0);
     }
@@ -164,16 +166,21 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
             inset ${highlightX}px ${highlightY}px 28px rgba(255,255,255,0.95)
           `;
         }
+        // 计算 transformOrigin，避免在每次渲染时重复计算导致性能问题
         let transformOrigin = 'center center';
         if (isHovered && cardRefs.current[resource.id]) {
           const card = cardRefs.current[resource.id];
           if (card) {
             const rect = card.getBoundingClientRect();
+            // 考虑卡片放大和位移后的实际位置
             if (rect.bottom > window.innerHeight - 40) {
               transformOrigin = 'center bottom';
             }
           }
         }
+        // 获取当前卡片的默认高度，如果没有则使用最大默认高度
+        const cardDefaultHeight = defaultHeights.current[resource.id] || maxDefaultHeight;
+        
         return (
           <div key={resource.id} className="relative w-full h-full">
             <div
@@ -191,7 +198,10 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
               style={{
                 transition: 'transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 1s cubic-bezier(.22,1,.36,1)',
                 height: isHovered ? 'auto' : undefined,
-                minHeight: maxDefaultHeight ? `${maxDefaultHeight}px` : undefined,
+                // hover时最小高度至少等于默认高度，避免内容少时高度变小导致抖动
+                minHeight: isHovered 
+                  ? (cardDefaultHeight ? `${cardDefaultHeight}px` : undefined)
+                  : (maxDefaultHeight ? `${maxDefaultHeight}px` : undefined),
                 maxHeight: isHovered ? '80vh' : undefined,
                 overflowY: isHovered ? 'auto' : undefined,
                 transform: isHovered

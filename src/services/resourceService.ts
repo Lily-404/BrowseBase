@@ -8,6 +8,12 @@ const searchCache = new Map<string, {
   timestamp: number;
 }>();
 
+// 缓存所有资源（用于盲盒）
+const allResourcesCache = new Map<string, {
+  data: Resource[];
+  timestamp: number;
+}>();
+
 // 缓存过期时间（5分钟）
 const CACHE_EXPIRY = 5 * 60 * 1000;
 
@@ -123,6 +129,15 @@ export const resourceService = {
   // 新增：获取所有资源（不分页）
   async fetchAllResources(filters?: ResourceFilters) {
     try {
+      // 生成缓存键
+      const cacheKey = JSON.stringify({ type: 'all', filters });
+      const cachedResult = allResourcesCache.get(cacheKey);
+      
+      // 检查缓存是否有效
+      if (cachedResult && Date.now() - cachedResult.timestamp < CACHE_EXPIRY) {
+        return cachedResult.data;
+      }
+
       let query = supabase
         .from('resources')
         .select('*');
@@ -144,7 +159,16 @@ export const resourceService = {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data || [];
+      
+      const result = data || [];
+      
+      // 缓存结果
+      allResourcesCache.set(cacheKey, {
+        data: result,
+        timestamp: Date.now()
+      });
+      
+      return result;
     } catch (error) {
       console.error('Error fetching all resources:', error);
       return [];
@@ -154,6 +178,7 @@ export const resourceService = {
   // 清除所有缓存
   clearCache() {
     searchCache.clear();
+    allResourcesCache.clear();
   },
 
   async createResource(resource: Omit<Resource, 'id'>) {
