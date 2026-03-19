@@ -186,24 +186,19 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
             <div
               ref={el => { cardRefs.current[resource.id] = el; }}
               className={`
-                ${isHovered
-                  ? 'absolute z-20 border-2 border-[#F9FAFB] scale-110 -translate-y-1'
-                  : 'relative z-0 h-full border border-[#E5E7EB] shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'}
-                top-0 left-0 w-full
+                relative z-0 w-full h-full
                 rounded-lg p-3 sm:p-4
-                
                 bg-[#F1F1F1]
                 cursor-pointer flex flex-col group transition-all duration-300
+                border
+                ${isHovered
+                  ? 'border-[#F9FAFB]'
+                  : 'border-[#E5E7EB] shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'}
               `}
               style={{
                 transition: 'transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 1s cubic-bezier(.22,1,.36,1)',
-                height: isHovered ? 'auto' : undefined,
-                // hover时最小高度至少等于默认高度，避免内容少时高度变小导致抖动
-                minHeight: isHovered 
-                  ? (cardDefaultHeight ? `${cardDefaultHeight}px` : undefined)
-                  : (maxDefaultHeight ? `${maxDefaultHeight}px` : undefined),
-                maxHeight: isHovered ? '80vh' : undefined,
-                overflowY: isHovered ? 'auto' : undefined,
+                // 固定占位高度，避免 hover 时高度变化影响整行布局
+                minHeight: maxDefaultHeight ? `${maxDefaultHeight}px` : undefined,
                 transform: isHovered
                   ? `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.10) translateY(${hoverTranslateY}px)`
                   : undefined,
@@ -234,24 +229,21 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                 handleResourceClick(resource);
                 window.open(resource.url, '_blank', 'noopener,noreferrer');
               }}
-            >
-              <div className="flex justify-between items-start mb-1.5 sm:mb-2">
-                <h3 className={`text-base font-bold text-[#1A1A1A] transition-all duration-300 ease-in-out ${isHovered ? 'line-clamp-none' : 'line-clamp-2'}`}>{resource.title}</h3>
-              </div>
-              <div
-                className={`
-                  text-sm leading-relaxed text-[#1A1A1A]/60
-                  transition-[max-height] duration-700 ease-[cubic-bezier(.22,1,.36,1)]
-                  overflow-hidden
-                  ${isHovered ? 'line-clamp-none' : 'line-clamp-4'}
-                `}
-                style={{
-                  maxHeight: isHovered ? '600px' : '96px',
-                }}
               >
-                {resource.description.split('\n\n')[0]}
+                <div className="flex justify-between items-start mb-1.5 sm:mb-2">
+                  <h3 className="text-base font-bold text-[#1A1A1A] transition-all duration-300 ease-in-out line-clamp-2">
+                    {resource.title}
+                  </h3>
+                </div>
+                <div
+                  className="
+                    text-sm leading-relaxed text-[#1A1A1A]/60
+                    overflow-hidden line-clamp-4
+                  "
+                >
+                  {resource.description.split('\n\n')[0]}
+                </div>
               </div>
-            </div>
           </div>
         );
       })}
