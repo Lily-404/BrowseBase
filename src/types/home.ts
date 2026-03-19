@@ -1,5 +1,4 @@
 import { Resource } from './resource';
-import { Tag } from './resourceTags';
 
 export interface FilterState {
   type: 'category' | 'tag';

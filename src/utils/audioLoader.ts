@@ -6,6 +6,18 @@ interface AudioCache {
   };
 }
 
+function isSafariMobile(): boolean {
+  if (typeof navigator === 'undefined') return false;
+
+  const ua = navigator.userAgent || '';
+  // iOS 设备
+  const isIOS = /iP(ad|hone|od)/i.test(ua);
+  // Safari 的渲染内核是 WebKit，但 iOS 上 Chrome/Firefox/Edge 的 UA 里会带额外标记
+  const isWebKit = /AppleWebKit/i.test(ua);
+  const isSafari = /Safari/i.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|Chrome/i.test(ua);
+  return isIOS && isWebKit && isSafari;
+}
+
 class AudioLoader {
   private static instance: AudioLoader;
   private audioCache: AudioCache = {};
@@ -18,8 +30,17 @@ class AudioLoader {
   private volume: number = 0.4;
   private isMuted: boolean = false;
   private isInitialized: boolean = false;
+  private isAudioDisabled: boolean;
 
-  private constructor() {}
+  private constructor() {
+    // Safari 移动端上，音频预加载/解码可能导致明显卡顿与“点击不够快”
+    // 因此在 Safari mobile 环境直接禁用音频功能。
+    this.isAudioDisabled = isSafariMobile();
+    if (this.isAudioDisabled) {
+      this.isInitialized = true;
+      this.loadingPromises = [];
+    }
+  }
 
   public static getInstance(): AudioLoader {
     if (!AudioLoader.instance) {
@@ -31,6 +52,10 @@ class AudioLoader {
   private async initialize() {
     if (this.isInitialized) return;
     
+    if (this.isAudioDisabled) {
+      this.isInitialized = true;
+      return;
+    }
     this.preloadAudios();
     this.isInitialized = true;
   }
@@ -140,6 +165,7 @@ class AudioLoader {
   }
 
   public async playSound(soundFile: string) {
+    if (this.isAudioDisabled) return;
     if (this.isMuted) return;
 
     try {
@@ -233,6 +259,7 @@ class AudioLoader {
   }
 
   public async waitForLoad(): Promise<void> {
+    if (this.isAudioDisabled) return;
     if (!this.isInitialized) {
       await this.initialize();
     }

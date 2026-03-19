@@ -56,11 +56,13 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   // 判断是否为移动端（动态监听）
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return window.innerWidth < 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+    const hasTouch = navigator.maxTouchPoints > 0;
+    return window.innerWidth < 768 || hasTouch;
   });
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768 || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0));
+      const hasTouch = navigator.maxTouchPoints > 0;
+      setIsMobile(window.innerWidth < 768 || hasTouch);
     };
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);

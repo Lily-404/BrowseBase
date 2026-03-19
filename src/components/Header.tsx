@@ -6,7 +6,12 @@ import CircleButton from './ui/CircleButton';
 import { audioLoader } from '../utils/audioLoader';
 import Icon from './ui/Icon';
 
-const Header: React.FC<{ onBlindBoxClick?: () => void }> = ({ onBlindBoxClick }) => {
+type HeaderMode = 'default' | 'about';
+
+const Header: React.FC<{ onBlindBoxClick?: () => void; mode?: HeaderMode }> = ({
+  onBlindBoxClick,
+  mode = 'default',
+}) => {
   const { t } = useTranslation();
   
   const toggleLanguage = () => {
@@ -34,66 +39,78 @@ const Header: React.FC<{ onBlindBoxClick?: () => void }> = ({ onBlindBoxClick })
               </div>
             </Link>
           </div>
-          
-          <div className="flex items-center gap-2 sm:gap-4 ml-auto">
-            <CircleButton
-              onClick={onBlindBoxClick}
-              variant="secondary"
-              size="sm"
-              title={t('header.blindBox')}
-              className="text-[10px] sm:text-xs bg-gray-400 text-white  border-none"
-            >
-              {t('header.blindBox')}
-            </CircleButton>
-            <CircleButton
-              href="https://www.jimmy-blog.top/"
-              variant="secondary"
-              size="sm"
-              title={t('header.blog')}
-              onClick={playClickSound}
-              className="text-[10px] sm:text-xs"
-            >
-              {t('header.blog')}
-            </CircleButton>
-            <Link to="/about" onClick={playClickSound}>
-              {/* 移动端显示icon */}
+
+          {mode === 'about' ? (
+            <div className="flex items-center ml-auto">
+              <Link
+                to="/"
+                onClick={playClickSound}
+                className="inline-flex items-center px-3 py-2 rounded-lg border border-[#E5E7EB] bg-[#F1F1F1] text-[#4D4D4D] font-medium text-sm transition-all duration-200 hover:bg-[#E7E7E7] hover:text-[#1A1A1A] shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]"
+              >
+                {t('header.back')}
+              </Link>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 sm:gap-4 ml-auto">
               <CircleButton
+                onClick={onBlindBoxClick}
                 variant="secondary"
                 size="sm"
-                title={t('header.about')}
+                title={t('header.blindBox')}
+                className="text-[10px] sm:text-xs bg-gray-400 text-white  border-none"
+              >
+                {t('header.blindBox')}
+              </CircleButton>
+              <CircleButton
+                href="https://www.jimmy-blog.top/"
+                variant="secondary"
+                size="sm"
+                title={t('header.blog')}
+                onClick={playClickSound}
+                className="text-[10px] sm:text-xs"
+              >
+                {t('header.blog')}
+              </CircleButton>
+              <Link to="/about" onClick={playClickSound}>
+                {/* 移动端显示icon */}
+                <CircleButton
+                  variant="secondary"
+                  size="sm"
+                  title={t('header.about')}
+                  iconOnly
+                  className="text-[10px] sm:text-xs inline-flex sm:hidden"
+                >
+                  <Icon name="Info" size={16} />
+                </CircleButton>
+                {/* PC端显示文字 */}
+                <CircleButton
+                  variant="secondary"
+                  size="sm"
+                  title={t('header.about')}
+                  className="text-[10px] sm:text-xs hidden sm:inline-flex"
+                >
+                  {t('header.about')}
+                </CircleButton>
+              </Link>
+              <CircleButton
+                onClick={() => {
+                  playClickSound();
+                  toggleLanguage();
+                }}
+                variant="secondary"
+                size="sm"
                 iconOnly
-                className="text-[10px] sm:text-xs inline-flex sm:hidden"
+                title={i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
+                className="hidden sm:inline-flex"
               >
-                <Icon name="Info" size={16} />
+                <Icon
+                  name="Globe"
+                  size={16}
+                  fallback={<span className="text-xs">🌐</span>}
+                />
               </CircleButton>
-              {/* PC端显示文字 */}
-              <CircleButton
-                variant="secondary"
-                size="sm"
-                title={t('header.about')}
-                className="text-[10px] sm:text-xs hidden sm:inline-flex"
-              >
-                {t('header.about')}
-              </CircleButton>
-            </Link>
-            <CircleButton
-              onClick={() => {
-                playClickSound();
-                toggleLanguage();
-              }}
-              variant="secondary"
-              size="sm"
-              iconOnly
-              title={i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
-              className="hidden sm:inline-flex"
-            >
-              <Icon 
-                name="Globe" 
-                size={16} 
-                fallback={<span className="text-xs">🌐</span>}
-              />
-            </CircleButton>
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

@@ -103,7 +103,24 @@ const Admin = () => {
   });
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
-  const [isRetroTheme, setIsRetroTheme] = useState(false);
+  const [isRetroTheme, setIsRetroTheme] = useState(() => {
+    try {
+      const v = localStorage.getItem('isRetroTheme');
+      if (v === 'true') return true;
+      if (v === 'false') return false;
+      return false;
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('isRetroTheme', String(isRetroTheme));
+    } catch {
+      // 忽略 localStorage 写入失败（隐私模式/禁用等）
+    }
+  }, [isRetroTheme]);
   
   // 使用 useCallback 包装 fetchResources 函数
   const fetchResources = useCallback(async () => {
@@ -241,7 +258,7 @@ const Admin = () => {
         
         {/* 优化后的操作加载状态 */}
         {!isInitialLoading && isLoading && (
-          <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 ${isRetroTheme ? 'bg-[#f0f0f0]/90 border-2 border-[#2c2c2c]' : 'bg-white/90 backdrop-blur border border-gray-100'} px-6 py-3 ${isRetroTheme ? '' : 'rounded-full shadow-lg'} flex items-center space-x-3 z-50`}>
+          <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 ${isRetroTheme ? 'bg-[#f0f0f0]/90 border-2 border-[#2c2c2c]' : 'bg-white/90 border border-gray-100'} px-6 py-3 ${isRetroTheme ? '' : 'rounded-full shadow-lg'} flex items-center space-x-3 z-50`}>
             <div className="relative">
               <div className={`w-5 h-5 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'border-2 border-gray-200 rounded-full'}`}></div>
               <div className={`absolute inset-0 w-5 h-5 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'border-2 border-blue-500 rounded-full'} border-t-transparent animate-spin`}></div>
