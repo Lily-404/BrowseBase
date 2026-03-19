@@ -44,6 +44,8 @@ const Home: React.FC = () => {
   const [isBlindBoxLoading, setIsBlindBoxLoading] = useState(false);
   // 盲盒资源池缓存（基于过滤条件）
   const blindBoxCacheRef = useRef<Record<string, Resource[]>>({});
+  // 音频是否已在首个交互时预热
+  const audioPreheatedRef = useRef(false);
 
   // 优化预加载逻辑
   const preloadNextPage = useCallback(async () => {
@@ -239,6 +241,23 @@ const Home: React.FC = () => {
   useEffect(() => {
     fetchResources();
   }, [fetchResources]);
+
+  // 首次用户交互时在后台预热音频，避免后续点击等待
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      if (audioPreheatedRef.current) return;
+      audioPreheatedRef.current = true;
+      void audioLoader.waitForLoad().catch((error) => {
+        console.warn('Failed to preheat audio on first interaction:', error);
+      });
+      window.removeEventListener('pointerdown', handleFirstInteraction);
+    };
+
+    window.addEventListener('pointerdown', handleFirstInteraction);
+    return () => {
+      window.removeEventListener('pointerdown', handleFirstInteraction);
+    };
+  }, []);
 
   return (
     <ErrorBoundary>

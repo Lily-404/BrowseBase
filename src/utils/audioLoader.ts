@@ -19,13 +19,7 @@ class AudioLoader {
   private isMuted: boolean = false;
   private isInitialized: boolean = false;
 
-  private constructor() {
-    // 立即开始预加载，不等待任何事件
-    // 使用微任务确保不阻塞主线程
-    Promise.resolve().then(() => {
-      this.initialize();
-    });
-  }
+  private constructor() {}
 
   public static getInstance(): AudioLoader {
     if (!AudioLoader.instance) {
@@ -37,10 +31,7 @@ class AudioLoader {
   private async initialize() {
     if (this.isInitialized) return;
     
-    // 立即开始预加载，不等待任何 DOM 事件
-    // 音频加载不依赖于 DOM，可以立即开始
     this.preloadAudios();
-    
     this.isInitialized = true;
   }
 

@@ -82,7 +82,7 @@ const Admin = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [isInitialLoading, setIsInitialLoading] = useState(true); // 添加初始加载状态
+  const [isInitialLoading, setIsInitialLoading] = useState(true); // 初始加载状态（仅用于首屏骨架）
   const itemsPerPage = 13;
   const [newResource, setNewResource] = useState<Partial<Resource>>({
     title: '',
@@ -237,20 +237,7 @@ const Admin = () => {
         </div>
         
         {/* 优化后的初始加载状态 */}
-        {isInitialLoading && (
-          <div className={`fixed inset-0 ${isRetroTheme ? 'bg-[#f0f0f0]/80' : 'bg-white/80'} backdrop-blur-sm flex items-center justify-center z-50`}>
-            <div className={`${isRetroTheme ? 'bg-[#f0f0f0]/90' : 'bg-white/90'} p-8 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-2xl shadow-xl'} flex flex-col items-center space-y-4`}>
-              <div className="relative">
-                <div className={`w-16 h-16 ${isRetroTheme ? 'border-2' : 'border-4'} ${isRetroTheme ? 'border-[#2c2c2c]' : 'border-blue-100'} ${isRetroTheme ? '' : 'rounded-full'}`}></div>
-                <div className={`absolute inset-0 w-16 h-16 ${isRetroTheme ? 'border-2' : 'border-4'} ${isRetroTheme ? 'border-[#2c2c2c]' : 'border-blue-500'} ${isRetroTheme ? '' : 'rounded-full'} border-t-transparent animate-spin`}></div>
-              </div>
-              <div className="flex flex-col items-center">
-                <span className={`text-lg ${isRetroTheme ? 'font-mono' : 'font-medium'} text-gray-700`}>资源加载中</span>
-                <span className="text-sm text-gray-500">请稍候...</span>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* 初始加载：使用局部骨架而不是整屏遮罩，提升感知性能 */}
         
         {/* 优化后的操作加载状态 */}
         {!isInitialLoading && isLoading && (
@@ -326,7 +313,7 @@ const Admin = () => {
                 </div>
               </div>
               
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto min-h-[320px]">
                 <table className="w-full">
                   <thead>
                     <tr className={isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-50'}>
@@ -337,64 +324,98 @@ const Admin = () => {
                     </tr>
                   </thead>
                   <tbody className={isRetroTheme ? '' : 'divide-y divide-gray-100'}>
-                    {resources.map(resource => (
-                      <tr key={resource.id} className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'hover:bg-gray-50'} transition-colors`}>
-                        <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                          <div className={`${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-900`}>{resource.title}</div>
-                          <div className={`text-sm text-gray-500 truncate hover:text-gray-700 max-w-[250px] ${isRetroTheme ? 'font-mono' : ''}`}>
-                            <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                              {resource.url}
-                            </a>
-                          </div>
-                        </td>
-                        <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                          {resource.category ? (
-                            <span className={`px-3 py-1 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-gray-100 rounded-full'} text-gray-700 text-sm ${isRetroTheme ? 'font-mono' : ''}`}>
-                              {getCategoryName(resource.category)}
-                            </span>
-                          ) : (
-                            <span className={`text-gray-400 text-sm ${isRetroTheme ? 'font-mono' : ''}`}>未分类</span>
-                          )}
-                        </td>
-                        <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                          <div className="flex flex-wrap gap-1">
-                            {resource.tags.map(tagId => {
-                              const tag = tags.find(t => t.id === tagId);
-                              return (
-                                <span
-                                  key={tagId}
-                                  className={`px-2 py-1 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-gray-100 rounded-full'} text-gray-700 text-xs ${isRetroTheme ? 'font-mono' : ''}`}
-                                >
-                                  {tag ? tag.name : tagId}
+                    {isInitialLoading
+                      ? Array.from({ length: 6 }).map((_, index) => (
+                          <tr key={index} className={isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}>
+                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
+                              <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-3/4 mb-2`} />
+                              <div className={`h-3 ${isRetroTheme ? 'bg-[#e0e0e0]' : 'bg-gray-100'} rounded w-1/2`} />
+                            </td>
+                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
+                              <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-1/2`} />
+                            </td>
+                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
+                              <div className="flex flex-wrap gap-2">
+                                <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-10`} />
+                                <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-12`} />
+                              </div>
+                            </td>
+                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
+                              <div className="flex space-x-3">
+                                <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-10`} />
+                                <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-10`} />
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      : resources.map((resource) => (
+                          <tr key={resource.id} className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'hover:bg-gray-50'} transition-colors`}>
+                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
+                              <div className={`${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-900`}>{resource.title}</div>
+                              <div className={`text-sm text-gray-500 truncate hover:text-gray-700 max-w-[250px] ${isRetroTheme ? 'font-mono' : ''}`}>
+                                <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                                  {resource.url}
+                                </a>
+                              </div>
+                            </td>
+                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
+                              {resource.category ? (
+                                <span className={`px-3 py-1 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-gray-100 rounded-full'} text-gray-700 text-sm ${isRetroTheme ? 'font-mono' : ''}`}>
+                                  {getCategoryName(resource.category)}
                                 </span>
-                              );
-                            })}
-                          </div>
-                        </td>
-                        <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                          <div className="flex space-x-3">
-                            <button
-                              onClick={() => handleEdit(resource)}
-                              className={`text-gray-600 hover:text-gray-800 transition-colors flex items-center space-x-1 ${isRetroTheme ? 'font-mono' : ''}`}
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                              <span className="text-sm">编辑</span>
-                            </button>
-                            <button
-                              onClick={() => handleDelete(resource.id)}
-                              className={`text-gray-600 hover:text-gray-800 transition-colors flex items-center space-x-1 ${isRetroTheme ? 'font-mono' : ''}`}
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                              <span className="text-sm">删除</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                              ) : (
+                                <span className={`text-gray-400 text-sm ${isRetroTheme ? 'font-mono' : ''}`}>未分类</span>
+                              )}
+                            </td>
+                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
+                              <div className="flex flex-wrap gap-1">
+                                {resource.tags.map((tagId) => {
+                                  const tag = tags.find((t) => t.id === tagId);
+                                  return (
+                                    <span
+                                      key={tagId}
+                                      className={`px-2 py-1 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-gray-100 rounded-full'} text-gray-700 text-xs ${isRetroTheme ? 'font-mono' : ''}`}
+                                    >
+                                      {tag ? tag.name : tagId}
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            </td>
+                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
+                              <div className="flex space-x-3">
+                                <button
+                                  onClick={() => handleEdit(resource)}
+                                  className={`text-gray-600 hover:text-gray-800 transition-colors flex items-center space-x-1 ${isRetroTheme ? 'font-mono' : ''}`}
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={1.5}
+                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                    />
+                                  </svg>
+                                  <span className="text-sm">编辑</span>
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(resource.id)}
+                                  className={`text-gray-600 hover:text-gray-800 transition-colors flex items-center space-x-1 ${isRetroTheme ? 'font-mono' : ''}`}
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={1.5}
+                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                    />
+                                  </svg>
+                                  <span className="text-sm">删除</span>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
                   </tbody>
                 </table>
               </div>

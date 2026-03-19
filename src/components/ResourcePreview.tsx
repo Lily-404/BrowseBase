@@ -32,7 +32,10 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   const { t } = useTranslation();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [tilt, setTilt] = useState<{[id: string]: {x: number, y: number}}>({});
-  const cardRefs = useRef<{[id: string]: HTMLDivElement | null}>({});
+  // 外层命中区域（不做 transform，避免 hover 抖动/反复接住鼠标）
+  const hitAreaRefs = useRef<{[id: string]: HTMLDivElement | null}>({});
+  // 内层视觉卡片（会做 transform/boxShadow）
+  const visualCardRefs = useRef<{[id: string]: HTMLDivElement | null}>({});
   const defaultHeights = useRef<{[id: string]: number}>({});
   const [hoverTranslateY, setHoverTranslateY] = useState(0);
 
@@ -53,9 +56,9 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   // 记录每个卡片的默认高度
   useEffect(() => {
     resources.forEach(resource => {
-      const card = cardRefs.current[resource.id];
-      if (card && !defaultHeights.current[resource.id]) {
-        defaultHeights.current[resource.id] = card.getBoundingClientRect().height;
+      const hitArea = hitAreaRefs.current[resource.id];
+      if (hitArea && !defaultHeights.current[resource.id]) {
+        defaultHeights.current[resource.id] = hitArea.getBoundingClientRect().height;
       }
     });
   }, [resources]);
@@ -67,12 +70,12 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   }, []);
 
   useEffect(() => {
-    if (hoveredId && cardRefs.current[hoveredId]) {
-      const card = cardRefs.current[hoveredId];
-      if (!card) return;
+    if (hoveredId && visualCardRefs.current[hoveredId]) {
+      const visualCard = visualCardRefs.current[hoveredId];
+      if (!visualCard) return;
       // 使用 requestAnimationFrame 确保在DOM更新后计算，避免抖动
       requestAnimationFrame(() => {
-        const rect = card.getBoundingClientRect();
+        const rect = visualCard.getBoundingClientRect();
         // rect.bottom 已经考虑了卡片放大后的实际位置（scale 1.10）
         const overBottom = rect.bottom - (window.innerHeight - footerHeight);
         if (overBottom > 0) {
@@ -86,20 +89,10 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
     }
   }, [hoveredId, footerHeight]);
 
-  useEffect(() => {
-    // 确保音效文件在组件加载时就开始预加载
-    audioLoader.waitForLoad().catch(error => {
-      console.warn('Failed to preload audio:', error);
-    });
-  }, []);
-
   const handleResourceClick = useCallback(async (resource: Resource) => {
     try {
-      // 懒加载音效
-      if (!audioLoader.isAudioLoaded('/to.wav')) {
-        await audioLoader.waitForLoad();
-      }
-      await audioLoader.playSound('/to.wav');
+      // 不阻塞点击，直接尝试播放（内部会按需懒加载，并做超时保护）
+      void audioLoader.playSound('/to.wav');
       trackEvent('Resource', 'To', resource.title);
     } catch (error) {
       console.warn('Failed to play sound:', error);
@@ -168,10 +161,10 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         }
         // 计算 transformOrigin，避免在每次渲染时重复计算导致性能问题
         let transformOrigin = 'center center';
-        if (isHovered && cardRefs.current[resource.id]) {
-          const card = cardRefs.current[resource.id];
-          if (card) {
-            const rect = card.getBoundingClientRect();
+        if (isHovered && hitAreaRefs.current[resource.id]) {
+          const hitArea = hitAreaRefs.current[resource.id];
+          if (hitArea) {
+            const rect = hitArea.getBoundingClientRect();
             // 考虑卡片放大和位移后的实际位置
             if (rect.bottom > window.innerHeight - 40) {
               transformOrigin = 'center bottom';
@@ -184,38 +177,17 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         return (
           <div key={resource.id} className="relative w-full h-full">
             <div
-              ref={el => { cardRefs.current[resource.id] = el; }}
-              className={`
-                relative z-0 w-full h-full
-                rounded-lg p-3 sm:p-4
-                bg-[#F1F1F1]
-                cursor-pointer flex flex-col group transition-all duration-300
-                border
-                ${isHovered
-                  ? 'border-[#F9FAFB]'
-                  : 'border-[#E5E7EB] shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'}
-              `}
-              style={{
-                transition: 'transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 1s cubic-bezier(.22,1,.36,1)',
-                // 固定占位高度，避免 hover 时高度变化影响整行布局
-                minHeight: maxDefaultHeight ? `${maxDefaultHeight}px` : undefined,
-                transform: isHovered
-                  ? `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.10) translateY(${hoverTranslateY}px)`
-                  : undefined,
-                boxShadow: isHovered
-                  ? dynamicBoxShadow
-                  : `inset -1px -1px 2px rgba(255,255,255,0.9), inset 1px 1px 2px rgba(0,0,0,0.1)`,
-                transformOrigin,
-              }}
               onMouseEnter={() => setHoveredId(resource.id)}
               onMouseLeave={() => {
                 setHoveredId(null);
                 setTilt(prev => ({ ...prev, [resource.id]: { x: 0, y: 0 } }));
               }}
               onMouseMove={e => {
-                const card = cardRefs.current[resource.id];
-                if (!card) return;
-                const rect = card.getBoundingClientRect();
+                // 使用视觉卡片实际位置来计算 3D 按压效果，避免上移后仍按原始位置计算
+                const visualCard = visualCardRefs.current[resource.id];
+                const rectTarget = visualCard ?? hitAreaRefs.current[resource.id];
+                if (!rectTarget) return;
+                const rect = rectTarget.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 const px = x / rect.width;
@@ -229,7 +201,34 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                 handleResourceClick(resource);
                 window.open(resource.url, '_blank', 'noopener,noreferrer');
               }}
+              ref={el => { hitAreaRefs.current[resource.id] = el; }}
+              className="relative w-full h-full"
               >
+                <div
+                  ref={el => { visualCardRefs.current[resource.id] = el; }}
+                  className={`
+                    relative z-0 w-full h-full
+                    rounded-lg p-3 sm:p-4
+                    bg-[#F1F1F1]
+                    cursor-pointer flex flex-col group transition-all duration-300
+                    border
+                    ${isHovered
+                      ? 'border-[#F9FAFB]'
+                      : 'border-[#E5E7EB] shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'}
+                  `}
+                  style={{
+                    transition: 'transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 1s cubic-bezier(.22,1,.36,1)',
+                    // 固定占位高度，避免 hover 时高度变化影响整行布局
+                    minHeight: maxDefaultHeight ? `${maxDefaultHeight}px` : undefined,
+                    transform: isHovered
+                      ? `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.10) translateY(${hoverTranslateY}px)`
+                      : undefined,
+                    boxShadow: isHovered
+                      ? dynamicBoxShadow
+                      : `inset -1px -1px 2px rgba(255,255,255,0.9), inset 1px 1px 2px rgba(0,0,0,0.1)`,
+                    transformOrigin,
+                  }}
+                >
                 <div className="flex justify-between items-start mb-1.5 sm:mb-2">
                   <h3 className="text-base font-bold text-[#1A1A1A] transition-all duration-300 ease-in-out line-clamp-2">
                     {resource.title}
@@ -242,6 +241,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
                   "
                 >
                   {resource.description.split('\n\n')[0]}
+                </div>
                 </div>
               </div>
           </div>

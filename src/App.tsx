@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import Home from './pages/Home';
 import Admin from './pages/Admin';
@@ -18,17 +17,18 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
 
+  // 首次挂载时执行鉴权并注册 auth 事件
   useEffect(() => {
     checkAuth();
-    // Track page view when location changes
-    trackPageView(location.pathname);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN') {
         checkAuth();
         // 清理 URL 中的认证参数
-        if (location.hash.includes('access_token')) {
-          window.history.replaceState({}, document.title, location.pathname);
+        if (window.location.hash.includes('access_token')) {
+          window.history.replaceState({}, document.title, window.location.pathname);
         }
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
@@ -40,7 +40,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [location]);
+  }, []);
+
+  // 路由变化时仅做埋点
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
 
   async function checkAuth() {
     try {

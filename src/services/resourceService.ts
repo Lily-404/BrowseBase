@@ -2,20 +2,37 @@ import { supabase } from '../lib/supabase';
 import { Resource, ResourceFilters } from '../types/resource';
 
 // 缓存搜索结果
-const searchCache = new Map<string, {
-  data: Resource[];
-  count: number;
-  timestamp: number;
-}>();
+const searchCache = new Map<
+  string,
+  {
+    data: Resource[];
+    count: number;
+    timestamp: number;
+  }
+>();
 
 // 缓存所有资源（用于盲盒）
-const allResourcesCache = new Map<string, {
-  data: Resource[];
-  timestamp: number;
-}>();
+const allResourcesCache = new Map<
+  string,
+  {
+    data: Resource[];
+    timestamp: number;
+  }
+>();
 
 // 缓存过期时间（5分钟）
 const CACHE_EXPIRY = 5 * 60 * 1000;
+
+// 首页缓存的最大条目数量，避免内存无限增长
+const MAX_SEARCH_CACHE_ENTRIES = 50;
+
+function ensureSearchCacheCapacity() {
+  if (searchCache.size <= MAX_SEARCH_CACHE_ENTRIES) return;
+  // 简单按插入顺序清理最旧的若干条
+  const overflow = searchCache.size - MAX_SEARCH_CACHE_ENTRIES;
+  const keys = Array.from(searchCache.keys()).slice(0, overflow);
+  keys.forEach((key) => searchCache.delete(key));
+}
 
 export const resourceService = {
   async fetchResources(page: number, itemsPerPage: number, filters?: ResourceFilters) {
@@ -95,6 +112,8 @@ export const resourceService = {
         count: result.count,
         timestamp: Date.now()
       });
+
+      ensureSearchCacheCapacity();
 
       return result;
     } catch (error) {
