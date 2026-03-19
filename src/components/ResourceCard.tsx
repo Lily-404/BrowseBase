@@ -10,6 +10,7 @@ export interface ResourceCardProps {
   hoverTranslateY: number;
   footerHeight: number;
   maxDefaultHeight?: number;
+  layoutMode: 'grid' | 'list' | 'single';
   onHover: (id: string) => void;
   onLeave: (id: string) => void;
   onTiltChange: (id: string, rotateX: number, rotateY: number) => void;
@@ -27,6 +28,7 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   hoverTranslateY,
   footerHeight,
   maxDefaultHeight,
+  layoutMode,
   onHover,
   onLeave,
   onTiltChange,
@@ -34,6 +36,10 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   onDefaultHeightMeasured,
   setHoverTranslateY,
 }) => {
+  const isSingle = layoutMode === 'single';
+  const isList = layoutMode === 'list';
+  const isVariableHeight = isList || isSingle;
+
   const hitAreaRef = useRef<HTMLDivElement | null>(null);
   const visualCardRef = useRef<HTMLDivElement | null>(null);
   const [transformOrigin, setTransformOrigin] = useState<'center center' | 'center bottom'>('center center');
@@ -109,10 +115,10 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
 
   if (isMobile) {
     return (
-      <div key={resource.id} className="relative w-full h-full">
+      <div key={resource.id} className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}>
         <div
           ref={hitAreaRef}
-          className="relative z-0 h-full bg-[#F1F1F1] rounded-lg p-3 sm:p-4 shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)] cursor-pointer flex flex-col group transition-all duration-300"
+          className={`relative z-0 ${isVariableHeight ? 'h-auto self-start' : 'h-full'} bg-[#F1F1F1] rounded-lg ${isSingle ? 'p-2 sm:p-3' : 'p-3 sm:p-4'} shadow-[inset_-0.5px_-0.5px_2px_rgba(255,255,255,0.9),inset_0.5px_0.5px_2px_rgba(0,0,0,0.25)] cursor-pointer flex flex-col group transition-all duration-300`}
           onClick={() => onClick(resource)}
         >
           <div className="flex justify-between items-start mb-1.5 sm:mb-2">
@@ -129,11 +135,11 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   }
 
   return (
-    <div className="relative w-full h-full">
+    <div className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}>
       {/* 命中区域：不做 transform，避免卡片收回时“接住”鼠标导致抖动 */}
       <div
         ref={hitAreaRef}
-        className="relative w-full h-full"
+        className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}
         onMouseEnter={() => onHover(resource.id)}
         onMouseLeave={() => {
           onLeave(resource.id);
@@ -144,8 +150,8 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
         <div
           ref={visualCardRef}
           className={`
-            relative z-0 w-full h-full
-            rounded-lg p-3 sm:p-4
+            relative z-0 w-full ${isVariableHeight ? 'h-auto' : 'h-full'}
+          rounded-lg ${isSingle ? 'p-2 sm:p-3' : 'p-3 sm:p-4'}
             bg-[#F1F1F1]
             cursor-pointer flex flex-col group transition-all duration-300
             border
@@ -153,7 +159,8 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
           `}
           style={{
             transition: 'transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 1s cubic-bezier(.22,1,.36,1)',
-            minHeight: maxDefaultHeight ? `${maxDefaultHeight}px` : undefined,
+            // list/single 模式让高度随内容变化，不强制用统一 minHeight
+            minHeight: isVariableHeight ? undefined : maxDefaultHeight ? `${maxDefaultHeight}px` : undefined,
             transform: isHovered
               ? `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.10) translateY(${hoverTranslateY}px)`
               : undefined,
@@ -164,11 +171,11 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
           }}
         >
           <div className="flex justify-between items-start mb-1.5 sm:mb-2">
-            <h3 className="text-base font-bold text-[#1A1A1A] transition-all duration-300 ease-in-out line-clamp-2">
+            <h3 className={`text-base font-bold text-[#1A1A1A] transition-all duration-300 ease-in-out ${isSingle ? 'line-clamp-1' : 'line-clamp-2'}`}>
               {resource.title}
             </h3>
           </div>
-          <div className="text-sm leading-relaxed text-[#1A1A1A]/60 overflow-hidden line-clamp-4">
+          <div className={`text-sm leading-relaxed text-[#1A1A1A]/60 overflow-hidden ${isSingle ? 'line-clamp-3' : 'line-clamp-4'}`}>
             {descriptionTop}
           </div>
         </div>

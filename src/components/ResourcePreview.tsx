@@ -17,6 +17,7 @@ interface ResourcePreviewProps {
   totalPages: number;
   totalCount: number;
   isLoading: boolean;
+  layoutMode: 'grid' | 'list' | 'single';
 }
 
 const ResourcePreview: React.FC<ResourcePreviewProps> = ({
@@ -29,6 +30,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   totalPages,
   totalCount,
   isLoading = false,
+  layoutMode,
 }) => {
   const { t } = useTranslation();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -117,7 +119,14 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
 
   const renderResources = useMemo(
     () => (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 sm:mb-8 relative">
+      <div
+        className={[
+          'grid mb-4 sm:mb-8 relative',
+          layoutMode === 'single' ? 'grid-cols-1 gap-4' : '',
+          layoutMode === 'list' ? 'grid-cols-1 sm:grid-cols-2 gap-4 items-start' : '',
+          layoutMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : '',
+        ].join(' ')}
+      >
         {resources.map((resource) => {
           const isHovered = hoveredId === resource.id;
           const rotateX = isHovered && tilt[resource.id] ? tilt[resource.id].x : 0;
@@ -136,6 +145,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
               hoverTranslateY={translateY}
               footerHeight={footerHeight}
               maxDefaultHeight={maxDefaultHeight}
+              layoutMode={layoutMode}
               onHover={handleHover}
               onLeave={handleLeave}
               onTiltChange={handleTiltChange}
@@ -161,13 +171,21 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
       handleResourceClick,
       handleDefaultHeightMeasured,
       setHoverTranslateYValue,
+      layoutMode,
     ],
   );
 
   // 优化骨架屏渲染
   const renderSkeleton = useMemo(
     () => (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div
+        className={[
+          'grid',
+          layoutMode === 'single' ? 'grid-cols-1 gap-4' : '',
+          layoutMode === 'list' ? 'grid-cols-1 sm:grid-cols-2 gap-4' : '',
+          layoutMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6' : '',
+        ].join(' ')}
+      >
         {Array.from({ length: 12 }).map((_, index) => (
           <div
             key={index}
@@ -192,7 +210,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         ))}
       </div>
     ),
-    [],
+    [layoutMode],
   );
 
   return (
