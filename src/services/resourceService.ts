@@ -145,11 +145,11 @@ export const resourceService = {
     }
   },
 
-  // 新增：获取所有资源（不分页）
-  async fetchAllResources(filters?: ResourceFilters) {
+  // 获取资源池（用于盲盒等场景）
+  async fetchAllResources(filters?: ResourceFilters, options?: { limit?: number }) {
     try {
       // 生成缓存键
-      const cacheKey = JSON.stringify({ type: 'all', filters });
+      const cacheKey = JSON.stringify({ type: 'all', filters, options });
       const cachedResult = allResourcesCache.get(cacheKey);
       
       // 检查缓存是否有效
@@ -174,6 +174,13 @@ export const resourceService = {
       }
       if (filters?.tag) {
         query = query.contains('tags', [filters.tag]);
+      }
+
+      // 可选结果上限：避免盲盒一次拉太多导致首开慢
+      if (options?.limit && options.limit > 0) {
+        // 盲盒资源池使用稳定排序，避免无 order 时每次取到的集合变化过大
+        query = query.order('updated_at', { ascending: false });
+        query = query.limit(options.limit);
       }
 
       const { data, error } = await query;

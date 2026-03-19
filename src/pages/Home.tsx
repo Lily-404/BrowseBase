@@ -182,12 +182,14 @@ const Home: React.FC = () => {
     // 如果没有缓存，显示加载状态并获取资源
     setIsBlindBoxLoading(true);
     try {
+      // 为盲盒建立资源池时增加结果上限，避免数据量大导致一次性拉取过慢
       const allResources = await resourceService.fetchAllResources(
         activeFilter.type === 'category' && activeFilter.id !== 'all'
           ? { category: activeFilter.id }
           : activeFilter.type === 'tag'
           ? { tag: activeFilter.id }
-          : undefined
+          : undefined,
+        { limit: 200 }
       );
       
       if (allResources.length === 0) {
