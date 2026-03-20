@@ -171,8 +171,8 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         className={[
           'grid mb-4 sm:mb-8 relative',
           layoutMode === 'single' ? 'grid-cols-1 gap-4' : '',
-          layoutMode === 'list' ? 'grid-cols-1 sm:grid-cols-2 gap-4 items-start' : '',
-          layoutMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start' : '',
+          layoutMode === 'list' ? 'grid-cols-1 sm:grid-cols-2 gap-4 items-stretch' : '',
+          layoutMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch' : '',
         ].join(' ')}
       >
         {resources.map((resource, index) => {
@@ -305,4 +305,3 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
 };
 
 export default memo(ResourcePreview);
-

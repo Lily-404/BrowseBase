@@ -147,11 +147,11 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   }
 
   return (
-    <div className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'self-start'}`}>
+    <div className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}>
       {/* 命中区域：不做 transform，避免卡片收回时“接住”鼠标导致抖动 */}
       <div
         ref={hitAreaRef}
-        className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'self-start'}`}
+        className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}
         onMouseEnter={() => onHover(resource.id)}
         onMouseLeave={() => {
           onLeave(resource.id);
@@ -179,8 +179,8 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
           `}
           style={{
             transition: 'transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 1s cubic-bezier(.22,1,.36,1)',
-            minHeight: shouldKeepRowMinHeight ? `${fixedRowHeight}px` : undefined,
-            height: shouldFillDefaultHeight ? `${fixedRowHeight}px` : undefined,
+            minHeight: shouldKeepRowMinHeight ? `${fixedRowHeight}px` : !isVariableHeight ? '100%' : undefined,
+            height: shouldFillDefaultHeight ? `${fixedRowHeight}px` : !isVariableHeight && !isHovered ? '100%' : undefined,
             overflow: 'visible',
             position: shouldOverlayCard ? 'absolute' : undefined,
             top: shouldOverlayCard ? 0 : undefined,
