@@ -83,7 +83,7 @@ const Header: React.FC<HeaderProps> = ({
                   variant="secondary"
                   size="sm"
                   title="布局模式"
-                  className="text-[10px] sm:text-xs bg-gray-800 text-white border-none"
+                  className="!hidden sm:!inline-flex text-[10px] sm:text-xs bg-gray-800 text-white border-none"
                 >
                   {getLayoutLabel()}
                 </CircleButton>
@@ -115,7 +115,7 @@ const Header: React.FC<HeaderProps> = ({
                   size="sm"
                   title={t('header.about')}
                   iconOnly
-                  className="text-[10px] sm:text-xs inline-flex sm:hidden"
+                  className="hidden"
                 >
                   <Icon name="Info" size={16} />
                 </CircleButton>
@@ -124,7 +124,7 @@ const Header: React.FC<HeaderProps> = ({
                   variant="secondary"
                   size="sm"
                   title={t('header.about')}
-                  className="text-[10px] sm:text-xs hidden sm:inline-flex"
+                  className="text-[10px] sm:text-xs inline-flex"
                 >
                   {t('header.about')}
                 </CircleButton>
@@ -138,7 +138,7 @@ const Header: React.FC<HeaderProps> = ({
                 size="sm"
                 iconOnly
                 title={i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
-                className="hidden sm:inline-flex"
+                className="inline-flex"
               >
                 <Icon
                   name="Globe"
