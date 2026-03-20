@@ -38,7 +38,22 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   const [hoverTranslateY, setHoverTranslateY] = useState(0);
 
   const defaultHeights = useRef<Record<string, number>>({});
-  const [maxDefaultHeight, setMaxDefaultHeight] = useState<number | undefined>(undefined);
+  // grid 模式下：每一行各自取“该行最高卡片高度”作为默认高度占位
+  const [rowMaxDefaultHeights, setRowMaxDefaultHeights] = useState<Record<number, number>>({});
+  const [columnsPerRow, setColumnsPerRow] = useState<number>(() => 1);
+
+  const calcColumnsPerRow = useCallback(() => {
+    if (typeof window === 'undefined') return 1;
+    if (layoutMode === 'single') return 1;
+    if (layoutMode === 'list') {
+      // list: grid-cols-1 sm:grid-cols-2
+      return window.innerWidth >= 640 ? 2 : 1;
+    }
+    // grid: grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 768) return 2;
+    return 1;
+  }, [layoutMode]);
 
   // Footer高度自适应
   const getFooterHeight = useCallback(() => {
@@ -73,19 +88,52 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
   // 资源列表变更时，重置高度/hover 状态
   useEffect(() => {
     defaultHeights.current = {};
-    setMaxDefaultHeight(undefined);
+    setRowMaxDefaultHeights({});
     setTilt({});
     setHoveredId(null);
     setHoverTranslateY(0);
   }, [resources]);
 
-  const handleDefaultHeightMeasured = useCallback((id: string, height: number) => {
-    // 只记录第一次测到的高度
-    if (defaultHeights.current[id] !== undefined) return;
-    defaultHeights.current[id] = height;
-    const heights = Object.values(defaultHeights.current);
-    if (heights.length > 0) setMaxDefaultHeight(Math.max(...heights));
-  }, []);
+  const computeRowMaxDefaultHeights = useCallback(
+    (heights: Record<string, number>) => {
+      const next: Record<number, number> = {};
+      if (layoutMode === 'single') return next;
+      if (columnsPerRow <= 1) return next;
+
+      resources.forEach((resource, index) => {
+        const h = heights[resource.id];
+        if (h === undefined) return;
+        const rowIndex = Math.floor(index / columnsPerRow);
+        next[rowIndex] = Math.max(next[rowIndex] ?? 0, h);
+      });
+
+      return next;
+    },
+    [resources, columnsPerRow, layoutMode],
+  );
+
+  // resize 或 layoutMode 变化时，更新每行列数
+  useEffect(() => {
+    const update = () => setColumnsPerRow(calcColumnsPerRow());
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [calcColumnsPerRow]);
+
+  // 列数变化时，基于已测得的高度重新分组计算每行最高值
+  useEffect(() => {
+    setRowMaxDefaultHeights(computeRowMaxDefaultHeights(defaultHeights.current));
+  }, [computeRowMaxDefaultHeights]);
+
+  const handleDefaultHeightMeasured = useCallback(
+    (id: string, height: number) => {
+      // 只记录第一次测到的高度
+      if (defaultHeights.current[id] !== undefined) return;
+      defaultHeights.current[id] = height;
+      setRowMaxDefaultHeights(computeRowMaxDefaultHeights(defaultHeights.current));
+    },
+    [computeRowMaxDefaultHeights],
+  );
 
   const handleResourceClick = useCallback((resource: Resource) => {
     // 不阻塞点击，直接尝试播放（内部会按需懒加载，并做超时保护）
@@ -124,10 +172,12 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
           'grid mb-4 sm:mb-8 relative',
           layoutMode === 'single' ? 'grid-cols-1 gap-4' : '',
           layoutMode === 'list' ? 'grid-cols-1 sm:grid-cols-2 gap-4 items-start' : '',
-          layoutMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : '',
+          layoutMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start' : '',
         ].join(' ')}
       >
-        {resources.map((resource) => {
+        {resources.map((resource, index) => {
+          const rowIndex = layoutMode === 'single' ? 0 : Math.floor(index / columnsPerRow);
+          const shouldFixHeight = layoutMode !== 'single' && columnsPerRow > 1;
           const isHovered = hoveredId === resource.id;
           const rotateX = isHovered && tilt[resource.id] ? tilt[resource.id].x : 0;
           const rotateY = isHovered && tilt[resource.id] ? tilt[resource.id].y : 0;
@@ -144,7 +194,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
               rotateY={rotateY}
               hoverTranslateY={translateY}
               footerHeight={footerHeight}
-              maxDefaultHeight={maxDefaultHeight}
+              maxDefaultHeight={shouldFixHeight ? rowMaxDefaultHeights[rowIndex] : undefined}
               layoutMode={layoutMode}
               onHover={handleHover}
               onLeave={handleLeave}
@@ -164,7 +214,8 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
       tilt,
       hoverTranslateY,
       footerHeight,
-      maxDefaultHeight,
+      rowMaxDefaultHeights,
+      columnsPerRow,
       handleHover,
       handleLeave,
       handleTiltChange,
@@ -183,7 +234,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
           'grid',
           layoutMode === 'single' ? 'grid-cols-1 gap-4' : '',
           layoutMode === 'list' ? 'grid-cols-1 sm:grid-cols-2 gap-4' : '',
-          layoutMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6' : '',
+          layoutMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 items-start' : '',
         ].join(' ')}
       >
         {Array.from({ length: 12 }).map((_, index) => (

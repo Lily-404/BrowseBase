@@ -37,8 +37,17 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   setHoverTranslateY,
 }) => {
   const isSingle = layoutMode === 'single';
-  const isList = layoutMode === 'list';
-  const isVariableHeight = isList || isSingle;
+  // single 模式保持可变高度；grid/list 需要固定占位，避免同一行不同内容导致高度不一致
+  // 移动端仍保持自适应高度，避免在父容器未定高度时出现拉伸/截断
+  const isVariableHeight = isMobile ? true : isSingle;
+  const isGrid = layoutMode === 'grid';
+  // grid 模式下：悬浮展开用 absolute 悬浮，避免撑大整行从而影响同一行其它卡片的高度
+  const shouldOverlayCard = isGrid && isHovered;
+  // 非移动端且存在统一占位高度时，按该行像素高度固定默认态，并在 hover 态保留最小高度避免回缩
+  const fixedRowHeight = !isVariableHeight && maxDefaultHeight ? maxDefaultHeight : undefined;
+  const shouldKeepRowMinHeight = Boolean(fixedRowHeight);
+  // 默认态保持视觉等高；hover 态改为仅保留最小高度，允许内容继续向上展开
+  const shouldFillDefaultHeight = shouldKeepRowMinHeight && !isHovered;
 
   const hitAreaRef = useRef<HTMLDivElement | null>(null);
   const visualCardRef = useRef<HTMLDivElement | null>(null);
@@ -80,6 +89,9 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   }, [isHovered, footerHeight, resource.id, setHoverTranslateY]);
 
   const descriptionTop = useMemo(() => resource.description.split('\n\n')[0], [resource.description]);
+  const shouldExpandContent = layoutMode === 'grid' && isHovered;
+  const titleCollapsedClamp = isSingle ? 'line-clamp-1' : 'line-clamp-2';
+  const descCollapsedClamp = isSingle ? 'line-clamp-3' : 'line-clamp-4';
 
   const dynamicBoxShadow = useMemo(() => {
     if (!isHovered) return undefined;
@@ -135,22 +147,30 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   }
 
   return (
-    <div className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}>
+    <div className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'self-start'}`}>
       {/* 命中区域：不做 transform，避免卡片收回时“接住”鼠标导致抖动 */}
       <div
         ref={hitAreaRef}
-        className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}
+        className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'self-start'}`}
         onMouseEnter={() => onHover(resource.id)}
         onMouseLeave={() => {
           onLeave(resource.id);
         }}
         onMouseMove={handleMouseMove}
         onClick={() => onClick(resource)}
+        style={
+          fixedRowHeight
+            ? {
+                height: `${fixedRowHeight}px`,
+                minHeight: `${fixedRowHeight}px`,
+              }
+            : undefined
+        }
       >
         <div
           ref={visualCardRef}
           className={`
-            relative z-0 w-full ${isVariableHeight ? 'h-auto' : 'h-full'}
+            relative z-0 ${isHovered ? 'z-20' : ''} w-full h-auto
           rounded-lg ${isSingle ? 'p-2 sm:p-3' : 'p-3 sm:p-4'}
             bg-[#F1F1F1]
             cursor-pointer flex flex-col group transition-all duration-300
@@ -159,8 +179,13 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
           `}
           style={{
             transition: 'transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 1s cubic-bezier(.22,1,.36,1)',
-            // list/single 模式让高度随内容变化，不强制用统一 minHeight
-            minHeight: isVariableHeight ? undefined : maxDefaultHeight ? `${maxDefaultHeight}px` : undefined,
+            minHeight: shouldKeepRowMinHeight ? `${fixedRowHeight}px` : undefined,
+            height: shouldFillDefaultHeight ? `${fixedRowHeight}px` : undefined,
+            overflow: 'visible',
+            position: shouldOverlayCard ? 'absolute' : undefined,
+            top: shouldOverlayCard ? 0 : undefined,
+            left: shouldOverlayCard ? 0 : undefined,
+            right: shouldOverlayCard ? 0 : undefined,
             transform: isHovered
               ? `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.10) translateY(${hoverTranslateY}px)`
               : undefined,
@@ -171,11 +196,22 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
           }}
         >
           <div className="flex justify-between items-start mb-1.5 sm:mb-2">
-            <h3 className={`text-base font-bold text-[#1A1A1A] transition-all duration-300 ease-in-out ${isSingle ? 'line-clamp-1' : 'line-clamp-2'}`}>
+            <h3
+              className={`text-base font-bold text-[#1A1A1A] transition-all duration-300 ease-in-out ${
+                shouldExpandContent ? 'line-clamp-none overflow-visible' : `${titleCollapsedClamp} overflow-hidden`
+              }`}
+            >
               {resource.title}
             </h3>
           </div>
-          <div className={`text-sm leading-relaxed text-[#1A1A1A]/60 overflow-hidden ${isSingle ? 'line-clamp-3' : 'line-clamp-4'}`}>
+
+          <div
+            className={`text-sm leading-relaxed text-[#1A1A1A]/60 transition-all duration-300 ${
+              shouldExpandContent
+                ? 'line-clamp-none overflow-visible'
+                : `overflow-hidden ${descCollapsedClamp}`
+            }`}
+          >
             {descriptionTop}
           </div>
         </div>
@@ -185,4 +221,3 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
 };
 
 export default React.memo(ResourceCard);
-
