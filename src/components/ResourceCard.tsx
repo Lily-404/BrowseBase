@@ -53,15 +53,24 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   const visualCardRef = useRef<HTMLDivElement | null>(null);
   const [transformOrigin, setTransformOrigin] = useState<'center center' | 'center bottom'>('center center');
 
-  // 命中区域高度用于占位，避免 hover 时整行布局抖动
+  // 命中区域高度用于占位，使用 ResizeObserver 持续同步，避免首帧/字体加载后高度漂移
   useEffect(() => {
     const el = hitAreaRef.current;
     if (!el) return;
-    const height = el.getBoundingClientRect().height;
-    onDefaultHeightMeasured(resource.id, height);
-    // 只在 resource.id 变化时测一次
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [resource.id]);
+    const measure = () => {
+      const height = el.getBoundingClientRect().height;
+      onDefaultHeightMeasured(resource.id, height);
+    };
+
+    measure();
+
+    const observer = new ResizeObserver(() => {
+      measure();
+    });
+    observer.observe(el);
+
+    return () => observer.disconnect();
+  }, [resource.id, onDefaultHeightMeasured]);
 
   // 仅当 hover 的卡片，才计算：为了不遮挡底部翻页条，需要整体上移多少
   useEffect(() => {

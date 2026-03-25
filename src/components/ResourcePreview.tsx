@@ -127,8 +127,9 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
 
   const handleDefaultHeightMeasured = useCallback(
     (id: string, height: number) => {
-      // 只记录第一次测到的高度
-      if (defaultHeights.current[id] !== undefined) return;
+      const prev = defaultHeights.current[id];
+      // 高度无变化时不触发重算，避免不必要渲染
+      if (prev !== undefined && Math.abs(prev - height) < 0.5) return;
       defaultHeights.current[id] = height;
       setRowMaxDefaultHeights(computeRowMaxDefaultHeights(defaultHeights.current));
     },
