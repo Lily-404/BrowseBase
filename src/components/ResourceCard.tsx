@@ -147,11 +147,21 @@ const ResourceCard: React.FC<ResourceCardProps> = ({
   }
 
   return (
-    <div className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}>
+    <div
+      className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}
+      style={
+        fixedRowHeight
+          ? {
+              height: `${fixedRowHeight}px`,
+              minHeight: `${fixedRowHeight}px`,
+            }
+          : undefined
+      }
+    >
       {/* 命中区域：不做 transform，避免卡片收回时“接住”鼠标导致抖动 */}
       <div
         ref={hitAreaRef}
-        className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : 'h-full'}`}
+        className={`relative w-full ${isVariableHeight ? 'h-auto self-start' : ''}`}
         onMouseEnter={() => onHover(resource.id)}
         onMouseLeave={() => {
           onLeave(resource.id);
