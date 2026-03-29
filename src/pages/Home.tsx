@@ -13,6 +13,7 @@ import { FilterState, CachedData } from '../types/home';
 import styles from '../styles/animations.module.css';
 // import AdSense from '../components/AdSense';  // 暂时注释，等待 AdSense 审核通过后再启用
 import Icon from '../components/ui/Icon';
+import WaveformLoader from '../components/WaveformLoader';
 import { audioLoader } from '../utils/audioLoader';
 
 // 添加错误类型定义
@@ -297,7 +298,7 @@ const Home: React.FC = () => {
         {(isInitialLoading || isAnimating) && (
           <div className={`fixed inset-0 bg-gradient-to-br from-[#F5F5F5] to-[#F0F0F0] z-50 flex items-center justify-center
             transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] ${!isInitialLoading ? 'opacity-0' : 'opacity-100'}`}>
-            <div className={`relative flex flex-col items-center gap-12 ${isAnimating ? styles.fadeIn : ''}`}>
+            <div className={`relative flex flex-col items-center gap-8 ${isAnimating ? styles.fadeIn : ''}`}>
               <div className="relative flex flex-col items-center gap-2">
                 <h1 className={`text-3xl font-bold bg-gradient-to-r from-[#4D4D4D] to-[#666666] bg-clip-text text-transparent
                   tracking-wider ${isAnimating ? styles.textFade : ''}`}>
@@ -308,30 +309,19 @@ const Home: React.FC = () => {
                 </p>
               </div>
               
-              <div className="relative flex flex-col items-center gap-6">
-                <div className={`relative w-24 h-24 ${isAnimating ? styles.ringExpand : ''}`}>
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#4D4D4D]/5 via-[#4D4D4D]/10 to-[#4D4D4D]/5 blur-xl animate-pulse"></div>
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white to-[#F8F8F8]
-                    shadow-[inset_-4px_-4px_8px_rgba(255,255,255,0.8),inset_4px_4px_8px_rgba(0,0,0,0.05)]"></div>
-                  <div className="absolute inset-2 rounded-full border-4 border-transparent
-                    border-t-[#4D4D4D] border-r-[#4D4D4D]/20 animate-spin"></div>
-                  <div className="absolute inset-4 rounded-full bg-gradient-to-br from-white to-[#F8F8F8]
-                    shadow-[inset_-2px_-2px_4px_rgba(255,255,255,0.8),inset_2px_2px_4px_rgba(0,0,0,0.05)]"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-3 h-3 rounded-full bg-gradient-to-br from-[#4D4D4D] to-[#4D4D4D]/80
-                      shadow-[0_0_8px_rgba(77,77,77,0.3)]"></div>
-                  </div>
+              <div className="relative flex flex-col items-center gap-4">
+                <div
+                  className={`flex items-center justify-center min-h-[4.5rem] ${isAnimating ? styles.ringExpand : ''}`}
+                  aria-hidden="true"
+                >
+                  <WaveformLoader className="scale-[1.5] sm:scale-[1.75]" />
                 </div>
-                
-                <div className="relative flex flex-col items-center gap-2">
-                  <p className={`text-[#4D4D4D] text-sm font-medium tracking-wider flex items-center gap-1.5
-                    ${isAnimating ? styles.textFade : ''}`}>
-                    <span>加载中</span>
-                    <span className="flex gap-1">
-                      <span className="inline-block w-1 h-3 bg-[#4D4D4D] rounded-full animate-bounce"></span>
-                      <span className="inline-block w-1 h-3 bg-[#4D4D4D] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                      <span className="inline-block w-1 h-3 bg-[#4D4D4D] rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></span>
-                    </span>
+
+                <div className="relative flex flex-col items-center gap-1">
+                  <p
+                    className={`text-[#4D4D4D] text-sm font-medium tracking-wider ${isAnimating ? styles.textFade : ''}`}
+                  >
+                    加载中
                   </p>
                   <p className={`text-xs text-[#4D4D4D]/40 tracking-wide ${isAnimating ? styles.textFade : ''}`}>
                     正在为您准备精彩内容
@@ -422,7 +412,7 @@ const Home: React.FC = () => {
                 // 加载状态 - 简单的加载圈圈
                 <div className="relative w-full h-full select-none">
                   <div className="relative z-0 h-full bg-white/60 rounded-2xl p-6 shadow-2xl flex flex-col items-center justify-center min-h-[260px] border border-[#e0e0e0]/70 backdrop-blur-xl">
-                    <div className="w-12 h-12 border-4 border-[#4D4D4D]/20 border-t-[#4D4D4D] rounded-full animate-spin mb-4"></div>
+                    <WaveformLoader className="scale-125 mb-4" />
                     <p className="text-[#4D4D4D] text-sm font-medium">{t('blindBox.loading')}</p>
                   </div>
                 </div>

@@ -65,4 +65,20 @@
 
 .textFade {
   animation: textFade 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
-} 
+}
+
+/* openai-fm 风格：波形条闪烁加载 */
+@keyframes wave {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animateWave {
+  animation: wave 1.2s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  opacity: 1;
+}
