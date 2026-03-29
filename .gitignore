@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local reference clone (not part of BrowseBase)
+openai-fm/

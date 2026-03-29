@@ -43,17 +43,32 @@ const About: React.FC = () => {
 
               <section>
                 <h3 className="text-lg sm:text-xl font-semibold text-[#1A1A1A] mb-4 sm:mb-5 tracking-tight">开源</h3>
-                <p className="text-[#1A1A1A]/70 leading-relaxed text-base sm:text-lg" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
-                  链接：<a 
-                    href="https://github.com/Lily-404/BrowseBase" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    onClick={playClickSound}
-                    className="text-[#4D4D4D] hover:text-[#1A1A1A] underline transition-colors"
-                  >
-                    https://github.com/Lily-404/BrowseBase
-                  </a>
-                </p>
+                <div className="text-[#1A1A1A]/70 leading-relaxed space-y-4 text-base sm:text-lg" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                  <p>
+                    本站仓库：
+                    <a
+                      href="https://github.com/Lily-404/BrowseBase"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={playClickSound}
+                      className="text-[#4D4D4D] hover:text-[#1A1A1A] underline transition-colors ml-1"
+                    >
+                      https://github.com/Lily-404/BrowseBase
+                    </a>
+                  </p>
+                  <p>
+                    UI 与交互部分参考了 OpenAI 开源演示项目 openai-fm：
+                    <a
+                      href="https://github.com/openai/openai-fm"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={playClickSound}
+                      className="text-[#4D4D4D] hover:text-[#1A1A1A] underline transition-colors ml-1"
+                    >
+                      https://github.com/openai/openai-fm
+                    </a>
+                  </p>
+                </div>
               </section>
 
               <section>

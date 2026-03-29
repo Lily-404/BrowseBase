@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, memo, useMemo, useState, useRef } from 'react';
 import Footer from './Footer';
+import SectionHeader from './SectionHeader';
 import { useTranslation } from 'react-i18next';
 import { trackEvent } from '../utils/analytics';
 import { Resource } from '../types/resourcePreview';
@@ -267,15 +268,11 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
 
   return (
     <div className="flex flex-col min-h-0">
-      <div className="flex flex-row justify-between relative gap-2 mb-3">
-        <div className="flex items-end">
-          <h2 className="text-base font-medium text-[#4D4D4D]">{t('resourcePreview.title')}</h2>
-        </div>
-        <div className="flex items-end gap-2">
-          <span className="text-sm text-[#4D4D4D]/60">{t('resourcePreview.totalResources', { count: totalCount })}</span>
-          <div className="flex flex-1 h-[1px] bg-foreground/8" />
-        </div>
-      </div>
+      <SectionHeader
+        className="mb-3"
+        title={t('resourcePreview.title')}
+        trailing={t('resourcePreview.totalResources', { count: totalCount })}
+      />
       <div className="flex flex-col flex-1 min-h-0">
         <div className="relative flex-1">
           {isLoading ? (

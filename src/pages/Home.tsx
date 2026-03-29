@@ -304,7 +304,7 @@ const Home: React.FC = () => {
                   BrowseBase
                 </h1>
                 <p className={`text-sm text-[#4D4D4D]/60 tracking-wide ${isAnimating ? styles.textFade : ''}`}>
-                  链接, 像盲盒一样简单
+                  信息，而非噪音。
                 </p>
               </div>
               

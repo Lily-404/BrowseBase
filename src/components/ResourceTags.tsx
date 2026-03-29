@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import SectionHeader from './SectionHeader';
 import { Button, ButtonLED } from './ui/Button';
 import { ResourceTagsProps } from '../types/resourceTags';
 import s from './ui/CapsuleButton.module.css';
@@ -60,7 +61,7 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
 
   return (
     <div className="mb-0 md:mb-6">
-      <h2 className="text-base uppercase font-medium mb-0 md:mb-3 text-[#4D4D4D]">{t('filter.title')}</h2>
+      <SectionHeader className="mb-0 md:mb-3" title={t('filter.title')} />
       <div className="block md:hidden">
         {renderMobileView()}
       </div>

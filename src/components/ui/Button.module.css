@@ -5,7 +5,7 @@
   gap: 8px;
   flex-wrap: wrap;
   flex: 1;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 12px;
   background: #f4f4f4;
   box-shadow: rgb(255, 255, 255) 1px 1px 1px 0px inset, 
@@ -150,11 +150,10 @@
   background: var(--primary, #FF3B30);
 }
 
-/* 星星图标样式 */
 .Star {
   position: absolute;
-  bottom: 8px;
-  right: 8px;
+  right: 13px;
+  bottom: 10.5px;
   display: flex;
   align-items: center;
   justify-content: center;

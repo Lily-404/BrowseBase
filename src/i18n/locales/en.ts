@@ -1,7 +1,7 @@
 export default {
   translation: {
     header: {
-      slogan: 'Links, with weight',
+      slogan: 'Signal over noise.',
       blog: 'Blog',
       about: 'About',
       language: 'Switch Language',

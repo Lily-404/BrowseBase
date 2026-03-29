@@ -34,7 +34,7 @@
   justify-content: center;
   gap: 8px;
   flex-wrap: nowrap;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 8px 16px;
   background: #F1F1F1;
   box-shadow: 

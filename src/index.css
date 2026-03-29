@@ -1,6 +1,19 @@
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  font-size: 14px;
+  line-height: 130%;
+}
 
 @layer components {
   .btn-base {
@@ -33,9 +46,17 @@
 
 body {
   background-color: #E7E7E7;
+  @apply antialiased;
 }
 
 :root {
-  --radius-md: 8px;
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
   --primary: #FF3B30;
 }
