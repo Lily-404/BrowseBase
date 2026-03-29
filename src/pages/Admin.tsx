@@ -258,12 +258,11 @@ const Admin = () => {
         
         {/* 优化后的操作加载状态 */}
         {!isInitialLoading && isLoading && (
-          <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 ${isRetroTheme ? 'bg-[#f0f0f0]/90 border-2 border-[#2c2c2c]' : 'bg-white/90 border border-gray-100'} px-6 py-3 ${isRetroTheme ? '' : 'rounded-full shadow-lg'} flex items-center space-x-3 z-50`}>
-            <div className="relative">
+          <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 ${isRetroTheme ? 'bg-[#f0f0f0]/90 border-2 border-[#2c2c2c]' : 'bg-white/90 border border-gray-100'} px-6 py-3 ${isRetroTheme ? '' : 'rounded-full shadow-lg'} flex items-center justify-center z-50`}>
+            <div className="relative" aria-hidden>
               <div className={`w-5 h-5 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'border-2 border-gray-200 rounded-full'}`}></div>
               <div className={`absolute inset-0 w-5 h-5 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'border-2 border-blue-500 rounded-full'} border-t-transparent animate-spin`}></div>
             </div>
-            <span className={`text-gray-700 text-sm ${isRetroTheme ? 'font-mono' : 'font-medium'}`}>处理中...</span>
           </div>
         )}
         
@@ -294,7 +293,7 @@ const Admin = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* 资源列表 - 在移动端后显示，PC端在左侧 */}
           <div className="lg:col-span-8 order-last lg:order-first">
-            <div className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'bg-white rounded-lg border border-gray-100'} p-6`}>
+            <div className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'bg-white/80 rounded-2xl border border-gray-100 shadow-sm'} p-6`}>
               <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
                 <h2 className={`text-lg ${isRetroTheme ? 'font-mono' : 'font-light'} text-gray-800`}>资源列表</h2>
                 <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-auto">
@@ -330,7 +329,7 @@ const Admin = () => {
                 </div>
               </div>
               
-              <div className="overflow-x-auto min-h-[320px]">
+              <div className={`overflow-x-auto min-h-[320px] rounded-lg border ${isRetroTheme ? 'border-[#2c2c2c]' : 'border-gray-100'} `}>
                 <table className="w-full">
                   <thead>
                     <tr className={isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-50'}>
@@ -340,32 +339,29 @@ const Admin = () => {
                       <th className={`text-left p-4 ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-600 text-sm ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-r-lg'}`}>操作</th>
                     </tr>
                   </thead>
-                  <tbody className={isRetroTheme ? '' : 'divide-y divide-gray-100'}>
-                    {isInitialLoading
-                      ? Array.from({ length: 6 }).map((_, index) => (
-                          <tr key={index} className={isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}>
-                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                              <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-3/4 mb-2`} />
-                              <div className={`h-3 ${isRetroTheme ? 'bg-[#e0e0e0]' : 'bg-gray-100'} rounded w-1/2`} />
-                            </td>
-                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                              <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-1/2`} />
-                            </td>
-                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                              <div className="flex flex-wrap gap-2">
-                                <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-10`} />
-                                <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-12`} />
-                              </div>
-                            </td>
-                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                              <div className="flex space-x-3">
-                                <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-10`} />
-                                <div className={`h-4 ${isRetroTheme ? 'bg-[#d4d4d4]' : 'bg-gray-100'} rounded w-10`} />
-                              </div>
-                            </td>
-                          </tr>
-                        ))
-                      : resources.map((resource) => (
+                  <tbody className={isRetroTheme ? 'divide-y divide-[#2c2c2c]/25' : 'divide-y divide-gray-100'}>
+                    {isInitialLoading ? (
+                      <tr>
+                        <td colSpan={4} className={`p-6 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
+                          <div
+                            className={`min-h-[260px] rounded-xl ${
+                              isRetroTheme ? 'bg-[#f0f0f0]/60' : 'bg-white/60'
+                            } backdrop-blur-xl shadow-2xl border ${
+                              isRetroTheme ? 'border-[#e0e0e0]/70' : 'border-[#e0e0e0]/70'
+                            } flex items-center justify-center`}
+                          >
+                            <div className="relative">
+                              <div className={`w-6 h-6 rounded-full border-2 ${isRetroTheme ? 'border-[#2c2c2c]' : 'border-gray-200'} `} />
+                              <div
+                                className={`absolute inset-0 w-6 h-6 rounded-full border-2 ${
+                                  isRetroTheme ? 'border-[#2c2c2c]' : 'border-blue-500'
+                                } border-t-transparent animate-spin`}
+                              />
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    ) : resources.map((resource) => (
                           <tr key={resource.id} className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'hover:bg-gray-50'} transition-colors`}>
                             <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
                               <div className={`${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-900`}>{resource.title}</div>
@@ -403,7 +399,11 @@ const Admin = () => {
                               <div className="flex space-x-3">
                                 <button
                                   onClick={() => handleEdit(resource)}
-                                  className={`text-gray-600 hover:text-gray-800 transition-colors flex items-center space-x-1 ${isRetroTheme ? 'font-mono' : ''}`}
+                                  className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg transition-colors text-gray-700 flex-shrink-0 ${
+                                    isRetroTheme
+                                      ? 'font-mono bg-[#f0f0f0] border border-[#2c2c2c] hover:bg-gray-200'
+                                      : 'bg-gray-100 hover:bg-gray-200'
+                                  }`}
                                 >
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path
@@ -417,7 +417,11 @@ const Admin = () => {
                                 </button>
                                 <button
                                   onClick={() => handleDelete(resource.id)}
-                                  className={`text-gray-600 hover:text-gray-800 transition-colors flex items-center space-x-1 ${isRetroTheme ? 'font-mono' : ''}`}
+                                  className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg transition-colors text-gray-700 flex-shrink-0 ${
+                                    isRetroTheme
+                                      ? 'font-mono bg-[#f0f0f0] border border-[#2c2c2c] hover:bg-gray-200'
+                                      : 'bg-gray-100 hover:bg-gray-200'
+                                  }`}
                                 >
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path
@@ -481,7 +485,7 @@ const Admin = () => {
 
           {/* 添加新资源 - 在移动端优先显示，PC端在右侧 */}
           <div className="lg:col-span-4 order-first lg:order-last">
-            <div className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'bg-white rounded-lg border border-gray-100'} p-6`}>
+            <div className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'bg-white/80 rounded-2xl border border-gray-100 shadow-sm'} p-6`}>
               <div className="flex justify-between items-center mb-6">
                  <h2 className={`text-lg ${isRetroTheme ? 'font-mono' : 'font-light'} text-gray-800`}>{editingResource ? '编辑资源' : '添加新资源'}</h2>
                  {editingResource && (

@@ -87,17 +87,19 @@ const Footer: React.FC<FooterProps> = ({
         <Button
           color={currentPage <= 1 ? "neutral" : "tertiary"}
           onClick={handlePrevClick}
-          className={`min-w-[80px] sm:min-w-[140px] h-10 sm:h-12 px-3 sm:px-6 justify-center items-center rounded-lg transition-all duration-200 ${
+          className={`min-w-[80px] sm:min-w-[140px] h-10 sm:h-12 px-3 sm:px-6 !py-0 justify-center items-center rounded-lg transition-all duration-200 ${
             currentPage <= 1 ? 'opacity-50' : 'shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'
           }`}
         >
           <Icon 
             name="ChevronLeft" 
             size={18} 
-            className="sm:w-5 sm:h-5"
+            className="sm:w-5 sm:h-5 self-center"
             fallback={<span className="text-sm">←</span>}
           />
-          <span className="text-sm font-medium ml-0.5 sm:ml-2">{t('navigation.previous')}</span>
+          <span className="inline-flex items-center h-full text-sm font-medium ml-0.5 sm:ml-2 leading-none">
+            {t('navigation.previous')}
+          </span>
         </Button>
 
         <div className="relative">
@@ -161,15 +163,17 @@ const Footer: React.FC<FooterProps> = ({
         <Button
           color={currentPage >= totalPages ? "neutral" : "tertiary"}
           onClick={handleNextClick}
-          className={`min-w-[80px] sm:min-w-[140px] h-10 sm:h-12 px-3 sm:px-6 justify-center items-center rounded-lg transition-all duration-200 ${
+          className={`min-w-[80px] sm:min-w-[140px] h-10 sm:h-12 px-3 sm:px-6 !py-0 justify-center items-center rounded-lg transition-all duration-200 ${
             currentPage >= totalPages ? 'opacity-50' : 'shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'
           }`}
         >
-          <span className="text-sm font-medium mr-0.5 sm:mr-2">{t('navigation.next')}</span>
+          <span className="inline-flex items-center h-full text-sm font-medium mr-0.5 sm:mr-2 leading-none">
+            {t('navigation.next')}
+          </span>
           <Icon 
             name="ChevronRight" 
             size={18} 
-            className="sm:w-5 sm:h-5"
+            className="sm:w-5 sm:h-5 self-center"
             fallback={<span className="text-sm">→</span>}
           />
         </Button>
