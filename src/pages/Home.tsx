@@ -411,9 +411,42 @@ const Home: React.FC = () => {
               {isBlindBoxLoading ? (
                 // 加载状态 - 简单的加载圈圈
                 <div className="relative w-full h-full select-none">
-                  <div className="relative z-0 h-full bg-white/60 rounded-2xl p-6 shadow-2xl flex flex-col items-center justify-center min-h-[260px] border border-[#e0e0e0]/70 backdrop-blur-xl">
-                    <WaveformLoader className="scale-125 mb-4" />
-                    <p className="text-[#4D4D4D] text-sm font-medium">{t('blindBox.loading')}</p>
+                  <div className="relative z-0 h-full bg-white/60 rounded-2xl p-6 shadow-2xl flex items-center justify-center min-h-[260px] border border-[#e0e0e0]/70 backdrop-blur-xl">
+                    <WaveformLoader className="scale-125" />
+                  </div>
+                  {/* 保留底部按钮占位，避免加载完成切换时跳动 */}
+                  <div className="flex justify-between mt-4 items-center opacity-60 cursor-not-allowed pointer-events-none">
+                    <button
+                      disabled
+                      className="rounded-full p-2 bg-white/60 border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
+                      style={{ boxShadow: '0 2px 12px 0 rgba(60,60,60,0.10)' }}
+                    >
+                      <Icon name="ChevronLeft" size={24} className="text-[#222]" />
+                    </button>
+                    <div className="flex gap-3">
+                      <button
+                        disabled
+                        className="inline-flex items-center gap-1 px-5 py-1.5 rounded-full bg-white/60 text-[#222] font-semibold text-base cursor-pointer select-none border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
+                        style={{ fontSize: '15px', fontWeight: 600, boxShadow: '0 2px 12px 0 rgba(60,60,60,0.10)' }}
+                      >
+                        {t('blindBox.nextOne')}
+                      </button>
+                      <button
+                        disabled
+                        className="inline-flex items-center gap-1 px-5 py-1.5 rounded-full bg-white/60 text-[#222] font-semibold text-base cursor-pointer select-none border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
+                        style={{ fontSize: '15px', fontWeight: 600, boxShadow: '0 2px 12px 0 rgba(60,60,60,0.10)' }}
+                      >
+                        <Icon name="ExternalLink" size={20} />
+                        {t('blindBox.enter')}
+                      </button>
+                    </div>
+                    <button
+                      disabled
+                      className="rounded-full p-2 bg-white/60 border border-[#e0e0e0]/70 shadow-md backdrop-blur-md transition-all hover:bg-white/80"
+                      style={{ boxShadow: '0 2px 12px 0 rgba(60,60,60,0.10)' }}
+                    >
+                      <Icon name="ChevronRight" size={24} className="text-[#222]" />
+                    </button>
                   </div>
                 </div>
               ) : blindBoxIndex !== null && blindBoxResources[blindBoxIndex] ? (

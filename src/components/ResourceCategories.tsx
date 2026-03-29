@@ -43,7 +43,7 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
           <button
             key={category.id}
             className={`${s.CapsuleButton}`}
-            data-selected={selectedCategory === category.id}
+            data-selected={selectedCategory === category.id ? 'true' : undefined}
             onClick={() => handleClick(category.id, category.disabled)}
             disabled={category.disabled}
           >

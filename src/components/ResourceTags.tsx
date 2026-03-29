@@ -29,7 +29,7 @@ const ResourceTags: React.FC<ResourceTagsProps> = ({
           <button
             key={tag.id}
             className={`${s.CapsuleButton}`}
-            data-selected={selectedTags.includes(tag.id)}
+            data-selected={selectedTags.includes(tag.id) ? 'true' : undefined}
             onClick={() => handleClick(tag.id)}
           >
             {t(`filter.${tag.id}`)}
