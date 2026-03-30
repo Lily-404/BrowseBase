@@ -134,7 +134,7 @@ const Footer: React.FC<FooterProps> = ({
                       value={selectedPage}
                       onChange={handlePageInputChange}
                       onKeyDown={handlePageInputKeyDown}
-                      className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-lg focus:outline-none text-center text-base sm:text-lg font-medium text-gray-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:bg-gray-50 shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]"
+                      className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-lg focus:outline-none text-center text-[16px] sm:text-lg font-medium text-gray-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:bg-gray-50 shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]"
                       autoFocus
                       id="page-selector"
                       name="page-selector"

@@ -6,7 +6,8 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
-  margin: -4px -16px;
+  /* 仅向上“顶”一点，底部留空间给阴影 */
+  margin: -4px -16px 0;
   width: calc(100% + 32px);
   touch-action: pan-x pan-y;
 }
@@ -19,7 +20,8 @@
   position: relative;
   width: 100%;
   overflow: visible;
-  padding: 4px 0;
+  /* 再多留一点底部空间给阴影 */
+  padding: 4px 0 12px;
   touch-action: pan-x pan-y;
 }
 
@@ -37,22 +39,18 @@
   border-radius: var(--radius-md);
   padding: 8px 16px;
   background: #f4f4f4;
-  box-shadow: 
-    rgb(255, 255, 255) 1px 1px 1px 0px inset, 
-    rgba(0, 0, 0, 0.15) -1px -1px 1px 0px inset, 
-    rgba(0, 0, 0, 0.26) 0.444584px 0.444584px 0.628737px -1px, 
-    rgba(0, 0, 0, 0.247) 1.21072px 1.21072px 1.71222px -1.5px, 
-    rgba(0, 0, 0, 0.23) 2.6583px 2.6583px 3.75941px -2.25px, 
-    rgba(0, 0, 0, 0.192) 5.90083px 5.90083px 8.34503px -3px, 
-    rgba(0, 0, 0, 0.056) 10px 10px 21.2132px -3.75px, 
-    -0.5px -0.5px 0 0 rgb(0 0 0 / 5%);
+  /* 收紧外部阴影半径，避免被容器裁切，同时保留轻微立体感 */
+  box-shadow:
+    rgb(255, 255, 255) 1px 1px 1px 0px inset,
+    rgba(0, 0, 0, 0.15) -1px -1px 1px 0px inset,
+    0 2px 8px rgba(0, 0, 0, 0.2);
   transition: box-shadow 0.3s ease, transform 0.15s ease, background 0.2s ease, color 0.2s ease;
   cursor: pointer;
   user-select: none;
   white-space: nowrap;
   font-size: 14px;
   font-weight: 500;
-  margin: 4px 0;
+  margin: 2px 0;
   color: #1A1A1A;
   touch-action: manipulation;
   letter-spacing: 0.01em;
