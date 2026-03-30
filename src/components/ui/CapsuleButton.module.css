@@ -57,7 +57,8 @@
 }
 
 .CapsuleButton[data-selected="true"] {
-  background: #2a2a2a;
+  /* 对齐 openai-fm：选中态使用主色 */
+  background: var(--primary, #ff4a00);
   color: #fff;
 }
 
@@ -66,7 +67,8 @@
 }
 
 .CapsuleButton[data-selected="true"]:active {
-  background: #1a1a1a;
+  /* 对齐 openai-fm：按下时主色更深一档 */
+  background: #e64200;
 }
 
 .CapsuleButton:active,
