@@ -105,7 +105,7 @@ const Footer: React.FC<FooterProps> = ({
         <div className="relative">
           <div 
             onClick={handlePageClick}
-            className="text-sm font-medium text-[#4D4D4D] cursor-pointer transition-all duration-200 px-2 py-1.5 rounded-lg w-[64px] sm:w-[100px] text-center shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]"
+            className="inline-flex items-center justify-center text-sm font-medium text-[#4D4D4D] cursor-pointer transition-all duration-200 px-2 !py-0 rounded-lg h-10 sm:h-12 w-[80px] sm:w-[110px] text-center whitespace-nowrap leading-none shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]"
           >
             {currentPage} / {totalPages}
           </div>
