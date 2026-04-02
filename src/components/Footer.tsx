@@ -87,7 +87,7 @@ const Footer: React.FC<FooterProps> = ({
         <Button
           color={currentPage <= 1 ? "neutral" : "tertiary"}
           onClick={handlePrevClick}
-          className={`min-w-[80px] sm:min-w-[140px] h-10 sm:h-12 px-3 sm:px-6 !py-0 justify-center items-center rounded-lg transition-all duration-200 ${
+          className={`min-w-[80px] sm:min-w-[140px] h-[44px] sm:h-[52px] px-3 sm:px-6 !py-0 justify-center items-center rounded-lg transition-all duration-200 ${
             currentPage <= 1 ? 'opacity-50' : 'shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'
           }`}
         >
@@ -163,7 +163,7 @@ const Footer: React.FC<FooterProps> = ({
         <Button
           color={currentPage >= totalPages ? "neutral" : "tertiary"}
           onClick={handleNextClick}
-          className={`min-w-[80px] sm:min-w-[140px] h-10 sm:h-12 px-3 sm:px-6 !py-0 justify-center items-center rounded-lg transition-all duration-200 ${
+          className={`min-w-[80px] sm:min-w-[140px] h-[44px] sm:h-[52px] px-3 sm:px-6 !py-0 justify-center items-center rounded-lg transition-all duration-200 ${
             currentPage >= totalPages ? 'opacity-50' : 'shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'
           }`}
         >

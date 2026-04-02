@@ -283,7 +283,7 @@ const ResourcePreview: React.FC<ResourcePreviewProps> = ({
         </div>
 
         <div className="mt-auto">
-          <div className="fixed bottom-0 left-0 right-0 bg-[#E7E7E7] py-2 sm:py-4 border-t border-[#D1D1D1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),inset_0_-1px_1px_rgba(0,0,0,0.1)]">
+          <div className="fixed bottom-0 left-0 right-0 bg-[#E7E7E7] py-1 sm:py-2 border-t border-[#D1D1D1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.5),inset_0_-1px_1px_rgba(0,0,0,0.1)]">
             <div className="max-w-7xl mx-auto px-4">
               <Footer
                 currentPage={currentPage}
