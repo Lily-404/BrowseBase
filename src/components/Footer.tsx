@@ -14,6 +14,18 @@ interface FooterProps {
   onPageSelectorOpenChange?: (isOpen: boolean) => void;
 }
 
+type PaginationIconStyle = 'step' | 'skip' | 'chevrons' | 'rewind';
+
+const paginationIconMap: Record<PaginationIconStyle, { prev: 'StepBack' | 'SkipBack' | 'ChevronsLeft' | 'Rewind'; next: 'StepForward' | 'SkipForward' | 'ChevronsRight' | 'FastForward' }> = {
+  step: { prev: 'StepBack', next: 'StepForward' },
+  skip: { prev: 'SkipBack', next: 'SkipForward' },
+  chevrons: { prev: 'ChevronsLeft', next: 'ChevronsRight' },
+  rewind: { prev: 'Rewind', next: 'FastForward' },
+};
+
+// 快速切換翻頁 icon 風格：'step' | 'skip' | 'chevrons' | 'rewind'
+const paginationIconStyle: PaginationIconStyle = 'skip';
+
 const Footer: React.FC<FooterProps> = ({ 
   currentPage, 
   totalPages, 
@@ -23,6 +35,7 @@ const Footer: React.FC<FooterProps> = ({
   onPageSelectorOpenChange
 }) => {
   const { t } = useTranslation();
+  const paginationIcons = paginationIconMap[paginationIconStyle];
   const [isPageSelectorOpen, setIsPageSelectorOpen] = useState(false);
   const [selectedPage, setSelectedPage] = useState<number | ''>(currentPage);
 
@@ -92,7 +105,7 @@ const Footer: React.FC<FooterProps> = ({
           }`}
         >
           <Icon 
-            name="ChevronLeft" 
+            name={paginationIcons.prev}
             size={18} 
             className="sm:w-5 sm:h-5 self-center"
             fallback={<span className="text-sm">←</span>}
@@ -171,7 +184,7 @@ const Footer: React.FC<FooterProps> = ({
             {t('navigation.next')}
           </span>
           <Icon 
-            name="ChevronRight" 
+            name={paginationIcons.next}
             size={18} 
             className="sm:w-5 sm:h-5 self-center"
             fallback={<span className="text-sm">→</span>}
