@@ -1,7 +1,7 @@
 export default {
   translation: {
     header: {
-      slogan: '信息，而非噪音。',
+      slogan: '信息，而非噪音',
       blog: '博客',
       about: '关于',
       language: '切换语言',

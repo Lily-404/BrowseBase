@@ -7,6 +7,7 @@ export interface CircleButtonProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'primary' | 'secondary';
+  shape?: 'pill' | 'square';
   href?: string;
   disabled?: boolean;
   iconOnly?: boolean;
@@ -20,6 +21,7 @@ const CircleButton = React.forwardRef<HTMLButtonElement, CircleButtonProps>(
     className, 
     size = 'md', 
     variant = 'primary', 
+    shape = 'pill',
     href, 
     disabled,
     iconOnly,
@@ -36,6 +38,7 @@ const CircleButton = React.forwardRef<HTMLButtonElement, CircleButtonProps>(
           )}
           data-variant={variant}
           data-size={size}
+          data-shape={shape}
           data-disabled={disabled}
           data-icon-only={iconOnly}
           onClick={onClick}
@@ -55,6 +58,7 @@ const CircleButton = React.forwardRef<HTMLButtonElement, CircleButtonProps>(
         )}
         data-variant={variant}
         data-size={size}
+        data-shape={shape}
         data-disabled={disabled}
         data-icon-only={iconOnly}
         disabled={disabled}

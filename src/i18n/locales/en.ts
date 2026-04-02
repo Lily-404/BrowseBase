@@ -9,7 +9,7 @@ export default {
       switchToChinese: 'Chinese',
       switchToEnglish: 'English',
       back: 'Back',
-      blindBox: 'Blind Box'
+      blindBox: 'Box'
     },
     blindBox: {
       loading: 'Loading...',

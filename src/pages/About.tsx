@@ -23,7 +23,7 @@ const About: React.FC = () => {
             <div className="space-y-8 sm:space-y-10">
               <section>
                 <h3 className="text-lg sm:text-xl font-semibold text-[#1A1A1A] mb-4 sm:mb-5 tracking-tight">{t('about.origin.heading')}</h3>
-                <div className="text-[#1A1A1A]/70 leading-relaxed space-y-4 text-base sm:text-lg" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                <div className="text-[#1A1A1A]/70 leading-relaxed space-y-4 text-base sm:text-lg">
                   <p>{t('about.origin.p1')}</p>
                   <p>
                     {t('about.origin.p2_line1')}
@@ -49,14 +49,14 @@ const About: React.FC = () => {
 
               <section>
                 <h3 className="text-lg sm:text-xl font-semibold text-[#1A1A1A] mb-4 sm:mb-5 tracking-tight">{t('about.update.heading')}</h3>
-                <p className="text-[#1A1A1A]/70 leading-relaxed text-base sm:text-lg" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                <p className="text-[#1A1A1A]/70 leading-relaxed text-base sm:text-lg">
                   {t('about.update.p1')}
                 </p>
               </section>
 
               <section>
                 <h3 className="text-lg sm:text-xl font-semibold text-[#1A1A1A] mb-4 sm:mb-5 tracking-tight">{t('about.opensource.heading')}</h3>
-                <div className="text-[#1A1A1A]/70 leading-relaxed space-y-4 text-base sm:text-lg" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                <div className="text-[#1A1A1A]/70 leading-relaxed space-y-4 text-base sm:text-lg">
                   <p>
                     {t('about.opensource.repoLabel')}
                     <a
@@ -86,7 +86,7 @@ const About: React.FC = () => {
 
               <section>
                 <h3 className="text-lg sm:text-xl font-semibold text-[#1A1A1A] mb-4 sm:mb-5 tracking-tight">{t('about.contact.heading')}</h3>
-                <p className="text-[#1A1A1A]/70 leading-relaxed text-base sm:text-lg" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
+                <p className="text-[#1A1A1A]/70 leading-relaxed text-base sm:text-lg">
                   {t('about.contact.wechat')}
                 </p>
               </section>

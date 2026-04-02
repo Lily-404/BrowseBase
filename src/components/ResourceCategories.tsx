@@ -56,7 +56,7 @@ const ResourceCategories: React.FC<ResourceCategoriesProps> = ({
 
   // 桌面端渲染
   const renderDesktopView = () => (
-    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 ${isPageSelectorOpen ? 'opacity-50 blur-[2px] pointer-events-none' : ''}`}>
+    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 ${isPageSelectorOpen ? 'opacity-50 blur-[2px] pointer-events-none' : ''}`}>
       {allCategories.map((category) => (
         <div key={category.id} className="relative aspect-square">
           <Button

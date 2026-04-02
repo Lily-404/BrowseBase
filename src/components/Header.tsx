@@ -73,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({
               </Link>
             </div>
           ) : (
-            <div className="flex items-center gap-2 sm:gap-4 ml-auto">
+            <div className="flex items-center gap-3 sm:gap-4 ml-auto">
               {onLayoutToggle ? (
                 <CircleButton
                   onClick={() => {
@@ -82,6 +82,7 @@ const Header: React.FC<HeaderProps> = ({
                   }}
                   variant="secondary"
                   size="sm"
+                  shape="square"
                   title="布局模式"
                   className="!hidden sm:!inline-flex text-[10px] sm:text-xs bg-gray-800 text-white border-none"
                 >
@@ -92,6 +93,7 @@ const Header: React.FC<HeaderProps> = ({
                   href="https://www.jimmy-blog.top/"
                   variant="secondary"
                   size="sm"
+                  shape="square"
                   title={t('header.blog')}
                   onClick={playClickSound}
                   className="text-[10px] sm:text-xs"
@@ -103,6 +105,7 @@ const Header: React.FC<HeaderProps> = ({
                 onClick={onBlindBoxClick}
                 variant="secondary"
                 size="sm"
+                shape="square"
                 title={t('header.blindBox')}
                 className="text-[10px] sm:text-xs bg-gray-400 text-white  border-none"
               >
@@ -113,6 +116,7 @@ const Header: React.FC<HeaderProps> = ({
                 <CircleButton
                   variant="secondary"
                   size="sm"
+                  shape="square"
                   title={t('header.about')}
                   iconOnly
                   className="hidden"
@@ -123,6 +127,7 @@ const Header: React.FC<HeaderProps> = ({
                 <CircleButton
                   variant="secondary"
                   size="sm"
+                  shape="square"
                   title={t('header.about')}
                   className="text-[10px] sm:text-xs inline-flex"
                 >
@@ -136,6 +141,7 @@ const Header: React.FC<HeaderProps> = ({
                 }}
                 variant="secondary"
                 size="sm"
+                shape="square"
                 iconOnly
                 title={i18n.language === 'en' ? t('header.switchToChinese') : t('header.switchToEnglish')}
                 className="inline-flex"

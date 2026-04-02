@@ -1,8 +1,9 @@
 .CapsuleContainer {
   display: flex;
   overflow-x: auto;
+  overflow-y: visible;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 8px 16px 12px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
@@ -39,11 +40,14 @@
   border-radius: var(--radius-md);
   padding: 8px 16px;
   background: #f4f4f4;
-  /* 收紧外部阴影半径，避免被容器裁切，同时保留轻微立体感 */
-  box-shadow:
-    rgb(255, 255, 255) 1px 1px 1px 0px inset,
+  box-shadow: rgb(255, 255, 255) 1px 1px 1px 0px inset,
     rgba(0, 0, 0, 0.15) -1px -1px 1px 0px inset,
-    0 2px 8px rgba(0, 0, 0, 0.2);
+    rgba(0, 0, 0, 0.26) 0.444584px 0.444584px 0.628737px -1px,
+    rgba(0, 0, 0, 0.247) 1.21072px 1.21072px 1.71222px -1.5px,
+    rgba(0, 0, 0, 0.23) 2.6583px 2.6583px 3.75941px -2.25px,
+    rgba(0, 0, 0, 0.16) 4px 4px 6px -3px,
+    rgba(0, 0, 0, 0.06) 6px 6px 10px -4px,
+    -0.5px -0.5px 0 0 rgb(0 0 0 / 5%);
   transition: box-shadow 0.3s ease, transform 0.15s ease, background 0.2s ease, color 0.2s ease;
   cursor: pointer;
   user-select: none;

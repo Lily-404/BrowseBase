@@ -46,6 +46,8 @@ html {
 
 body {
   background-color: #E7E7E7;
+  font-family: "JetBrains Mono", ui-monospace, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", monospace;
   @apply antialiased;
 }
 
