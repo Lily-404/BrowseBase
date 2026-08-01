@@ -1,6 +1,6 @@
-/* Nothing Design System — scoped to Admin */
+/* Nothing Design System — shared shell */
 
-.nd-admin {
+.nd {
   --nd-black: #000000;
   --nd-surface: #111111;
   --nd-surface-raised: #1a1a1a;
@@ -21,7 +21,7 @@
   min-height: 100vh;
 }
 
-.nd-admin.nd-light {
+.nd.nd-light {
   --nd-black: #f5f5f5;
   --nd-surface: #ffffff;
   --nd-surface-raised: #f0f0f0;
@@ -34,7 +34,7 @@
   --nd-interactive: #007aff;
 }
 
-.nd-admin .nd-label {
+.nd .nd-label {
   font-family: "Space Mono", "JetBrains Mono", monospace;
   font-size: 11px;
   line-height: 1.2;
@@ -43,7 +43,7 @@
   color: var(--nd-text-secondary);
 }
 
-.nd-admin .nd-caption {
+.nd .nd-caption {
   font-family: "Space Mono", "JetBrains Mono", monospace;
   font-size: 12px;
   line-height: 1.4;
@@ -51,7 +51,7 @@
   color: var(--nd-text-secondary);
 }
 
-.nd-admin .nd-display {
+.nd .nd-display {
   font-family: "Doto", "Space Mono", monospace;
   font-size: 36px;
   line-height: 1;
@@ -60,7 +60,7 @@
   font-weight: 400;
 }
 
-.nd-admin .nd-heading {
+.nd .nd-heading {
   font-family: "Space Grotesk", system-ui, sans-serif;
   font-size: 18px;
   line-height: 1.2;
@@ -69,13 +69,13 @@
   color: var(--nd-text-display);
 }
 
-.nd-admin .nd-surface {
+.nd .nd-surface {
   background: var(--nd-surface);
   border: 1px solid var(--nd-border);
   border-radius: 12px;
 }
 
-.nd-admin .nd-input {
+.nd .nd-input {
   width: 100%;
   background: transparent;
   border: none;
@@ -89,15 +89,15 @@
   transition: border-color 200ms var(--nd-ease);
 }
 
-.nd-admin .nd-input::placeholder {
+.nd .nd-input::placeholder {
   color: var(--nd-text-disabled);
 }
 
-.nd-admin .nd-input:focus {
+.nd .nd-input:focus {
   border-bottom-color: var(--nd-text-primary);
 }
 
-.nd-admin .nd-textarea {
+.nd .nd-textarea {
   width: 100%;
   background: var(--nd-surface-raised);
   border: 1px solid var(--nd-border-visible);
@@ -111,11 +111,11 @@
   transition: border-color 200ms var(--nd-ease);
 }
 
-.nd-admin .nd-textarea:focus {
+.nd .nd-textarea:focus {
   border-color: var(--nd-text-primary);
 }
 
-.nd-admin .nd-btn {
+.nd .nd-btn {
   font-family: "Space Mono", monospace;
   font-size: 13px;
   letter-spacing: 0.06em;
@@ -127,34 +127,34 @@
   cursor: pointer;
 }
 
-.nd-admin .nd-btn:disabled {
+.nd .nd-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-.nd-admin .nd-btn-primary {
+.nd .nd-btn-primary {
   background: var(--nd-text-display);
   color: var(--nd-black);
   border: none;
   border-radius: 999px;
 }
 
-.nd-admin .nd-btn-primary:hover:not(:disabled) {
+.nd .nd-btn-primary:hover:not(:disabled) {
   opacity: 0.9;
 }
 
-.nd-admin .nd-btn-secondary {
+.nd .nd-btn-secondary {
   background: transparent;
   color: var(--nd-text-primary);
   border: 1px solid var(--nd-border-visible);
   border-radius: 999px;
 }
 
-.nd-admin .nd-btn-secondary:hover:not(:disabled) {
+.nd .nd-btn-secondary:hover:not(:disabled) {
   border-color: var(--nd-text-secondary);
 }
 
-.nd-admin .nd-btn-ghost {
+.nd .nd-btn-ghost {
   background: transparent;
   border: none;
   color: var(--nd-text-secondary);
@@ -163,22 +163,22 @@
   border-radius: 0;
 }
 
-.nd-admin .nd-btn-ghost:hover:not(:disabled) {
+.nd .nd-btn-ghost:hover:not(:disabled) {
   color: var(--nd-text-display);
 }
 
-.nd-admin .nd-btn-danger {
+.nd .nd-btn-danger {
   background: transparent;
   color: var(--nd-accent);
   border: 1px solid var(--nd-accent);
   border-radius: 999px;
 }
 
-.nd-admin .nd-btn-danger:hover:not(:disabled) {
+.nd .nd-btn-danger:hover:not(:disabled) {
   background: rgba(215, 25, 33, 0.08);
 }
 
-.nd-admin .nd-chip {
+.nd .nd-chip {
   font-family: "Space Mono", monospace;
   font-size: 11px;
   letter-spacing: 0.06em;
@@ -193,24 +193,24 @@
   cursor: pointer;
 }
 
-.nd-admin .nd-chip:hover {
+.nd .nd-chip:hover {
   border-color: var(--nd-text-secondary);
   color: var(--nd-text-primary);
 }
 
-.nd-admin .nd-chip-active {
+.nd .nd-chip-active {
   border-color: var(--nd-text-display);
   color: var(--nd-text-display);
   background: transparent;
 }
 
-.nd-admin .nd-chip-filled {
+.nd .nd-chip-filled {
   background: var(--nd-text-display);
   border-color: var(--nd-text-display);
   color: var(--nd-black);
 }
 
-.nd-admin .nd-select-trigger {
+.nd .nd-select-trigger {
   width: 100%;
   display: flex;
   align-items: center;
@@ -229,18 +229,18 @@
   transition: border-color 200ms var(--nd-ease);
 }
 
-.nd-admin .nd-select-trigger:hover {
+.nd .nd-select-trigger:hover {
   border-color: var(--nd-text-secondary);
 }
 
-.nd-admin .nd-dropdown {
+.nd .nd-dropdown {
   background: var(--nd-surface-raised);
   border: 1px solid var(--nd-border-visible);
   border-radius: 8px;
   overflow: hidden;
 }
 
-.nd-admin .nd-dropdown button {
+.nd .nd-dropdown button {
   width: 100%;
   text-align: left;
   padding: 12px 16px;
@@ -256,22 +256,22 @@
   transition: color 150ms var(--nd-ease), background-color 150ms var(--nd-ease);
 }
 
-.nd-admin .nd-dropdown button:hover {
+.nd .nd-dropdown button:hover {
   color: var(--nd-text-primary);
   background: var(--nd-surface);
 }
 
-.nd-admin .nd-dropdown button.nd-selected {
+.nd .nd-dropdown button.nd-selected {
   color: var(--nd-text-display);
   border-left-color: var(--nd-accent);
 }
 
-.nd-admin .nd-table {
+.nd .nd-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.nd-admin .nd-table th {
+.nd .nd-table th {
   font-family: "Space Mono", monospace;
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -283,41 +283,41 @@
   border-bottom: 1px solid var(--nd-border-visible);
 }
 
-.nd-admin .nd-table td {
+.nd .nd-table td {
   padding: 14px 16px;
   border-bottom: 1px solid var(--nd-border);
   vertical-align: top;
 }
 
-.nd-admin .nd-table tbody tr {
+.nd .nd-table tbody tr {
   transition: background-color 150ms var(--nd-ease);
 }
 
-.nd-admin .nd-table tbody tr:hover {
+.nd .nd-table tbody tr:hover {
   background: var(--nd-surface-raised);
 }
 
-.nd-admin .nd-table tbody tr.nd-editing {
+.nd .nd-table tbody tr.nd-editing {
   background: var(--nd-surface-raised);
   box-shadow: inset 2px 0 0 var(--nd-accent);
 }
 
-.nd-admin .nd-status {
+.nd .nd-status {
   font-family: "Space Mono", monospace;
   font-size: 12px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
-.nd-admin .nd-status-ok {
+.nd .nd-status-ok {
   color: var(--nd-success);
 }
 
-.nd-admin .nd-status-err {
+.nd .nd-status-err {
   color: var(--nd-accent);
 }
 
-.nd-admin .nd-mode-toggle {
+.nd .nd-mode-toggle {
   display: inline-flex;
   border: 1px solid var(--nd-border-visible);
   border-radius: 999px;
@@ -325,7 +325,7 @@
   height: 36px;
 }
 
-.nd-admin .nd-mode-toggle button {
+.nd .nd-mode-toggle button {
   font-family: "Space Mono", monospace;
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -338,18 +338,18 @@
   transition: background-color 200ms var(--nd-ease), color 200ms var(--nd-ease);
 }
 
-.nd-admin .nd-mode-toggle button.nd-active {
+.nd .nd-mode-toggle button.nd-active {
   background: var(--nd-text-display);
   color: var(--nd-black);
 }
 
-.nd-admin .nd-dot-grid {
+.nd .nd-dot-grid {
   background-image: radial-gradient(circle, var(--nd-border) 0.5px, transparent 0.5px);
   background-size: 12px 12px;
 }
 
 @media (max-width: 640px) {
-  .nd-admin .nd-display {
+  .nd .nd-display {
     font-size: 28px;
   }
 }

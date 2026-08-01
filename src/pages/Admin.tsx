@@ -5,7 +5,7 @@ import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
 import { debounce } from 'lodash';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
-import '../styles/nothing-admin.css';
+import '../styles/nothing.css';
 
 const getCategoryName = (categoryId: string) => {
   const category = categories.find(c => c.id === categoryId);
@@ -248,7 +248,7 @@ const Admin = () => {
   const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
 
   return (
-    <div className={`nd-admin ${theme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
+    <div className={`nd ${theme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
       <div className="max-w-7xl mx-auto px-6 py-6 md:py-8">
         {/* Header + metric — compact top bar */}
         <header className="flex items-center justify-between gap-4 mb-8">
