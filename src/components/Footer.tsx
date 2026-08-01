@@ -116,12 +116,33 @@ const Footer: React.FC<FooterProps> = ({
                 }}
               />
               <div className="fixed sm:absolute top-[40%] sm:top-auto left-1/2 -translate-x-1/2 -translate-y-1/2 sm:translate-y-0 sm:bottom-full sm:mb-4 bg-[#F5F5F5] rounded-xl shadow-[0_8px_24px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08),0_0_0_1px_rgba(0,0,0,0.05)] p-4 sm:p-6 w-[280px] sm:w-72 z-[10000] animate-in fade-in slide-in-from-bottom-2 duration-200">
-                <div className="flex flex-col gap-3 sm:gap-4">
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm sm:text-base font-medium text-gray-700">{t('navigation.selectPage')}</div>
-                    <div className="text-xs sm:text-sm text-gray-500">{t('navigation.totalPages', { count: totalPages })}</div>
+                <div className="flex flex-col gap-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-mono text-[11px] tracking-[0.08em] uppercase text-[#666666]">
+                      {t('navigation.selectPage')}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsPageSelectorOpen(false);
+                        onPageSelectorOpenChange?.(false);
+                      }}
+                      className="font-mono text-[11px] tracking-[0.08em] uppercase text-[#666666] hover:text-[#000000] transition-colors duration-200"
+                    >
+                      [ × ]
+                    </button>
                   </div>
-                  <div className="relative">
+
+                  <div>
+                    <label
+                      htmlFor="page-selector"
+                      className="font-mono text-[11px] tracking-[0.08em] uppercase text-[#666666] block mb-2"
+                    >
+                      页码
+                      <span className="text-[#999999] ml-2">
+                        / {String(totalPages).padStart(2, '0')}
+                      </span>
+                    </label>
                     <input
                       type="number"
                       min={1}
@@ -129,19 +150,18 @@ const Footer: React.FC<FooterProps> = ({
                       value={selectedPage}
                       onChange={handlePageInputChange}
                       onKeyDown={handlePageInputKeyDown}
-                      className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-lg focus:outline-none text-center text-[16px] sm:text-lg font-medium text-gray-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:bg-gray-50 shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]"
+                      className="w-full px-4 sm:px-6 py-2.5 sm:py-3 bg-white border border-gray-200 rounded-lg focus:outline-none text-center font-doto text-[28px] sm:text-[32px] leading-none tracking-tight text-gray-700 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:bg-gray-50 shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]"
                       autoFocus
                       id="page-selector"
                       name="page-selector"
                     />
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 sm:pl-6 pointer-events-none">
-                      <span className="text-gray-400">#</span>
-                    </div>
                   </div>
-                  <div className="flex justify-between text-xs sm:text-sm text-gray-500">
-                    <span>{t('navigation.minPage')}</span>
-                    <span>{t('navigation.maxPage', { count: totalPages })}</span>
+
+                  <div className="flex justify-between font-mono text-[11px] tracking-[0.08em] uppercase text-[#999999]">
+                    <span>最小 01</span>
+                    <span>最大 {String(totalPages).padStart(2, '0')}</span>
                   </div>
+
                   <Button
                     color="primary"
                     onClick={() => handlePageChange(selectedPage)}

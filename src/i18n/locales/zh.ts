@@ -71,6 +71,10 @@ export default {
         heading: '更新',
         p1: '本站资源会不定期更新，如果遇到资源失效，请及时联系我。'
       },
+      blog: {
+        heading: '博客',
+        label: '个人博客：'
+      },
       opensource: {
         heading: '开源',
         repoLabel: '本站仓库：',

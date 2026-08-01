@@ -348,6 +348,51 @@
   background-size: 12px 12px;
 }
 
+/* Pixel grid loader */
+.nd .nd-pixel-loader-label {
+  background-image: linear-gradient(
+    90deg,
+    var(--nd-text-secondary) 35%,
+    var(--nd-text-display) 50%,
+    var(--nd-text-secondary) 65%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: nd-shimmer-text 1.4s linear infinite;
+}
+
+@keyframes nd-pixel-on {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  40%,
+  60% {
+    opacity: 1;
+  }
+}
+
+@keyframes nd-shimmer-text {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nd .nd-pixel-loader-label {
+    animation: none;
+    color: var(--nd-text-secondary);
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+  }
+}
+
 @media (max-width: 640px) {
   .nd .nd-display {
     font-size: 28px;

@@ -55,6 +55,22 @@ const About: React.FC = () => {
               </section>
 
               <section>
+                <h3 className="text-lg sm:text-xl font-semibold text-[#1A1A1A] mb-4 sm:mb-5 tracking-tight">{t('about.blog.heading')}</h3>
+                <p className="text-[#1A1A1A]/70 leading-relaxed text-base sm:text-lg">
+                  {t('about.blog.label')}
+                  <a
+                    href="https://www.jimmy-blog.top/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={playClickSound}
+                    className="text-[#4D4D4D] hover:text-[#1A1A1A] underline transition-colors ml-1"
+                  >
+                    https://www.jimmy-blog.top/
+                  </a>
+                </p>
+              </section>
+
+              <section>
                 <h3 className="text-lg sm:text-xl font-semibold text-[#1A1A1A] mb-4 sm:mb-5 tracking-tight">{t('about.opensource.heading')}</h3>
                 <div className="text-[#1A1A1A]/70 leading-relaxed space-y-4 text-base sm:text-lg">
                   <p>

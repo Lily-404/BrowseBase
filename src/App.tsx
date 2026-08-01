@@ -6,6 +6,8 @@ import Admin from './pages/Admin';
 import Login from './pages/Login';
 import About from './pages/About';
 import { initGA, trackPageView } from './utils/analytics';
+import './styles/nothing.css';
+import PixelLoader from './components/ui/PixelLoader';
 
 
 initGA('G-W0ZSDCR0XB');
@@ -16,6 +18,15 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
+  const [theme] = useState<'dark' | 'light'>(() => {
+    try {
+      const v = localStorage.getItem('adminNothingTheme');
+      if (v === 'light' || v === 'dark') return v;
+      return 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
 
   // 首次挂载时执行鉴权并注册 auth 事件
   useEffect(() => {
@@ -89,16 +100,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="bg-white/90 p-8 rounded-2xl shadow-lg flex flex-col items-center space-y-4">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-blue-100 rounded-full"></div>
-            <div className="absolute inset-0 w-16 h-16 border-4 border-blue-500 rounded-full border-t-transparent animate-spin"></div>
-          </div>
-          <div className="flex flex-col items-center">
-            <span className="text-lg font-medium text-gray-700">验证身份中</span>
-            <span className="text-sm text-gray-500">请稍候...</span>
-          </div>
+      <div className={`nd ${theme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
+        <div className="min-h-screen flex flex-col items-center justify-center px-6">
+          <p className="nd-label mb-6">BrowseBase</p>
+          <p className="nd-heading mb-6">身份验证</p>
+          <PixelLoader label="验证中" variant="Drive" />
         </div>
       </div>
     );

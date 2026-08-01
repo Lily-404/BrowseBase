@@ -71,6 +71,10 @@ export default {
         heading: 'Updates',
         p1: 'The resources on this site are updated from time to time. If something becomes unavailable, please contact me.'
       },
+      blog: {
+        heading: 'Blog',
+        label: 'Personal blog:'
+      },
       opensource: {
         heading: 'Open Source',
         repoLabel: 'Repository:',

@@ -58,17 +58,6 @@ const Header: React.FC<HeaderProps> = ({
           ) : (
             <div className="flex items-center gap-3 sm:gap-4 ml-auto">
               <CircleButton
-                href="https://www.jimmy-blog.top/"
-                variant="secondary"
-                size="sm"
-                shape="square"
-                title={t('header.blog')}
-                onClick={playClickSound}
-                className="text-[10px] sm:text-xs"
-              >
-                {t('header.blog')}
-              </CircleButton>
-              <CircleButton
                 onClick={onBlindBoxClick}
                 variant="secondary"
                 size="sm"
