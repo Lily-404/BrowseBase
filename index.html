@@ -43,11 +43,6 @@
     <!-- Canonical URL -->
     <link rel="canonical" href="https://browsebase.pages.dev" />
     
-    <!-- Nothing Design fonts (Admin) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;700&family=Space+Grotesk:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
     
@@ -57,14 +52,23 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/favorite.png" />
     <link rel="apple-touch-icon" sizes="167x167" href="/favorite.png" />
     
-    <!-- 预加载音效文件，提升移动端加载速度 -->
-    <link rel="preload" href="/click.wav" as="audio" type="audio/wav" />
-    <link rel="preload" href="/pressed.wav" as="audio" type="audio/wav" />
-    <link rel="preload" href="/to.wav" as="audio" type="audio/wav" />
-    
-    <!-- 将 AdSense 脚本移到最后 -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2452864169775781"
-     crossorigin="anonymous"></script>
+    <!-- AdSense：延后到空闲时再加载，避免抢首屏带宽 -->
+    <script>
+      (function () {
+        var loadAds = function () {
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2452864169775781';
+          s.crossOrigin = 'anonymous';
+          document.head.appendChild(s);
+        };
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadAds, { timeout: 4000 });
+        } else {
+          window.addEventListener('load', function () { setTimeout(loadAds, 2000); });
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

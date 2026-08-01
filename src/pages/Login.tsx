@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import bcrypt from 'bcryptjs';
 import React from 'react';
 import '../styles/nothing.css';
+import { loadNothingFonts } from '../utils/loadNothingFonts';
 
 interface AuthError {
   message?: string;
@@ -29,6 +30,10 @@ const Login = () => {
     }
   });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    loadNothingFonts();
+  }, []);
 
   useEffect(() => {
     try {

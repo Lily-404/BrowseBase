@@ -47,26 +47,34 @@ const Home: React.FC = () => {
   const [isBlindBoxLoading, setIsBlindBoxLoading] = useState(false);
   // 盲盒资源池缓存（基于过滤条件）
   const blindBoxCacheRef = useRef<Record<string, Resource[]>>({});
+  // 用 ref 读缓存，避免 setCachedData 触发 fetch 依赖变化 → 重复请求
+  const cachedDataRef = useRef(cachedData);
+  cachedDataRef.current = cachedData;
+  const totalPagesRef = useRef(totalPages);
+  totalPagesRef.current = totalPages;
+  const isInitialLoadingRef = useRef(isInitialLoading);
+  isInitialLoadingRef.current = isInitialLoading;
 
   // 优化预加载逻辑
-  const preloadNextPage = useCallback(async () => {
-    if (currentPage >= totalPages) return;
-    
-    const nextPage = currentPage + 1;
-    const cacheKey = `${nextPage}-${activeFilter.type}-${activeFilter.id}`;
-    
-    if (cachedData[cacheKey]) return;
-    
+  const preloadNextPage = useCallback(async (page: number, filter: FilterState) => {
+    const pages = totalPagesRef.current;
+    if (page >= pages) return;
+
+    const nextPage = page + 1;
+    const cacheKey = `${nextPage}-${filter.type}-${filter.id}`;
+
+    if (cachedDataRef.current[cacheKey]) return;
+
     try {
       const result = await resourceService.fetchResources(
         nextPage,
         itemsPerPage,
         {
-          category: activeFilter.type === 'category' ? activeFilter.id : undefined,
-          tag: activeFilter.type === 'tag' ? activeFilter.id : undefined
+          category: filter.type === 'category' ? filter.id : undefined,
+          tag: filter.type === 'tag' ? filter.id : undefined
         }
       );
-      
+
       if (result.data.length > 0) {
         setCachedData(prev => ({
           ...prev,
@@ -79,25 +87,24 @@ const Home: React.FC = () => {
         console.error('Error preloading next page:', pgError);
       }
     }
-  }, [currentPage, totalPages, activeFilter, cachedData, itemsPerPage]);
+  }, [itemsPerPage]);
 
   // 优化资源获取逻辑
   const fetchResources = useCallback(async () => {
     try {
       setIsLoading(true);
-      
+
       const cacheKey = `${currentPage}-${activeFilter.type}-${activeFilter.id}`;
-      
-      if (cachedData[cacheKey]) {
-        setResources(cachedData[cacheKey].data);
-        setTotalCount(cachedData[cacheKey].count);
-        setTotalPages(Math.ceil(cachedData[cacheKey].count / itemsPerPage));
-        setIsLoading(false);
-        
-        preloadNextPage();
+      const hit = cachedDataRef.current[cacheKey];
+
+      if (hit) {
+        setResources(hit.data);
+        setTotalCount(hit.count);
+        setTotalPages(Math.ceil(hit.count / itemsPerPage));
+        void preloadNextPage(currentPage, activeFilter);
         return;
       }
-      
+
       const result = await resourceService.fetchResources(
         currentPage,
         itemsPerPage,
@@ -106,33 +113,32 @@ const Home: React.FC = () => {
           tag: activeFilter.type === 'tag' ? activeFilter.id : undefined
         }
       );
-      
+
       setResources(result.data || []);
       setTotalCount(result.count || 0);
       setTotalPages(Math.ceil(result.count / itemsPerPage));
-      
+
       setCachedData(prev => ({
         ...prev,
         [cacheKey]: { data: result.data, count: result.count }
       }));
-      
-      preloadNextPage();
+
+      void preloadNextPage(currentPage, activeFilter);
     } catch (error) {
       console.error('Error fetching resources:', error);
       throw error; // 让错误边界处理错误
     } finally {
       setIsLoading(false);
-      if (isInitialLoading) {
+      // 数据就绪后立刻结束首屏遮罩，只保留短暂淡出
+      if (isInitialLoadingRef.current) {
         setIsAnimating(true);
-        setTimeout(() => {
-          setIsInitialLoading(false);
-        }, 300);
-        setTimeout(() => {
+        setIsInitialLoading(false);
+        window.setTimeout(() => {
           setIsAnimating(false);
-        }, 700);
+        }, 280);
       }
     }
-  }, [currentPage, activeFilter, cachedData, itemsPerPage, preloadNextPage, isInitialLoading]);
+  }, [currentPage, activeFilter, itemsPerPage, preloadNextPage]);
 
   // 处理分类选择
   const handleSelectCategory = useCallback((categoryId: string) => {
@@ -245,23 +251,27 @@ const Home: React.FC = () => {
     fetchResources();
   }, [fetchResources]);
 
-  // 在首页初始加载阶段就后台预热音频，尽量避免首次点击等待
+  // 首屏结束后再预热音频，避免和首请求抢带宽
   useEffect(() => {
-    if (!isInitialLoading) return;
+    if (isInitialLoading) return;
 
-    let cancelled = false;
-    const preheatAudio = async () => {
+    const idle =
+      typeof window !== 'undefined' && 'requestIdleCallback' in window
+        ? (window as Window & { requestIdleCallback: (cb: () => void) => number }).requestIdleCallback
+        : (cb: () => void) => window.setTimeout(cb, 800);
+
+    const id = idle(() => {
       void audioLoader.waitForLoad().catch((error) => {
-        if (!cancelled) {
-          console.warn('Failed to preheat audio during initial loading:', error);
-        }
+        console.warn('Failed to preheat audio:', error);
       });
-    };
-
-    preheatAudio();
+    });
 
     return () => {
-      cancelled = true;
+      if ('cancelIdleCallback' in window) {
+        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(id);
+      } else {
+        clearTimeout(id);
+      }
     };
   }, [isInitialLoading]);
 

@@ -6,6 +6,7 @@ import { Resource } from '../types/resource';
 import { debounce } from 'lodash';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import '../styles/nothing.css';
+import { loadNothingFonts } from '../utils/loadNothingFonts';
 
 const getCategoryName = (categoryId: string) => {
   const category = categories.find(c => c.id === categoryId);
@@ -75,6 +76,10 @@ const Admin = () => {
       return 'dark';
     }
   });
+
+  useEffect(() => {
+    loadNothingFonts();
+  }, []);
 
   useEffect(() => {
     try {

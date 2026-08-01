@@ -8,6 +8,7 @@ import About from './pages/About';
 import { initGA, trackPageView } from './utils/analytics';
 import './styles/nothing.css';
 import PixelLoader from './components/ui/PixelLoader';
+import { loadNothingFonts } from './utils/loadNothingFonts';
 
 
 initGA('G-W0ZSDCR0XB');
@@ -27,6 +28,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       return 'dark';
     }
   });
+
+  useEffect(() => {
+    loadNothingFonts();
+  }, []);
 
   // 首次挂载时执行鉴权并注册 auth 事件
   useEffect(() => {
