@@ -8,20 +8,14 @@ import Icon from './ui/Icon';
 
 type HeaderMode = 'default' | 'about';
 
-type LayoutMode = 'grid' | 'list' | 'single';
-
 type HeaderProps = {
   onBlindBoxClick?: () => void;
   mode?: HeaderMode;
-  layoutMode?: LayoutMode;
-  onLayoutToggle?: () => void;
 };
 
 const Header: React.FC<HeaderProps> = ({
   onBlindBoxClick,
   mode = 'default',
-  layoutMode,
-  onLayoutToggle,
 }) => {
   const { t } = useTranslation();
   
@@ -32,17 +26,6 @@ const Header: React.FC<HeaderProps> = ({
 
   const playClickSound = () => {
     audioLoader.playSound('/click.wav');
-  };
-
-  const getLayoutLabel = () => {
-    if (i18n.language !== 'en') {
-      if (layoutMode === 'list') return '列表';
-      if (layoutMode === 'single') return '单列';
-      return '网格';
-    }
-    if (layoutMode === 'list') return 'List';
-    if (layoutMode === 'single') return 'Single';
-    return 'Grid';
   };
 
   return (
@@ -74,33 +57,17 @@ const Header: React.FC<HeaderProps> = ({
             </div>
           ) : (
             <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-              {onLayoutToggle ? (
-                <CircleButton
-                  onClick={() => {
-                    playClickSound();
-                    onLayoutToggle();
-                  }}
-                  variant="secondary"
-                  size="sm"
-                  shape="square"
-                  title="布局模式"
-                  className="!hidden sm:!inline-flex text-[10px] sm:text-xs bg-gray-800 text-white border-none"
-                >
-                  {getLayoutLabel()}
-                </CircleButton>
-              ) : (
-                <CircleButton
-                  href="https://www.jimmy-blog.top/"
-                  variant="secondary"
-                  size="sm"
-                  shape="square"
-                  title={t('header.blog')}
-                  onClick={playClickSound}
-                  className="text-[10px] sm:text-xs"
-                >
-                  {t('header.blog')}
-                </CircleButton>
-              )}
+              <CircleButton
+                href="https://www.jimmy-blog.top/"
+                variant="secondary"
+                size="sm"
+                shape="square"
+                title={t('header.blog')}
+                onClick={playClickSound}
+                className="text-[10px] sm:text-xs"
+              >
+                {t('header.blog')}
+              </CircleButton>
               <CircleButton
                 onClick={onBlindBoxClick}
                 variant="secondary"

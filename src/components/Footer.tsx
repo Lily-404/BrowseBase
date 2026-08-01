@@ -3,7 +3,7 @@ import { Button } from './ui/Button';
 import { useTranslation } from 'react-i18next';
 import { audioLoader } from '../utils/audioLoader';
 import { memo } from 'react';
-import Icon from './ui/Icon';
+import DotMatrixChevron from './ui/DotMatrixChevron';
 
 interface FooterProps {
   currentPage: number;
@@ -14,18 +14,6 @@ interface FooterProps {
   onPageSelectorOpenChange?: (isOpen: boolean) => void;
 }
 
-type PaginationIconStyle = 'step' | 'skip' | 'chevrons' | 'rewind';
-
-const paginationIconMap: Record<PaginationIconStyle, { prev: 'StepBack' | 'SkipBack' | 'ChevronsLeft' | 'Rewind'; next: 'StepForward' | 'SkipForward' | 'ChevronsRight' | 'FastForward' }> = {
-  step: { prev: 'StepBack', next: 'StepForward' },
-  skip: { prev: 'SkipBack', next: 'SkipForward' },
-  chevrons: { prev: 'ChevronsLeft', next: 'ChevronsRight' },
-  rewind: { prev: 'Rewind', next: 'FastForward' },
-};
-
-// 快速切換翻頁 icon 風格：'step' | 'skip' | 'chevrons' | 'rewind'
-const paginationIconStyle: PaginationIconStyle = 'skip';
-
 const Footer: React.FC<FooterProps> = ({ 
   currentPage, 
   totalPages, 
@@ -35,7 +23,6 @@ const Footer: React.FC<FooterProps> = ({
   onPageSelectorOpenChange
 }) => {
   const { t } = useTranslation();
-  const paginationIcons = paginationIconMap[paginationIconStyle];
   const [isPageSelectorOpen, setIsPageSelectorOpen] = useState(false);
   const [selectedPage, setSelectedPage] = useState<number | ''>(currentPage);
 
@@ -104,12 +91,7 @@ const Footer: React.FC<FooterProps> = ({
             currentPage <= 1 ? 'opacity-50' : 'shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]'
           }`}
         >
-          <Icon 
-            name={paginationIcons.prev}
-            size={18} 
-            className="sm:w-5 sm:h-5 self-center"
-            fallback={<span className="text-sm">←</span>}
-          />
+          <DotMatrixChevron direction="left" size={18} className="sm:w-5 sm:h-5" />
           <span className="inline-flex items-center h-full text-sm font-medium ml-0.5 sm:ml-2 leading-none">
             {t('navigation.previous')}
           </span>
@@ -183,12 +165,7 @@ const Footer: React.FC<FooterProps> = ({
           <span className="inline-flex items-center h-full text-sm font-medium mr-0.5 sm:mr-2 leading-none">
             {t('navigation.next')}
           </span>
-          <Icon 
-            name={paginationIcons.next}
-            size={18} 
-            className="sm:w-5 sm:h-5 self-center"
-            fallback={<span className="text-sm">→</span>}
-          />
+          <DotMatrixChevron direction="right" size={18} className="sm:w-5 sm:h-5" />
         </Button>
       </div>
     </footer>

@@ -26,7 +26,7 @@ interface PostgrestError {
 
 const Home: React.FC = () => {
   const { t } = useTranslation();
-  type LayoutMode = 'grid' | 'list' | 'single';
+  const layoutMode = 'grid' as const;
 
   const [resources, setResources] = useState<Resource[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterState>({ type: 'category', id: 'all' });
@@ -41,33 +41,6 @@ const Home: React.FC = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [showBlindBoxModal, setShowBlindBoxModal] = useState(false);
   const [blindBoxIndex, setBlindBoxIndex] = useState<number | null>(null);
-
-  const [layoutMode, setLayoutMode] = useState<LayoutMode>(() => {
-    try {
-      const v = localStorage.getItem('home.layoutMode');
-      if (v === 'grid' || v === 'list' || v === 'single') return v;
-      return 'grid';
-    } catch {
-      return 'grid';
-    }
-  });
-
-  useEffect(() => {
-    try {
-      localStorage.setItem('home.layoutMode', layoutMode);
-    } catch {
-      // ignore
-    }
-  }, [layoutMode]);
-
-  const handleLayoutToggle = useCallback(() => {
-    setLayoutMode((prev) => {
-      if (prev === 'grid') return 'list';
-      if (prev === 'list') return 'single';
-      if (prev === 'single') return 'grid';
-      return 'grid';
-    });
-  }, []);
   // 盲盒专用资源池
   const [blindBoxResources, setBlindBoxResources] = useState<Resource[]>([]);
   // 盲盒加载状态
@@ -332,11 +305,7 @@ const Home: React.FC = () => {
           </div>
         )}
         
-        <Header
-          onBlindBoxClick={handleOpenBlindBox}
-          layoutMode={layoutMode}
-          onLayoutToggle={handleLayoutToggle}
-        />
+        <Header onBlindBoxClick={handleOpenBlindBox} />
         <main className="flex-grow">
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6">
             <div className="flex flex-col md:flex-row gap-4 sm:gap-8">

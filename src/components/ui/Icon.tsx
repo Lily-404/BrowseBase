@@ -51,9 +51,10 @@ interface IconProps {
   size?: number;
   className?: string;
   fallback?: React.ReactNode;
+  strokeWidth?: number;
 }
 
-const Icon: React.FC<IconProps> = ({ name, size = 24, className = '', fallback }) => {
+const Icon: React.FC<IconProps> = ({ name, size = 24, className = '', fallback, strokeWidth = 1.5 }) => {
   const IconComponent = iconMap[name];
   
   if (!IconComponent) {
@@ -65,6 +66,7 @@ const Icon: React.FC<IconProps> = ({ name, size = 24, className = '', fallback }
     <IconComponent
       size={size}
       className={className}
+      strokeWidth={strokeWidth}
     />
   );
 };
