@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import React from 'react';
+import { toast } from 'sonner';
 import { resourceService } from '../services/resourceService';
 import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
@@ -58,7 +59,6 @@ const Admin = () => {
   const [editingResource, setEditingResource] = useState<Resource | null>(null);
   const [pendingDelete, setPendingDelete] = useState<Resource | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [filters, setFilters] = useState({
     search: '',
     category: '',
@@ -87,6 +87,11 @@ const Admin = () => {
     } catch {
       // ignore
     }
+    const root = document.documentElement;
+    root.classList.toggle('dark', theme === 'dark');
+    return () => {
+      root.classList.remove('dark');
+    };
   }, [theme]);
 
   const fetchResources = useCallback(async () => {
@@ -150,11 +155,11 @@ const Admin = () => {
     try {
       if (editingResource) {
         await resourceService.updateResource(editingResource.id, newResource);
-        setMessage({ type: 'success', text: '更新成功' });
+        toast.success('已更新资源');
         setEditingResource(null);
       } else {
         await resourceService.createResource(newResource as Omit<Resource, 'id'>);
-        setMessage({ type: 'success', text: '添加成功' });
+        toast.success('已添加资源');
       }
 
       setNewResource({
@@ -169,10 +174,9 @@ const Admin = () => {
       fetchResources();
     } catch (error) {
       console.error('Error saving resource:', error);
-      setMessage({ type: 'error', text: '操作失败，请重试' });
+      toast.error('提交失败，请重试');
     } finally {
       setIsLoading(false);
-      setTimeout(() => setMessage(null), 3000);
     }
   }
 
@@ -184,14 +188,13 @@ const Admin = () => {
       await resourceService.deleteResource(id);
       setPendingDelete(null);
       if (editingResource?.id === id) clearEdit();
-      setMessage({ type: 'success', text: '删除成功' });
+      toast.success('已删除资源');
       fetchResources();
     } catch (error) {
       console.error('Error deleting resource:', error);
-      setMessage({ type: 'error', text: '删除失败，请重试' });
+      toast.error('删除失败，请重试');
     } finally {
       setIsLoading(false);
-      setTimeout(() => setMessage(null), 3000);
     }
   }
 
@@ -357,22 +360,8 @@ const Admin = () => {
             </h1>
           </div>
           <div className="flex items-center gap-4 shrink-0">
-            {(isLoading || message) && (
-              <p
-                className={`nd-status ${
-                  message?.type === 'error'
-                    ? 'nd-status-err'
-                    : message?.type === 'success'
-                      ? 'nd-status-ok'
-                      : 'text-[var(--nd-text-secondary)]'
-                }`}
-              >
-                {isLoading && !message
-                  ? '[加载中...]'
-                  : message
-                    ? `[${message.text}]`
-                    : null}
-              </p>
+            {isLoading && (
+              <p className="nd-status text-[var(--nd-text-secondary)]">[加载中...]</p>
             )}
             <div className="nd-mode-toggle" role="group" aria-label="主题">
               <button
@@ -787,7 +776,11 @@ const Admin = () => {
                     {newResource.tags?.length || 0} 标签 · {newResource.category ? 1 : 0} 分类
                   </span>
                   <button type="submit" className="records-form-submit" disabled={isLoading}>
-                    {editingResource ? '更新记录' : '添加记录'}
+                    {isLoading
+                      ? '处理中...'
+                      : editingResource
+                        ? '更新记录'
+                        : '添加记录'}
                   </button>
                 </div>
               </form>

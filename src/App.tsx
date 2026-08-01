@@ -8,6 +8,7 @@ import About from './pages/About';
 import { initGA, trackPageView } from './utils/analytics';
 import './styles/nothing.css';
 import PixelLoader from './components/ui/PixelLoader';
+import { Toaster } from './components/ui/Toaster';
 import { loadNothingFonts } from './utils/loadNothingFonts';
 
 
@@ -125,6 +126,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 function App() {
   return (
     <Router>
+      <Toaster />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

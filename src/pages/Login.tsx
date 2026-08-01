@@ -41,6 +41,11 @@ const Login = () => {
     } catch {
       // ignore
     }
+    const root = document.documentElement;
+    root.classList.toggle('dark', theme === 'dark');
+    return () => {
+      root.classList.remove('dark');
+    };
   }, [theme]);
 
   const isGoogleOAuthSupported = () => {
