@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({
     <header>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
         <div className="flex justify-between items-center">
-          <div className="flex flex-col">
+          <div className="flex flex-col font-['JetBrains_Mono',ui-monospace,'PingFang_SC','Hiragino_Sans_GB',sans-serif]">
             <Link to="/" className="flex items-center gap-2 sm:gap-3">
               <div className="flex flex-col">
                 <h1 className="text-lg sm:text-xl font-semibold tracking-tight text-black drop-shadow-[0_2px_2px_rgba(0,0,0,0.1)]">
@@ -50,8 +50,9 @@ const Header: React.FC<HeaderProps> = ({
               <Link
                 to="/"
                 onClick={playClickSound}
-                className="inline-flex items-center px-3 py-2 rounded-lg border border-[#E5E7EB] bg-[#F1F1F1] text-[#4D4D4D] font-medium text-sm transition-all duration-200 hover:bg-[#E7E7E7] hover:text-[#1A1A1A] shadow-[inset_-1px_-1px_2px_rgba(255,255,255,0.9),inset_1px_1px_2px_rgba(0,0,0,0.1)]"
+                className="nd-btn nd-btn-secondary !min-h-0 !py-2 !px-4 !text-[11px] inline-flex items-center gap-1.5 no-underline"
               >
+                <Icon name="ArrowLeft" size={14} />
                 {t('header.back')}
               </Link>
             </div>

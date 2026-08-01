@@ -20,6 +20,22 @@ const allResourcesCache = new Map<
   }
 >();
 
+export type ResourceStatItem = {
+  id: string;
+  count: number;
+};
+
+export type ResourceStats = {
+  total: number;
+  byCategory: ResourceStatItem[];
+  byTag: ResourceStatItem[];
+};
+
+const statsCache: { data: ResourceStats | null; timestamp: number } = {
+  data: null,
+  timestamp: 0,
+};
+
 // 缓存过期时间（5分钟）
 const CACHE_EXPIRY = 5 * 60 * 1000;
 
@@ -201,10 +217,66 @@ export const resourceService = {
     }
   },
 
+  /** 关于页统计：只取 category/tags，客户端聚合 */
+  async fetchResourceStats(options?: { tagTopN?: number }): Promise<ResourceStats> {
+    const tagTopN = options?.tagTopN ?? 6;
+
+    try {
+      if (statsCache.data && Date.now() - statsCache.timestamp < CACHE_EXPIRY) {
+        return statsCache.data;
+      }
+
+      const { data, error } = await supabase
+        .from('resources')
+        .select('category, tags');
+
+      if (error) throw error;
+
+      const rows = data || [];
+      const categoryMap = new Map<string, number>();
+      const tagMap = new Map<string, number>();
+
+      for (const row of rows) {
+        const category = (row.category as string) || 'uncategorized';
+        categoryMap.set(category, (categoryMap.get(category) || 0) + 1);
+
+        const rowTags = Array.isArray(row.tags) ? (row.tags as string[]) : [];
+        for (const tagId of rowTags) {
+          if (!tagId) continue;
+          tagMap.set(tagId, (tagMap.get(tagId) || 0) + 1);
+        }
+      }
+
+      const byCategory = Array.from(categoryMap.entries())
+        .map(([id, count]) => ({ id, count }))
+        .sort((a, b) => b.count - a.count);
+
+      const byTag = Array.from(tagMap.entries())
+        .map(([id, count]) => ({ id, count }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, tagTopN);
+
+      const result: ResourceStats = {
+        total: rows.length,
+        byCategory,
+        byTag,
+      };
+
+      statsCache.data = result;
+      statsCache.timestamp = Date.now();
+      return result;
+    } catch (error) {
+      console.error('Error fetching resource stats:', error);
+      return { total: 0, byCategory: [], byTag: [] };
+    }
+  },
+
   // 清除所有缓存
   clearCache() {
     searchCache.clear();
     allResourcesCache.clear();
+    statsCache.data = null;
+    statsCache.timestamp = 0;
   },
 
   async createResource(resource: Omit<Resource, 'id'>) {

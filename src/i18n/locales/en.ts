@@ -55,6 +55,17 @@ export default {
     },
     about: {
       title: 'About',
+      label: 'ABOUT',
+      brand: 'BrowseBase',
+      stats: {
+        overview: 'Overview',
+        goalProgress: 'Goal progress',
+        goalUnit: '/ 1000',
+        categoryDist: 'By category',
+        tagDist: 'By tag',
+        loading: 'Loading...',
+        resources: 'resources'
+      },
       origin: {
         heading: 'Origin',
         p1: 'In an age of information overload, algorithms decide what you see, and trending charts shape your interests.',
@@ -73,16 +84,16 @@ export default {
       },
       blog: {
         heading: 'Blog',
-        label: 'Personal blog:'
+        label: 'Personal blog'
       },
       opensource: {
         heading: 'Open Source',
-        repoLabel: 'Repository:',
-        inspiredBy: 'The UI and interaction are inspired by OpenAI open-source demo project openai-fm:'
+        repoLabel: 'Repository',
+        inspiredBy: 'UI inspired by openai-fm'
       },
       contact: {
         heading: 'Contact',
-        wechat: 'WeChat: OOIll0'
+        wechat: 'WeChat OOIll0'
       }
     }
   }

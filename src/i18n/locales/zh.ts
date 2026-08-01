@@ -55,6 +55,17 @@ export default {
     },
     about: {
       title: '关于',
+      label: 'ABOUT',
+      brand: 'BrowseBase',
+      stats: {
+        overview: '资源概况',
+        goalProgress: '目标进度',
+        goalUnit: '/ 1000',
+        categoryDist: '分类分布',
+        tagDist: '标签分布',
+        loading: '加载中...',
+        resources: '资源'
+      },
       origin: {
         heading: '初衷',
         p1: '在信息过载的时代，算法决定你看到什么，热榜塑造你的兴趣。',
@@ -73,16 +84,16 @@ export default {
       },
       blog: {
         heading: '博客',
-        label: '个人博客：'
+        label: '个人博客'
       },
       opensource: {
         heading: '开源',
-        repoLabel: '本站仓库：',
-        inspiredBy: 'UI 与交互部分参考了 OpenAI 开源演示项目 openai-fm：'
+        repoLabel: '本站仓库',
+        inspiredBy: 'UI 与交互参考 openai-fm'
       },
       contact: {
         heading: '联系',
-        wechat: '微信：OOIll0'
+        wechat: '微信 OOIll0'
       }
     }
   }

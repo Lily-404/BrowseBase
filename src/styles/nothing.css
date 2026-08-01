@@ -1098,6 +1098,233 @@
   cursor: not-allowed;
 }
 
+/* About page */
+.nd .about-page {
+  min-height: 100vh;
+}
+
+.nd .about-main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+.nd .about-hero {
+  margin-bottom: 48px;
+}
+
+.nd .about-hero-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.nd .about-metric {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.nd .about-metric .nd-display {
+  font-size: 64px;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+}
+
+.nd .about-metric-unit {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nd-text-secondary);
+  padding-bottom: 8px;
+}
+
+.nd .about-progress {
+  margin-top: 24px;
+}
+
+.nd .about-progress-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.nd .about-progress-value {
+  font-family: "Space Mono", monospace;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--nd-text-secondary);
+}
+
+.nd .about-seg {
+  display: flex;
+  gap: 2px;
+  width: 100%;
+  height: 10px;
+}
+
+.nd .about-seg-bit {
+  flex: 1;
+  min-width: 2px;
+  border-radius: 0;
+  background: var(--nd-border);
+}
+
+.nd .about-seg-bit.is-filled {
+  background: var(--nd-text-display);
+}
+
+.nd .about-seg-bit.is-accent {
+  background: var(--nd-accent);
+}
+
+.nd .about-seg-sm {
+  height: 6px;
+}
+
+.nd .about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 56px;
+}
+
+.nd .about-panel {
+  background: var(--nd-surface);
+  border: 1px solid var(--nd-border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--ft-shadow-card);
+}
+
+.nd.nd-light .about-panel {
+  border-color: transparent;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+
+.nd .about-panel-title {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nd-text-secondary);
+  margin-bottom: 14px;
+}
+
+.nd .about-dist-row {
+  display: grid;
+  grid-template-columns: 72px 1fr 36px;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.nd .about-dist-row:last-child {
+  margin-bottom: 0;
+}
+
+.nd .about-dist-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--nd-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nd .about-dist-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.nd .about-dist-count {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--nd-text-disabled);
+}
+
+.nd .about-section {
+  margin-bottom: 40px;
+}
+
+.nd .about-section-title {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nd-text-secondary);
+  margin-bottom: 14px;
+}
+
+.nd .about-prose {
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 300;
+  color: var(--nd-text-primary);
+}
+
+.nd .about-prose p + p {
+  margin-top: 16px;
+}
+
+.nd .about-meta-list {
+  border-top: 1px solid var(--nd-border);
+}
+
+.nd .about-meta-row {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--nd-border);
+  align-items: start;
+}
+
+.nd .about-meta-label {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--nd-text-disabled);
+  padding-top: 2px;
+}
+
+.nd .about-meta-body {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--nd-text-primary);
+}
+
+.nd .about-meta-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--nd-interactive);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.nd .about-meta-link:hover {
+  text-decoration: underline;
+}
+
+.nd .about-status {
+  margin-top: 12px;
+}
+
 @media (max-width: 640px) {
   .nd .nd-display {
     font-size: 28px;
@@ -1116,5 +1343,26 @@
 
   .nd .records-field-label {
     padding-top: 0;
+  }
+
+  .nd .about-main {
+    padding: 24px 16px 64px;
+  }
+
+  .nd .about-metric .nd-display {
+    font-size: 48px;
+  }
+
+  .nd .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nd .about-dist-row {
+    grid-template-columns: 64px 1fr 32px;
+  }
+
+  .nd .about-meta-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
   }
 }
