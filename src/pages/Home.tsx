@@ -10,11 +10,12 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
 import { FilterState, CachedData } from '../types/home';
-import styles from '../styles/animations.module.css';
 // import AdSense from '../components/AdSense';  // 暂时注释，等待 AdSense 审核通过后再启用
 import Icon from '../components/ui/Icon';
 import WaveformLoader from '../components/WaveformLoader';
+import PixelLoader from '../components/ui/PixelLoader';
 import { audioLoader } from '../utils/audioLoader';
+import '../styles/nothing.css';
 
 // 添加错误类型定义
 interface PostgrestError {
@@ -279,38 +280,20 @@ const Home: React.FC = () => {
     <ErrorBoundary>
       <div className="min-h-screen flex flex-col relative">
         {(isInitialLoading || isAnimating) && (
-          <div className={`fixed inset-0 bg-gradient-to-br from-[#F5F5F5] to-[#F0F0F0] z-50 flex items-center justify-center
-            transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] ${!isInitialLoading ? 'opacity-0' : 'opacity-100'}`}>
-            <div className={`relative flex flex-col items-center gap-8 ${isAnimating ? styles.fadeIn : ''}`}>
-              <div className="relative flex flex-col items-center gap-2">
-                <h1 className={`text-3xl font-bold bg-gradient-to-r from-[#4D4D4D] to-[#666666] bg-clip-text text-transparent
-                  tracking-wider ${isAnimating ? styles.textFade : ''}`}>
-                  BrowseBase
-                </h1>
-                <p className={`text-sm text-[#4D4D4D]/60 tracking-wide ${isAnimating ? styles.textFade : ''}`}>
-                  信息，而非噪音。
-                </p>
+          <div
+            className={`nd nd-light nd-dot-grid fixed inset-0 z-50 flex items-center justify-center transition-opacity duration-300 ease-out ${
+              !isInitialLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            }`}
+            role="status"
+            aria-live="polite"
+            aria-busy={isInitialLoading}
+          >
+            <div className="flex flex-col items-center gap-6 px-6">
+              <div className="text-center">
+                <p className="nd-label mb-2">BrowseBase</p>
+                <h1 className="nd-heading text-[28px] tracking-tight">信息，而非噪音</h1>
               </div>
-              
-              <div className="relative flex flex-col items-center gap-4">
-                <div
-                  className={`flex items-center justify-center min-h-[4.5rem] ${isAnimating ? styles.ringExpand : ''}`}
-                  aria-hidden="true"
-                >
-                  <WaveformLoader className="scale-[1.5] sm:scale-[1.75]" />
-                </div>
-
-                <div className="relative flex flex-col items-center gap-1">
-                  <p
-                    className={`text-[#4D4D4D] text-sm font-medium tracking-wider ${isAnimating ? styles.textFade : ''}`}
-                  >
-                    加载中
-                  </p>
-                  <p className={`text-xs text-[#4D4D4D]/40 tracking-wide ${isAnimating ? styles.textFade : ''}`}>
-                    正在为您准备精彩内容
-                  </p>
-                </div>
-              </div>
+              <PixelLoader label="加载中" variant="Drive" />
             </div>
           </div>
         )}
