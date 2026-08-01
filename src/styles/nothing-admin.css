@@ -1,0 +1,355 @@
+/* Nothing Design System — scoped to Admin */
+
+.nd-admin {
+  --nd-black: #000000;
+  --nd-surface: #111111;
+  --nd-surface-raised: #1a1a1a;
+  --nd-border: #222222;
+  --nd-border-visible: #333333;
+  --nd-text-disabled: #666666;
+  --nd-text-secondary: #999999;
+  --nd-text-primary: #e8e8e8;
+  --nd-text-display: #ffffff;
+  --nd-accent: #d71921;
+  --nd-success: #4a9e5c;
+  --nd-interactive: #5b9bf6;
+  --nd-ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  background-color: var(--nd-black);
+  color: var(--nd-text-primary);
+  font-family: "Space Grotesk", "DM Sans", system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.nd-admin.nd-light {
+  --nd-black: #f5f5f5;
+  --nd-surface: #ffffff;
+  --nd-surface-raised: #f0f0f0;
+  --nd-border: #e8e8e8;
+  --nd-border-visible: #cccccc;
+  --nd-text-disabled: #999999;
+  --nd-text-secondary: #666666;
+  --nd-text-primary: #1a1a1a;
+  --nd-text-display: #000000;
+  --nd-interactive: #007aff;
+}
+
+.nd-admin .nd-label {
+  font-family: "Space Mono", "JetBrains Mono", monospace;
+  font-size: 11px;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nd-text-secondary);
+}
+
+.nd-admin .nd-caption {
+  font-family: "Space Mono", "JetBrains Mono", monospace;
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  color: var(--nd-text-secondary);
+}
+
+.nd-admin .nd-display {
+  font-family: "Doto", "Space Mono", monospace;
+  font-size: 36px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--nd-text-display);
+  font-weight: 400;
+}
+
+.nd-admin .nd-heading {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-weight: 300;
+  color: var(--nd-text-display);
+}
+
+.nd-admin .nd-surface {
+  background: var(--nd-surface);
+  border: 1px solid var(--nd-border);
+  border-radius: 12px;
+}
+
+.nd-admin .nd-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--nd-border-visible);
+  border-radius: 0;
+  padding: 10px 0;
+  font-family: "Space Mono", monospace;
+  font-size: 14px;
+  color: var(--nd-text-primary);
+  outline: none;
+  transition: border-color 200ms var(--nd-ease);
+}
+
+.nd-admin .nd-input::placeholder {
+  color: var(--nd-text-disabled);
+}
+
+.nd-admin .nd-input:focus {
+  border-bottom-color: var(--nd-text-primary);
+}
+
+.nd-admin .nd-textarea {
+  width: 100%;
+  background: var(--nd-surface-raised);
+  border: 1px solid var(--nd-border-visible);
+  border-radius: 8px;
+  padding: 12px;
+  font-family: "Space Mono", monospace;
+  font-size: 14px;
+  color: var(--nd-text-primary);
+  outline: none;
+  resize: vertical;
+  transition: border-color 200ms var(--nd-ease);
+}
+
+.nd-admin .nd-textarea:focus {
+  border-color: var(--nd-text-primary);
+}
+
+.nd-admin .nd-btn {
+  font-family: "Space Mono", monospace;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  min-height: 44px;
+  padding: 12px 24px;
+  transition: opacity 200ms var(--nd-ease), border-color 200ms var(--nd-ease),
+    color 200ms var(--nd-ease), background-color 200ms var(--nd-ease);
+  cursor: pointer;
+}
+
+.nd-admin .nd-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.nd-admin .nd-btn-primary {
+  background: var(--nd-text-display);
+  color: var(--nd-black);
+  border: none;
+  border-radius: 999px;
+}
+
+.nd-admin .nd-btn-primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.nd-admin .nd-btn-secondary {
+  background: transparent;
+  color: var(--nd-text-primary);
+  border: 1px solid var(--nd-border-visible);
+  border-radius: 999px;
+}
+
+.nd-admin .nd-btn-secondary:hover:not(:disabled) {
+  border-color: var(--nd-text-secondary);
+}
+
+.nd-admin .nd-btn-ghost {
+  background: transparent;
+  border: none;
+  color: var(--nd-text-secondary);
+  padding: 8px 12px;
+  min-height: auto;
+  border-radius: 0;
+}
+
+.nd-admin .nd-btn-ghost:hover:not(:disabled) {
+  color: var(--nd-text-display);
+}
+
+.nd-admin .nd-btn-danger {
+  background: transparent;
+  color: var(--nd-accent);
+  border: 1px solid var(--nd-accent);
+  border-radius: 999px;
+}
+
+.nd-admin .nd-btn-danger:hover:not(:disabled) {
+  background: rgba(215, 25, 33, 0.08);
+}
+
+.nd-admin .nd-chip {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border: 1px solid var(--nd-border-visible);
+  border-radius: 999px;
+  color: var(--nd-text-secondary);
+  background: transparent;
+  transition: border-color 200ms var(--nd-ease), color 200ms var(--nd-ease),
+    background-color 200ms var(--nd-ease);
+  cursor: pointer;
+}
+
+.nd-admin .nd-chip:hover {
+  border-color: var(--nd-text-secondary);
+  color: var(--nd-text-primary);
+}
+
+.nd-admin .nd-chip-active {
+  border-color: var(--nd-text-display);
+  color: var(--nd-text-display);
+  background: transparent;
+}
+
+.nd-admin .nd-chip-filled {
+  background: var(--nd-text-display);
+  border-color: var(--nd-text-display);
+  color: var(--nd-black);
+}
+
+.nd-admin .nd-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid var(--nd-border-visible);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: "Space Mono", monospace;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--nd-text-primary);
+  cursor: pointer;
+  transition: border-color 200ms var(--nd-ease);
+}
+
+.nd-admin .nd-select-trigger:hover {
+  border-color: var(--nd-text-secondary);
+}
+
+.nd-admin .nd-dropdown {
+  background: var(--nd-surface-raised);
+  border: 1px solid var(--nd-border-visible);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.nd-admin .nd-dropdown button {
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  font-family: "Space Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--nd-text-secondary);
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+  transition: color 150ms var(--nd-ease), background-color 150ms var(--nd-ease);
+}
+
+.nd-admin .nd-dropdown button:hover {
+  color: var(--nd-text-primary);
+  background: var(--nd-surface);
+}
+
+.nd-admin .nd-dropdown button.nd-selected {
+  color: var(--nd-text-display);
+  border-left-color: var(--nd-accent);
+}
+
+.nd-admin .nd-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.nd-admin .nd-table th {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--nd-text-secondary);
+  font-weight: 400;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--nd-border-visible);
+}
+
+.nd-admin .nd-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--nd-border);
+  vertical-align: top;
+}
+
+.nd-admin .nd-table tbody tr {
+  transition: background-color 150ms var(--nd-ease);
+}
+
+.nd-admin .nd-table tbody tr:hover {
+  background: var(--nd-surface-raised);
+}
+
+.nd-admin .nd-table tbody tr.nd-editing {
+  background: var(--nd-surface-raised);
+  box-shadow: inset 2px 0 0 var(--nd-accent);
+}
+
+.nd-admin .nd-status {
+  font-family: "Space Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nd-admin .nd-status-ok {
+  color: var(--nd-success);
+}
+
+.nd-admin .nd-status-err {
+  color: var(--nd-accent);
+}
+
+.nd-admin .nd-mode-toggle {
+  display: inline-flex;
+  border: 1px solid var(--nd-border-visible);
+  border-radius: 999px;
+  overflow: hidden;
+  height: 36px;
+}
+
+.nd-admin .nd-mode-toggle button {
+  font-family: "Space Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0 16px;
+  border: none;
+  background: transparent;
+  color: var(--nd-text-secondary);
+  cursor: pointer;
+  transition: background-color 200ms var(--nd-ease), color 200ms var(--nd-ease);
+}
+
+.nd-admin .nd-mode-toggle button.nd-active {
+  background: var(--nd-text-display);
+  color: var(--nd-black);
+}
+
+.nd-admin .nd-dot-grid {
+  background-image: radial-gradient(circle, var(--nd-border) 0.5px, transparent 0.5px);
+  background-size: 12px 12px;
+}
+
+@media (max-width: 640px) {
+  .nd-admin .nd-display {
+    font-size: 28px;
+  }
+}

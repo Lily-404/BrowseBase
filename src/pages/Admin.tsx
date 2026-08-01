@@ -4,74 +4,70 @@ import { resourceService } from '../services/resourceService';
 import { categories, tags } from '../data/mockData';
 import { Resource } from '../types/resource';
 import { debounce } from 'lodash';
-import { ThemeToggle } from '../components/ui/ThemeToggle';
-// 给定分类ID获取分类名称
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import '../styles/nothing-admin.css';
 
-// 自定义下拉选择组件
-const CustomSelect = ({ 
-  value, 
-  onChange, 
-  options, 
-  placeholder, 
-  isRetroTheme 
-}: { 
+const getCategoryName = (categoryId: string) => {
+  const category = categories.find(c => c.id === categoryId);
+  return category ? category.name : categoryId;
+};
+
+type ThemeMode = 'dark' | 'light';
+
+const CustomSelect = ({
+  value,
+  onChange,
+  options,
+  placeholder,
+}: {
   value: string;
   onChange: (value: string) => void;
-  options: { id: string; name: string; }[];
+  options: { id: string; name: string }[];
   placeholder: string;
-  isRetroTheme: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const selected = options.find(opt => opt.id === value)?.name || placeholder;
 
   return (
-    <div className="relative">
+    <div className="relative w-full lg:w-52">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full lg:w-48 px-3 py-2 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50'} text-gray-800 flex items-center justify-between`}
+        className="nd-select-trigger"
+        aria-expanded={isOpen}
       >
-        <span className={`${isRetroTheme ? 'font-mono' : ''}`}>
-          {options.find(opt => opt.id === value)?.name || placeholder}
-        </span>
-        <svg 
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="square" strokeLinejoin="miter" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        <span className="truncate">{selected}</span>
+        <ChevronDown
+          className={`w-4 h-4 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          strokeWidth={1.5}
+        />
       </button>
-      
+
       {isOpen && (
-        <div 
-          className={`absolute z-50 w-full mt-1 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-white border border-gray-100 rounded-lg shadow-lg'}`}
-        >
-          <div className="max-h-60 overflow-y-auto">
+        <div className="nd-dropdown absolute z-50 w-full mt-1 max-h-60 overflow-y-auto">
+          <button
+            type="button"
+            onClick={() => {
+              onChange('');
+              setIsOpen(false);
+            }}
+            className={value === '' ? 'nd-selected' : ''}
+          >
+            {placeholder}
+          </button>
+          {options.map(option => (
             <button
+              key={option.id}
               type="button"
               onClick={() => {
-                onChange('');
+                onChange(option.id);
                 setIsOpen(false);
               }}
-              className={`w-full px-4 py-2 text-left ${isRetroTheme ? 'font-mono hover:bg-gray-200' : 'hover:bg-gray-50'} ${value === '' ? (isRetroTheme ? 'bg-[#2c2c2c] text-white' : 'bg-gray-100') : 'text-gray-700'}`}
+              className={value === option.id ? 'nd-selected' : ''}
             >
-              {placeholder}
+              {option.name}
             </button>
-            {options.map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                onClick={() => {
-                  onChange(option.id);
-                  setIsOpen(false);
-                }}
-                className={`w-full px-4 py-2 text-left ${isRetroTheme ? 'font-mono hover:bg-gray-200' : 'hover:bg-gray-50'} ${value === option.id ? (isRetroTheme ? 'bg-[#2c2c2c] text-white' : 'bg-gray-100') : 'text-gray-700'}`}
-              >
-                {option.name}
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
       )}
     </div>
@@ -82,7 +78,7 @@ const Admin = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-  const [isInitialLoading, setIsInitialLoading] = useState(true); // 初始加载状态（仅用于首屏骨架）
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const itemsPerPage = 13;
   const [newResource, setNewResource] = useState<Partial<Resource>>({
     title: '',
@@ -91,38 +87,36 @@ const Admin = () => {
     category: '',
     tags: [],
     rating: 0,
-    reviews: 0
+    reviews: 0,
   });
   const [editingResource, setEditingResource] = useState<Resource | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{type: 'success' | 'error', text: string} | null>(null);
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [filters, setFilters] = useState({
     search: '',
     category: '',
-    tag: ''
+    tag: '',
   });
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
-  const [isRetroTheme, setIsRetroTheme] = useState(() => {
+  const [theme, setTheme] = useState<ThemeMode>(() => {
     try {
-      const v = localStorage.getItem('isRetroTheme');
-      if (v === 'true') return true;
-      if (v === 'false') return false;
-      return false;
+      const v = localStorage.getItem('adminNothingTheme');
+      if (v === 'light' || v === 'dark') return v;
+      return 'dark';
     } catch {
-      return false;
+      return 'dark';
     }
   });
 
   useEffect(() => {
     try {
-      localStorage.setItem('isRetroTheme', String(isRetroTheme));
+      localStorage.setItem('adminNothingTheme', theme);
     } catch {
-      // 忽略 localStorage 写入失败（隐私模式/禁用等）
+      // ignore
     }
-  }, [isRetroTheme]);
-  
-  // 使用 useCallback 包装 fetchResources 函数
+  }, [theme]);
+
   const fetchResources = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -137,21 +131,19 @@ const Admin = () => {
     }
   }, [currentPage, itemsPerPage, filters]);
 
-  // 创建防抖的搜索处理函数
   const debouncedSearch = useCallback(
     debounce((value: string) => {
       setFilters(prev => ({ ...prev, search: value }));
-      setCurrentPage(1); // 重置页码
+      setCurrentPage(1);
     }, 300),
     []
   );
 
-  // 处理搜索输入
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     debouncedSearch(value);
     setShowSuggestions(true);
-    
+
     if (value.trim().length > 0) {
       resourceService.getSearchSuggestions(value).then(suggestions => {
         setSearchSuggestions(suggestions);
@@ -161,7 +153,6 @@ const Admin = () => {
     }
   };
 
-  // 只保留一个 useEffect
   useEffect(() => {
     fetchResources();
   }, [fetchResources]);
@@ -172,13 +163,13 @@ const Admin = () => {
     try {
       if (editingResource) {
         await resourceService.updateResource(editingResource.id, newResource);
-        setMessage({ type: 'success', text: '资源更新成功！' });
+        setMessage({ type: 'success', text: '更新成功' });
         setEditingResource(null);
       } else {
         await resourceService.createResource(newResource as Omit<Resource, 'id'>);
-        setMessage({ type: 'success', text: '资源添加成功！' });
+        setMessage({ type: 'success', text: '添加成功' });
       }
-      
+
       setNewResource({
         title: '',
         url: '',
@@ -186,7 +177,7 @@ const Admin = () => {
         category: '',
         tags: [],
         rating: 0,
-        reviews: 0
+        reviews: 0,
       });
       fetchResources();
     } catch (error) {
@@ -202,7 +193,7 @@ const Admin = () => {
     try {
       setIsLoading(true);
       await resourceService.deleteResource(id);
-      setMessage({ type: 'success', text: '资源删除成功！' });
+      setMessage({ type: 'success', text: '删除成功' });
       fetchResources();
     } catch (error) {
       console.error('Error deleting resource:', error);
@@ -222,7 +213,20 @@ const Admin = () => {
       category: resource.category,
       tags: resource.tags,
       rating: resource.rating,
-      reviews: resource.reviews
+      reviews: resource.reviews,
+    });
+  }
+
+  function clearEdit() {
+    setEditingResource(null);
+    setNewResource({
+      title: '',
+      url: '',
+      description: '',
+      category: '',
+      tags: [],
+      rating: 0,
+      reviews: 0,
     });
   }
 
@@ -241,330 +245,296 @@ const Admin = () => {
     setCurrentPage(prev => prev - 1);
   };
 
+  const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
+
   return (
-    <div className={`min-h-screen ${isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-50'} p-6`}>
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h1 className={`text-2xl ${isRetroTheme ? 'font-mono' : 'font-light'} tracking-wide text-gray-800`}>
-            BrowseBase
-            <span className="text-gray-400 ml-2 text-sm font-normal">资源管理</span>
-          </h1>
-          <ThemeToggle isRetroTheme={isRetroTheme} onToggle={() => setIsRetroTheme(!isRetroTheme)} />
-        </div>
-        
-        {/* 优化后的初始加载状态 */}
-        {/* 初始加载：使用局部骨架而不是整屏遮罩，提升感知性能 */}
-        
-        {/* 优化后的操作加载状态 */}
-        {!isInitialLoading && isLoading && (
-          <div className={`fixed bottom-6 left-1/2 transform -translate-x-1/2 ${isRetroTheme ? 'bg-[#f0f0f0]/90 border-2 border-[#2c2c2c]' : 'bg-white/90 border border-gray-100'} px-6 py-3 ${isRetroTheme ? '' : 'rounded-full shadow-lg'} flex items-center justify-center z-50`}>
-            <div className="relative" aria-hidden>
-              <div className={`w-5 h-5 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'border-2 border-gray-200 rounded-full'}`}></div>
-              <div className={`absolute inset-0 w-5 h-5 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'border-2 border-blue-500 rounded-full'} border-t-transparent animate-spin`}></div>
+    <div className={`nd-admin ${theme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
+      <div className="max-w-7xl mx-auto px-6 py-6 md:py-8">
+        {/* Header + metric — compact top bar */}
+        <header className="flex items-center justify-between gap-4 mb-8">
+          <div className="min-w-0">
+            <p className="nd-label mb-0.5">BrowseBase</p>
+            <h1 className="nd-heading">资源管理</h1>
+          </div>
+          <div className="flex items-center gap-4 shrink-0">
+            {(isLoading || message) && (
+              <p
+                className={`nd-status ${
+                  message?.type === 'error'
+                    ? 'nd-status-err'
+                    : message?.type === 'success'
+                      ? 'nd-status-ok'
+                      : 'text-[var(--nd-text-secondary)]'
+                }`}
+              >
+                {isLoading && !message
+                  ? '[加载中...]'
+                  : message
+                    ? `[${message.text}]`
+                    : null}
+              </p>
+            )}
+            <div className="nd-mode-toggle" role="group" aria-label="主题">
+              <button
+                type="button"
+                className={theme === 'dark' ? 'nd-active' : ''}
+                onClick={() => setTheme('dark')}
+              >
+                深色
+              </button>
+              <button
+                type="button"
+                className={theme === 'light' ? 'nd-active' : ''}
+                onClick={() => setTheme('light')}
+              >
+                浅色
+              </button>
             </div>
           </div>
-        )}
-        
-        {/* 优化消息提示 */}
-        {message && (
-          <div className={`fixed bottom-4 right-4 z-50 max-w-sm p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-lg shadow-sm'} transform transition-all duration-300 flex items-center space-x-2 ${
-            message.type === 'success' 
-              ? isRetroTheme ? 'bg-[#f0f0f0] text-[#2c2c2c]' : 'bg-gray-50 text-gray-700 border border-gray-200'
-              : isRetroTheme ? 'bg-[#f0f0f0] text-[#2c2c2c]' : 'bg-gray-50 text-gray-700 border border-gray-200'
-          }`}>
-            <span className={`flex-shrink-0 w-6 h-6 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-full'} flex items-center justify-center ${
-              message.type === 'success' ? isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-100' : isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-100'
-            }`}>
-              {message.type === 'success' ? (
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              ) : (
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              )}
-            </span>
-            <span className={`text-sm ${isRetroTheme ? 'font-mono' : ''}`}>{message.text}</span>
-          </div>
-        )}
-        
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* 资源列表 - 在移动端后显示，PC端在左侧 */}
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+          {/* Resource list */}
           <div className="lg:col-span-8 order-last lg:order-first">
-            <div className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'bg-white/80 rounded-2xl border border-gray-100 shadow-sm'} p-6`}>
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-                <h2 className={`text-lg ${isRetroTheme ? 'font-mono' : 'font-light'} text-gray-800`}>资源列表</h2>
-                <div className="flex flex-col lg:flex-row gap-4 w-full lg:w-auto">
-                  <div className="relative w-full lg:w-64">
-                    <input
-                      type="text"
-                      placeholder="搜索资源..."
-                      defaultValue={filters.search}
-                      onChange={handleSearchChange}
-                      className={`w-full px-3 py-2 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50'} text-gray-800`}
-                    />
-                    {showSuggestions && searchSuggestions.length > 0 && (
-                      <div className={`absolute z-10 w-full mt-1 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-white border border-gray-100 rounded-lg shadow-lg'} max-h-60 overflow-y-auto`}>
-                        {searchSuggestions.map((suggestion, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleSuggestionClick(suggestion)}
-                            className={`w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 focus:outline-none ${isRetroTheme ? 'font-mono' : ''}`}
-                          >
-                            {suggestion}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  <CustomSelect
-                    value={filters.category}
-                    onChange={(value) => setFilters({...filters, category: value})}
-                    options={categories}
-                    placeholder="所有分类"
-                    isRetroTheme={isRetroTheme}
-                  />
-                </div>
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-8">
+              <div className="flex items-baseline gap-2">
+                <span className="nd-display" aria-label="资源总数">
+                  {isInitialLoading ? '—' : String(totalCount).padStart(2, '0')}
+                </span>
+                <span className="nd-label">条</span>
               </div>
-              
-              <div className={`overflow-x-auto min-h-[320px] rounded-lg border ${isRetroTheme ? 'border-[#2c2c2c]' : 'border-gray-100'} `}>
-                <table className="w-full">
-                  <thead>
-                    <tr className={isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-50'}>
-                      <th className={`text-left p-4 ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-600 text-sm ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-l-lg'}`}>标题</th>
-                      <th className={`text-left p-4 ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-600 text-sm ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>分类</th>
-                      <th className={`text-left p-4 ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-600 text-sm ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>标签</th>
-                      <th className={`text-left p-4 ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-600 text-sm ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-r-lg'}`}>操作</th>
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div className="relative w-full sm:w-56">
+                  <input
+                    type="text"
+                    placeholder="搜索资源..."
+                    defaultValue={filters.search}
+                    onChange={handleSearchChange}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                    className="nd-input"
+                  />
+                  {showSuggestions && searchSuggestions.length > 0 && (
+                    <div className="nd-dropdown absolute z-10 w-full mt-1 max-h-60 overflow-y-auto">
+                      {searchSuggestions.map((suggestion, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <CustomSelect
+                  value={filters.category}
+                  onChange={value => {
+                    setFilters({ ...filters, category: value });
+                    setCurrentPage(1);
+                  }}
+                  options={categories}
+                  placeholder="所有分类"
+                />
+              </div>
+            </div>
+
+            <div className="overflow-x-auto min-h-[280px]">
+              <table className="nd-table">
+                <thead>
+                  <tr>
+                    <th>标题</th>
+                    <th>分类</th>
+                    <th>标签</th>
+                    <th className="w-[1%] whitespace-nowrap">操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isInitialLoading ? (
+                    <tr>
+                      <td colSpan={4} className="!py-20 text-center">
+                        <span className="nd-status text-[var(--nd-text-disabled)]">
+                          [加载中...]
+                        </span>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className={isRetroTheme ? 'divide-y divide-[#2c2c2c]/25' : 'divide-y divide-gray-100'}>
-                    {isInitialLoading ? (
-                      <tr>
-                        <td colSpan={4} className={`p-6 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                          <div
-                            className={`min-h-[260px] rounded-xl ${
-                              isRetroTheme ? 'bg-[#f0f0f0]/60' : 'bg-white/60'
-                            } backdrop-blur-xl shadow-2xl border ${
-                              isRetroTheme ? 'border-[#e0e0e0]/70' : 'border-[#e0e0e0]/70'
-                            } flex items-center justify-center`}
+                  ) : resources.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="!py-20 text-center">
+                        <p className="text-[var(--nd-text-secondary)] text-sm mb-1">暂无资源</p>
+                        <p className="nd-caption text-[var(--nd-text-disabled)]">
+                          添加一条资源开始管理
+                        </p>
+                      </td>
+                    </tr>
+                  ) : (
+                    resources.map(resource => (
+                      <tr
+                        key={resource.id}
+                        className={editingResource?.id === resource.id ? 'nd-editing' : ''}
+                      >
+                        <td>
+                          <div className="font-light text-[var(--nd-text-display)] text-[15px]">
+                            {resource.title}
+                          </div>
+                          <a
+                            href={resource.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="nd-caption truncate block max-w-[240px] mt-1 hover:text-[var(--nd-interactive)] transition-colors"
+                            style={{ color: 'var(--nd-text-disabled)' }}
                           >
-                            <div className="relative">
-                              <div className={`w-6 h-6 rounded-full border-2 ${isRetroTheme ? 'border-[#2c2c2c]' : 'border-gray-200'} `} />
-                              <div
-                                className={`absolute inset-0 w-6 h-6 rounded-full border-2 ${
-                                  isRetroTheme ? 'border-[#2c2c2c]' : 'border-blue-500'
-                                } border-t-transparent animate-spin`}
-                              />
-                            </div>
+                            {resource.url}
+                          </a>
+                        </td>
+                        <td>
+                          {resource.category ? (
+                            <span className="nd-chip pointer-events-none">
+                              {getCategoryName(resource.category)}
+                            </span>
+                          ) : (
+                            <span className="nd-caption text-[var(--nd-text-disabled)]">—</span>
+                          )}
+                        </td>
+                        <td>
+                          <div className="flex flex-wrap gap-1.5">
+                            {resource.tags.length === 0 ? (
+                              <span className="nd-caption text-[var(--nd-text-disabled)]">—</span>
+                            ) : (
+                              resource.tags.map(tagId => {
+                                const tag = tags.find(t => t.id === tagId);
+                                return (
+                                  <span key={tagId} className="nd-chip pointer-events-none">
+                                    {tag ? tag.name : tagId}
+                                  </span>
+                                );
+                              })
+                            )}
+                          </div>
+                        </td>
+                        <td>
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handleEdit(resource)}
+                              className="nd-btn nd-btn-ghost"
+                            >
+                              编辑
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(resource.id)}
+                              className="nd-btn nd-btn-ghost !text-[var(--nd-accent)] hover:!opacity-80"
+                            >
+                              删除
+                            </button>
                           </div>
                         </td>
                       </tr>
-                    ) : resources.map((resource) => (
-                          <tr key={resource.id} className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'hover:bg-gray-50'} transition-colors`}>
-                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                              <div className={`${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-900`}>{resource.title}</div>
-                              <div className={`text-sm text-gray-500 truncate hover:text-gray-700 max-w-[250px] ${isRetroTheme ? 'font-mono' : ''}`}>
-                                <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                                  {resource.url}
-                                </a>
-                              </div>
-                            </td>
-                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                              {resource.category ? (
-                                <span className={`px-3 py-1 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-gray-100 rounded-full'} text-gray-700 text-sm ${isRetroTheme ? 'font-mono' : ''}`}>
-                                  {getCategoryName(resource.category)}
-                                </span>
-                              ) : (
-                                <span className={`text-gray-400 text-sm ${isRetroTheme ? 'font-mono' : ''}`}>未分类</span>
-                              )}
-                            </td>
-                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                              <div className="flex flex-wrap gap-1">
-                                {resource.tags.map((tagId) => {
-                                  const tag = tags.find((t) => t.id === tagId);
-                                  return (
-                                    <span
-                                      key={tagId}
-                                      className={`px-2 py-1 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-gray-100 rounded-full'} text-gray-700 text-xs ${isRetroTheme ? 'font-mono' : ''}`}
-                                    >
-                                      {tag ? tag.name : tagId}
-                                    </span>
-                                  );
-                                })}
-                              </div>
-                            </td>
-                            <td className={`p-4 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : ''}`}>
-                              <div className="flex space-x-3">
-                                <button
-                                  onClick={() => handleEdit(resource)}
-                                  className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg transition-colors text-gray-700 flex-shrink-0 ${
-                                    isRetroTheme
-                                      ? 'font-mono bg-[#f0f0f0] border border-[#2c2c2c] hover:bg-gray-200'
-                                      : 'bg-gray-100 hover:bg-gray-200'
-                                  }`}
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={1.5}
-                                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                    />
-                                  </svg>
-                                  <span className="text-sm">编辑</span>
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(resource.id)}
-                                  className={`inline-flex items-center space-x-1 px-2 py-1 rounded-lg transition-colors text-gray-700 flex-shrink-0 ${
-                                    isRetroTheme
-                                      ? 'font-mono bg-[#f0f0f0] border border-[#2c2c2c] hover:bg-gray-200'
-                                      : 'bg-gray-100 hover:bg-gray-200'
-                                  }`}
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={1.5}
-                                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                    />
-                                  </svg>
-                                  <span className="text-sm">删除</span>
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-                  </tbody>
-                </table>
-              </div>
-              
-              {/* 分页控制 */}
-              <div className="mt-6 flex items-center justify-between">
-                <div className={`text-sm text-gray-500 ${isRetroTheme ? 'font-mono' : ''}`}>
-                  显示 {resources.length} 条，共 {totalCount} 条
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={handlePrevPage}
-                    disabled={currentPage === 1}
-                    className={`px-4 py-2 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-lg'} flex items-center space-x-1 transition-colors text-sm ${
-                      currentPage === 1
-                        ? isRetroTheme ? 'bg-[#f0f0f0] text-gray-400 cursor-not-allowed' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : isRetroTheme ? 'bg-[#f0f0f0] text-gray-700 hover:bg-gray-200 border-2 border-[#2c2c2c]' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-                    } ${isRetroTheme ? 'font-mono' : ''}`}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    <span>上一页</span>
-                  </button>
-                  <span className={`px-4 py-2 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'bg-white border border-gray-200 rounded-lg'} text-sm text-gray-700 ${isRetroTheme ? 'font-mono' : ''}`}>
-                    第 {currentPage} 页
-                  </span>
-                  <button
-                    onClick={handleNextPage}
-                    disabled={resources.length < itemsPerPage}
-                    className={`px-4 py-2 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-lg'} flex items-center space-x-1 transition-colors text-sm ${
-                      resources.length < itemsPerPage
-                        ? isRetroTheme ? 'bg-[#f0f0f0] text-gray-400 cursor-not-allowed' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : isRetroTheme ? 'bg-[#f0f0f0] text-gray-700 hover:bg-gray-200 border-2 border-[#2c2c2c]' : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-                    } ${isRetroTheme ? 'font-mono' : ''}`}
-                  >
-                    <span>下一页</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </div>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="mt-8 flex items-center justify-between gap-4">
+              <p className="nd-caption">
+                显示 {resources.length} 条，共 {totalCount} 条 · 第 {currentPage} / {totalPages} 页
+              </p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="nd-btn nd-btn-secondary !min-h-10 !px-4 !py-2 inline-flex items-center gap-1"
+                >
+                  <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
+                  上一页
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextPage}
+                  disabled={resources.length < itemsPerPage}
+                  className="nd-btn nd-btn-secondary !min-h-10 !px-4 !py-2 inline-flex items-center gap-1"
+                >
+                  下一页
+                  <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                </button>
               </div>
             </div>
           </div>
 
-          {/* 添加新资源 - 在移动端优先显示，PC端在右侧 */}
+          {/* Form panel */}
           <div className="lg:col-span-4 order-first lg:order-last">
-            <div className={`${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'bg-white/80 rounded-2xl border border-gray-100 shadow-sm'} p-6`}>
-              <div className="flex justify-between items-center mb-6">
-                 <h2 className={`text-lg ${isRetroTheme ? 'font-mono' : 'font-light'} text-gray-800`}>{editingResource ? '编辑资源' : '添加新资源'}</h2>
-                 {editingResource && (
-                   <button
-                     type="button"
-                     onClick={() => {
-                       setEditingResource(null);
-                       setNewResource({
-                         title: '',
-                         url: '',
-                         description: '',
-                         category: '',
-                         tags: [],
-                         rating: 0,
-                         reviews: 0
-                       });
-                     }}
-                     className={`text-gray-600 hover:text-gray-800 text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'}`}
-                   >
-                     取消编辑
-                   </button>
-                 )}
+            <div className="nd-surface p-6 sticky top-6">
+              <div className="flex items-start justify-between gap-3 mb-8">
+                <div>
+                  <p className="nd-label mb-1">
+                    {editingResource ? '修改' : '新建'}
+                  </p>
+                  <h2 className="text-[18px] font-light tracking-tight text-[var(--nd-text-display)]">
+                    {editingResource ? '编辑资源' : '添加新资源'}
+                  </h2>
+                </div>
+                {editingResource && (
+                  <button type="button" onClick={clearEdit} className="nd-btn nd-btn-ghost !px-0">
+                    [ 取消 ]
+                  </button>
+                )}
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="name" className={`block text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-700 mb-1`}>
+                  <label htmlFor="name" className="nd-label block mb-2">
                     资源名称
                   </label>
                   <input
                     type="text"
                     id="name"
                     value={newResource.title}
-                    onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
-                    className={`w-full px-3 py-2 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50'} text-gray-800`}
+                    onChange={e => setNewResource({ ...newResource, title: e.target.value })}
+                    className="nd-input"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="url" className={`block text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-700 mb-1`}>
+                  <label htmlFor="url" className="nd-label block mb-2">
                     资源链接
                   </label>
                   <input
                     type="url"
                     id="url"
                     value={newResource.url}
-                    onChange={(e) => setNewResource({ ...newResource, url: e.target.value })}
-                    className={`w-full px-3 py-2 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50'} text-gray-800`}
+                    onChange={e => setNewResource({ ...newResource, url: e.target.value })}
+                    className="nd-input"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="description" className={`block text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-700 mb-1`}>
+                  <label htmlFor="description" className="nd-label block mb-2">
                     资源描述
                   </label>
                   <textarea
                     id="description"
                     value={newResource.description}
-                    onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
-                    className={`w-full px-3 py-2 ${isRetroTheme ? 'border-2 border-[#2c2c2c] bg-[#f0f0f0]' : 'border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-300 bg-gray-50'} text-gray-800`}
+                    onChange={e => setNewResource({ ...newResource, description: e.target.value })}
+                    className="nd-textarea"
                     rows={3}
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="category" className={`block text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-700 mb-1`}>
-                    分类
-                  </label>
-                  <div className={`flex flex-wrap gap-1.5 p-2 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'border border-gray-200 rounded-lg'} min-h-[40px] ${isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-50'}`}>
+                  <label className="nd-label block mb-3">分类</label>
+                  <div className="flex flex-wrap gap-2">
                     {categories.map(category => (
                       <button
                         key={category.id}
                         type="button"
-                        onClick={() => setNewResource({...newResource, category: category.id})}
-                        className={`px-2.5 py-1 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-full'} text-xs font-normal transition-all ${
-                          newResource.category === category.id
-                            ? isRetroTheme ? 'bg-[#2c2c2c] text-white' : 'bg-gray-800 text-white shadow-sm'
-                            : isRetroTheme ? 'bg-[#f0f0f0] text-gray-700 hover:bg-gray-200 border-2 border-[#2c2c2c]' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                        } ${isRetroTheme ? 'font-mono' : ''}`}
+                        onClick={() => setNewResource({ ...newResource, category: category.id })}
+                        className={`nd-chip ${
+                          newResource.category === category.id ? 'nd-chip-filled' : ''
+                        }`}
                       >
                         {category.name}
                       </button>
@@ -572,11 +542,9 @@ const Admin = () => {
                   </div>
                 </div>
                 <div>
-                  <label className={`block text-sm ${isRetroTheme ? 'font-mono' : 'font-normal'} text-gray-700 mb-1`}>
-                    标签
-                  </label>
-                  <div className={`flex flex-wrap gap-1.5 p-1.5 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'border border-gray-200 rounded-lg'} min-h-[40px] ${isRetroTheme ? 'bg-[#f0f0f0]' : 'bg-gray-50'}`}>
-                    {tags.map((tag) => {
+                  <label className="nd-label block mb-3">标签</label>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map(tag => {
                       const isSelected = newResource.tags?.includes(tag.id) || false;
                       return (
                         <button
@@ -585,15 +553,11 @@ const Admin = () => {
                           onClick={() => {
                             const currentTags = newResource.tags || [];
                             const newTags = isSelected
-                              ? currentTags.filter((id) => id !== tag.id)
+                              ? currentTags.filter(id => id !== tag.id)
                               : [...currentTags, tag.id];
                             setNewResource({ ...newResource, tags: newTags });
                           }}
-                          className={`px-2 py-0.5 ${isRetroTheme ? 'border-2 border-[#2c2c2c]' : 'rounded-full'} text-xs font-normal transition-all ${
-                            isSelected
-                              ? isRetroTheme ? 'bg-[#2c2c2c] text-white' : 'bg-gray-800 text-white shadow-sm'
-                              : isRetroTheme ? 'bg-[#f0f0f0] text-gray-700 hover:bg-gray-200 border-2 border-[#2c2c2c]' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-                          } ${isRetroTheme ? 'font-mono' : ''}`}
+                          className={`nd-chip ${isSelected ? 'nd-chip-active' : ''}`}
                         >
                           {tag.name}
                         </button>
@@ -601,10 +565,7 @@ const Admin = () => {
                     })}
                   </div>
                 </div>
-                <button
-                  type="submit"
-                  className={`w-full px-4 py-2 ${isRetroTheme ? 'bg-[#2c2c2c] border-2 border-[#2c2c2c]' : 'bg-gray-800 rounded-lg'} text-white hover:opacity-90 transition-colors ${isRetroTheme ? 'font-mono' : ''}`}
-                >
+                <button type="submit" className="nd-btn nd-btn-primary w-full" disabled={isLoading}>
                   {editingResource ? '更新资源' : '添加资源'}
                 </button>
               </form>
@@ -617,10 +578,3 @@ const Admin = () => {
 };
 
 export default Admin;
-
-
-// 辅助函数：根据ID获取分类名称
-const getCategoryName = (categoryId: string) => {
-  const category = categories.find(c => c.id === categoryId);
-  return category ? category.name : categoryId;
-};

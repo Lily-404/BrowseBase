@@ -12,6 +12,9 @@ export default {
           'Microsoft YaHei',
           'monospace',
         ],
+        doto: ['"Doto"', '"Space Mono"', 'monospace'],
+        grotesk: ['"Space Grotesk"', '"DM Sans"', 'system-ui', 'sans-serif'],
+        mono: ['"Space Mono"', '"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       borderRadius: {
         sm: 'var(--radius-xs)',
