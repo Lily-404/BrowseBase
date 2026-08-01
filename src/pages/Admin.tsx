@@ -629,19 +629,19 @@ const Admin = () => {
                   type="button"
                   onClick={handlePrevPage}
                   disabled={currentPage === 1}
-                  className="nd-btn nd-btn-secondary !min-h-10 !px-4 !py-2 inline-flex items-center gap-1"
+                  className="rec-btn rec-btn-secondary inline-flex items-center gap-1"
                 >
-                  <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
+                  <ChevronLeft className="w-3.5 h-3.5" strokeWidth={1.8} />
                   上一页
                 </button>
                 <button
                   type="button"
                   onClick={handleNextPage}
                   disabled={resources.length < itemsPerPage}
-                  className="nd-btn nd-btn-secondary !min-h-10 !px-4 !py-2 inline-flex items-center gap-1"
+                  className="rec-btn rec-btn-secondary inline-flex items-center gap-1"
                 >
                   下一页
-                  <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+                  <ChevronRight className="w-3.5 h-3.5" strokeWidth={1.8} />
                 </button>
               </div>
             </div>

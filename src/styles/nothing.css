@@ -647,6 +647,7 @@
   padding: 0 10px;
   font-size: 12.5px;
   font-weight: 500;
+  font-family: "Space Grotesk", system-ui, sans-serif;
   border: none;
   cursor: pointer;
   transition: background-color 100ms var(--nd-ease), transform 100ms var(--nd-ease),
@@ -1077,8 +1078,8 @@
   align-items: center;
   justify-content: center;
   min-height: 36px;
-  padding: 0 16px;
-  border-radius: 8px;
+  padding: 0 18px;
+  border-radius: 999px;
   border: 1px solid var(--nd-border-visible);
   background: var(--nd-text-display);
   color: var(--nd-black);
