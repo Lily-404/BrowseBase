@@ -10,6 +10,12 @@ import './styles/nothing.css';
 import PixelLoader from './components/ui/PixelLoader';
 import { Toaster } from './components/ui/Toaster';
 import { loadNothingFonts } from './utils/loadNothingFonts';
+import {
+  getSystemThemeMediaQuery,
+  readThemePreference,
+  resolveTheme,
+  type ResolvedTheme,
+} from './utils/adminTheme';
 
 
 initGA('G-W0ZSDCR0XB');
@@ -20,18 +26,22 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-  const [theme] = useState<'dark' | 'light'>(() => {
-    try {
-      const v = localStorage.getItem('adminNothingTheme');
-      if (v === 'light' || v === 'dark') return v;
-      return 'dark';
-    } catch {
-      return 'dark';
-    }
-  });
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
+    resolveTheme(readThemePreference())
+  );
 
   useEffect(() => {
     loadNothingFonts();
+  }, []);
+
+  useEffect(() => {
+    const preference = readThemePreference();
+    const apply = () => setResolvedTheme(resolveTheme(preference));
+    apply();
+    if (preference !== 'system') return;
+    const media = getSystemThemeMediaQuery();
+    media.addEventListener('change', apply);
+    return () => media.removeEventListener('change', apply);
   }, []);
 
   // 首次挂载时执行鉴权并注册 auth 事件
@@ -106,7 +116,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (isLoading) {
     return (
-      <div className={`nd ${theme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
+      <div className={`nd ${resolvedTheme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
         <div className="min-h-screen flex flex-col items-center justify-center px-6">
           <p className="nd-label mb-6">BrowseBase</p>
           <p className="nd-heading mb-6">身份验证</p>

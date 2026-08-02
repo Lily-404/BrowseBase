@@ -5,6 +5,15 @@ import bcrypt from 'bcryptjs';
 import React from 'react';
 import '../styles/nothing.css';
 import { loadNothingFonts } from '../utils/loadNothingFonts';
+import {
+  getSystemThemeMediaQuery,
+  readThemePreference,
+  resolveTheme,
+  writeThemePreference,
+  type ResolvedTheme,
+  type ThemePreference,
+} from '../utils/adminTheme';
+import ThemeModeToggle from '../components/ui/ThemeModeToggle';
 
 interface AuthError {
   message?: string;
@@ -12,23 +21,16 @@ interface AuthError {
   name?: string;
 }
 
-type ThemeMode = 'dark' | 'light';
-
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [loginMethod, setLoginMethod] = useState<'password' | 'magic'>('password');
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    try {
-      const v = localStorage.getItem('adminNothingTheme');
-      if (v === 'light' || v === 'dark') return v;
-      return 'dark';
-    } catch {
-      return 'dark';
-    }
-  });
+  const [themePreference, setThemePreference] = useState<ThemePreference>(() => readThemePreference());
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
+    resolveTheme(readThemePreference())
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,17 +38,30 @@ const Login = () => {
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('adminNothingTheme', theme);
-    } catch {
-      // ignore
-    }
-    const root = document.documentElement;
-    root.classList.toggle('dark', theme === 'dark');
-    return () => {
-      root.classList.remove('dark');
+    writeThemePreference(themePreference);
+
+    const apply = () => {
+      const next = resolveTheme(themePreference);
+      setResolvedTheme(next);
+      document.documentElement.classList.toggle('dark', next === 'dark');
     };
-  }, [theme]);
+
+    apply();
+
+    if (themePreference !== 'system') {
+      return () => {
+        document.documentElement.classList.remove('dark');
+      };
+    }
+
+    const media = getSystemThemeMediaQuery();
+    const onChange = () => apply();
+    media.addEventListener('change', onChange);
+    return () => {
+      media.removeEventListener('change', onChange);
+      document.documentElement.classList.remove('dark');
+    };
+  }, [themePreference]);
 
   const isGoogleOAuthSupported = () => {
     const isChrome = /Chrome/.test(navigator.userAgent) && !/Edge/.test(navigator.userAgent);
@@ -184,36 +199,37 @@ const Login = () => {
   const isSuccessMsg = error.includes('已发送');
 
   return (
-    <div className={`nd ${theme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
+    <div className={`nd ${resolvedTheme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
       <div className="min-h-screen flex flex-col items-center justify-center px-6 py-10">
         <div className="w-full max-w-md">
           {/* Top bar */}
           <div className="flex items-center justify-between mb-10">
             <p className="nd-label">BrowseBase</p>
-            <div className="nd-mode-toggle" role="group" aria-label="主题">
-              <button
-                type="button"
-                className={theme === 'dark' ? 'nd-active' : ''}
-                onClick={() => setTheme('dark')}
-              >
-                深色
-              </button>
-              <button
-                type="button"
-                className={theme === 'light' ? 'nd-active' : ''}
-                onClick={() => setTheme('light')}
-              >
-                浅色
-              </button>
-            </div>
+            <ThemeModeToggle
+              value={themePreference}
+              onChange={setThemePreference}
+            />
+
           </div>
 
           <div className="nd-surface p-6 md:p-8">
             {/* Method segmented control */}
-            <div className="nd-mode-toggle w-full mb-8 !h-11">
+            <div
+              className="nd-mode-toggle w-full mb-8"
+              role="group"
+              aria-label="登录方式"
+              style={
+                {
+                  '--nd-seg-cols': 2,
+                  '--nd-seg-index': loginMethod === 'password' ? 0 : 1,
+                } as React.CSSProperties
+              }
+            >
+              <span className="nd-mode-toggle-thumb" aria-hidden />
               <button
                 type="button"
-                className={`flex-1 ${loginMethod === 'password' ? 'nd-active' : ''}`}
+                className={loginMethod === 'password' ? 'nd-active' : ''}
+                aria-pressed={loginMethod === 'password'}
                 onClick={() => {
                   setLoginMethod('password');
                   setError('');
@@ -223,7 +239,8 @@ const Login = () => {
               </button>
               <button
                 type="button"
-                className={`flex-1 ${loginMethod === 'magic' ? 'nd-active' : ''}`}
+                className={loginMethod === 'magic' ? 'nd-active' : ''}
+                aria-pressed={loginMethod === 'magic'}
                 onClick={() => {
                   setLoginMethod('magic');
                   setError('');

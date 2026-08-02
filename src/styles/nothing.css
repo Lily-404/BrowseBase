@@ -22,7 +22,7 @@
 }
 
 .nd.nd-light {
-  --nd-black: #f5f5f5;
+  --nd-black: #E7E7E7;
   --nd-surface: #ffffff;
   --nd-surface-raised: #f0f0f0;
   --nd-border: #e8e8e8;
@@ -317,30 +317,66 @@
   color: var(--nd-accent);
 }
 
+/* Layo-style segmented control: gray track + raised thumb */
 .nd .nd-mode-toggle {
-  display: inline-flex;
-  border: 1px solid var(--nd-border-visible);
-  border-radius: 999px;
-  overflow: hidden;
-  height: 36px;
+  --nd-seg-cols: 2;
+  --nd-seg-index: 0;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--nd-seg-cols), minmax(0, 1fr));
+  align-items: stretch;
+  border-radius: 8px;
+  background: var(--ft-field);
+  padding: 2px;
+  height: auto;
+  border: none;
+  overflow: visible;
+}
+
+.nd .nd-mode-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 2px;
+  width: calc((100% - 4px) / var(--nd-seg-cols));
+  border-radius: 6px;
+  background: var(--nd-surface);
+  box-shadow: var(--ft-shadow-btn);
+  transform: translateX(calc(var(--nd-seg-index) * 100%));
+  transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .nd .nd-mode-toggle button {
-  font-family: "Space Mono", monospace;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0 16px;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 28px;
+  min-width: 36px;
+  font-family: "Space Grotesk", "DM Sans", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  padding: 0 12px;
   border: none;
   background: transparent;
   color: var(--nd-text-secondary);
   cursor: pointer;
-  transition: background-color 200ms var(--nd-ease), color 200ms var(--nd-ease);
+  transition: color 200ms var(--nd-ease);
 }
 
 .nd .nd-mode-toggle button.nd-active {
-  background: var(--nd-text-display);
-  color: var(--nd-black);
+  background: transparent;
+  color: var(--nd-accent);
+}
+
+.nd .nd-mode-toggle button:hover:not(.nd-active) {
+  color: var(--nd-text-primary);
 }
 
 .nd .nd-dot-grid {
@@ -1173,6 +1209,10 @@
   min-width: 2px;
   border-radius: 0;
   background: var(--nd-border);
+}
+
+.nd.nd-light .about-seg-bit {
+  background: var(--nd-border-visible);
 }
 
 .nd .about-seg-bit.is-filled {

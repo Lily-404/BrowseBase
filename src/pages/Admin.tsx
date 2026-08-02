@@ -8,6 +8,15 @@ import { debounce } from 'lodash';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import '../styles/nothing.css';
 import { loadNothingFonts } from '../utils/loadNothingFonts';
+import {
+  getSystemThemeMediaQuery,
+  readThemePreference,
+  resolveTheme,
+  writeThemePreference,
+  type ResolvedTheme,
+  type ThemePreference,
+} from '../utils/adminTheme';
+import ThemeModeToggle from '../components/ui/ThemeModeToggle';
 
 const getCategoryName = (categoryId: string) => {
   const category = categories.find(c => c.id === categoryId);
@@ -38,8 +47,6 @@ const categoryPillClass = (categoryId: string) => {
   return known.includes(categoryId) ? `ft-pill-${categoryId}` : 'ft-pill-default';
 };
 
-type ThemeMode = 'dark' | 'light';
-
 const Admin = () => {
   const [resources, setResources] = useState<Resource[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,32 +74,40 @@ const Admin = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    try {
-      const v = localStorage.getItem('adminNothingTheme');
-      if (v === 'light' || v === 'dark') return v;
-      return 'dark';
-    } catch {
-      return 'dark';
-    }
-  });
+  const [themePreference, setThemePreference] = useState<ThemePreference>(() => readThemePreference());
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>(() =>
+    resolveTheme(readThemePreference())
+  );
 
   useEffect(() => {
     loadNothingFonts();
   }, []);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('adminNothingTheme', theme);
-    } catch {
-      // ignore
-    }
-    const root = document.documentElement;
-    root.classList.toggle('dark', theme === 'dark');
-    return () => {
-      root.classList.remove('dark');
+    writeThemePreference(themePreference);
+
+    const apply = () => {
+      const next = resolveTheme(themePreference);
+      setResolvedTheme(next);
+      document.documentElement.classList.toggle('dark', next === 'dark');
     };
-  }, [theme]);
+
+    apply();
+
+    if (themePreference !== 'system') {
+      return () => {
+        document.documentElement.classList.remove('dark');
+      };
+    }
+
+    const media = getSystemThemeMediaQuery();
+    const onChange = () => apply();
+    media.addEventListener('change', onChange);
+    return () => {
+      media.removeEventListener('change', onChange);
+      document.documentElement.classList.remove('dark');
+    };
+  }, [themePreference]);
 
   const fetchResources = useCallback(async () => {
     try {
@@ -269,7 +284,7 @@ const Admin = () => {
   );
 
   return (
-    <div className={`nd ${theme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
+    <div className={`nd ${resolvedTheme === 'light' ? 'nd-light' : ''} nd-dot-grid`}>
       {pendingDelete && (
         <div
           className="rec-overlay"
@@ -363,22 +378,11 @@ const Admin = () => {
             {isLoading && (
               <p className="nd-status text-[var(--nd-text-secondary)]">[加载中...]</p>
             )}
-            <div className="nd-mode-toggle" role="group" aria-label="主题">
-              <button
-                type="button"
-                className={theme === 'dark' ? 'nd-active' : ''}
-                onClick={() => setTheme('dark')}
-              >
-                深色
-              </button>
-              <button
-                type="button"
-                className={theme === 'light' ? 'nd-active' : ''}
-                onClick={() => setTheme('light')}
-              >
-                浅色
-              </button>
-            </div>
+            <ThemeModeToggle
+              value={themePreference}
+              onChange={setThemePreference}
+            />
+
           </div>
         </header>
 
