@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { supabase } from './lib/supabase';
+import { isSupabaseConfigured, supabase } from './lib/supabase';
+import SetupRequired from './pages/SetupRequired';
 import Home from './pages/Home';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
@@ -134,6 +135,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
+  if (!isSupabaseConfigured) {
+    return <SetupRequired />;
+  }
+
   return (
     <Router>
       <Toaster />
